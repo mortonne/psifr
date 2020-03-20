@@ -1,7 +1,7 @@
-function tab = frdata2table(frdata, extra)
-%FRDATA2TABLE   Export an FRdata struct to a table.
+function tab = subj_frdata2table(frdata, extra)
+%SUBJ_FRDATA2TABLE   Export an FRdata struct for one subject to a table.
 %
-%  frdata2table(frdata, extra)
+%  subj_frdata2table(frdata, extra)
 %
 %  INPUTS
 %  frdata - free recall data structure
@@ -37,10 +37,25 @@ list = zeros(n_trial, 1);
 position = zeros(n_trial, 1);
 item = cell(n_trial, 1);
 
+% extra custom fields
 extra_vectors = struct();
 for i = 1:length(extra)
     f = extra{i};
     extra_vectors.(f) = zeros(n_trial, 1);
+end
+
+% prepare subject field
+if isfield(frdata, 'subject')
+    if iscell(frdata.subject)
+        subject = cell(n_trial, 1);
+    else
+        subject = zeros(n_trial, 1);
+    end
+else
+    subject = repmat({'n/a'}, [n_trial, 1]);
+end
+if length(unique(subject)) > 1
+    error('Data struct has multiple subjects. Call frdata2table instead.')
 end
 
 % unpack trial information
@@ -48,6 +63,7 @@ ind = 1;
 for i = 1:n_list
     % study trials
     for j = 1:n_position
+        subject(ind) = frdata.subject(i);
         trial_type{ind} = 'study';
         list(ind) = i;
         position(ind) = j;
@@ -71,6 +87,7 @@ for i = 1:n_list
             break
         end
 
+        subject(ind) = frdata.subject(i);
         trial_type{ind} = 'recall';
         list(ind) = i;
         position(ind) = j;
@@ -87,7 +104,7 @@ for i = 1:n_list
     end
 end
 
-tab = table(list, position, trial_type, item);
+tab = table(subject, list, position, trial_type, item);
 
 if ~isempty(extra)
     for i = 1:length(extra)
