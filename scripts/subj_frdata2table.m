@@ -1,4 +1,4 @@
-function tab = subj_frdata2table(frdata, extra)
+function tab = subj_frdata2table(frdata, extra, names)
 %SUBJ_FRDATA2TABLE   Export an FRdata struct for one subject to a table.
 %
 %  subj_frdata2table(frdata, extra)
@@ -20,8 +20,11 @@ function tab = subj_frdata2table(frdata, extra)
 %  tab - table
 %      Table of data in long format.
 
-if nargin < 2
-    extra = {};
+if nargin < 3
+    names = {};
+    if nargin < 2
+        extra = {};
+    end
 end
 
 % compile basic information
@@ -38,10 +41,19 @@ position = zeros(n_trial, 1);
 item = cell(n_trial, 1);
 
 % extra custom fields
-extra_vectors = struct();
-for i = 1:length(extra)
-    f = extra{i};
-    extra_vectors.(f) = zeros(n_trial, 1);
+if ~isempty(extra)
+    if isempty(names)
+        names = repmat({''}, size(extra));
+    end
+
+    extra_vectors = struct();
+    for i = 1:length(extra)
+        if isempty(names{i})
+            names{i} = extra{i};
+        end
+        f = names{i};
+        extra_vectors.(f) = zeros(n_trial, 1);
+    end
 end
 
 % prepare subject field
@@ -70,9 +82,10 @@ for i = 1:n_list
         item{ind} = frdata.pres_items{i, j};
         if ~isempty(extra)
             for k = 1:length(extra)
-                f = extra{k};
-                mat = frdata.pres.(f);
-                extra_vectors.(f)(ind) = mat(i, j);
+                f1 = extra{k};
+                f2 = names{k};
+                mat = frdata.pres.(f1);
+                extra_vectors.(f2)(ind) = mat(i, j);
             end
         end
 
@@ -94,9 +107,10 @@ for i = 1:n_list
         item{ind} = frdata.rec_items{i, j};
         if ~isempty(extra)
             for k = 1:length(extra)
-                f = extra{k};
-                mat = frdata.rec.(f);
-                extra_vectors.(f)(ind) = mat(i, j);
+                f1 = extra{k};
+                f2 = names{k};
+                mat = frdata.rec.(f1);
+                extra_vectors.(f2)(ind) = mat(i, j);
             end
         end
 
@@ -107,8 +121,8 @@ end
 tab = table(subject, list, position, trial_type, item);
 
 if ~isempty(extra)
-    for i = 1:length(extra)
-        f = extra{i};
+    for i = 1:length(names)
+        f = names{i};
         tab.(f) = extra_vectors.(f);
     end
 end
