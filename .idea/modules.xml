@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/freerec.iml" filepath="$PROJECT_DIR$/.idea/freerec.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/psifr.iml" filepath="$PROJECT_DIR$/.idea/psifr.iml" />
     </modules>
   </component>
 </project>
