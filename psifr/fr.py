@@ -125,8 +125,9 @@ def merge_lists(study, recall, merge_keys=None, list_keys=None, study_keys=None,
     merged = merged.astype({'repeat': 'int'})
 
     # reorder columns
-    columns = (merge_keys + ['input', 'output'] + list_keys +
-               study_keys + recall_keys + ['recalled', 'repeat', 'intrusion'])
+    columns = (merge_keys + ['input', 'output'] +
+               ['recalled', 'repeat', 'intrusion'] +
+               list_keys + study_keys + recall_keys)
     merged = merged.reindex(columns=columns)
 
     # sort rows in standard order
