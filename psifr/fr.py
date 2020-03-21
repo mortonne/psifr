@@ -1,5 +1,6 @@
 """Utilities for working with free recall data."""
 
+import numpy as np
 import pandas as pd
 
 
@@ -30,6 +31,20 @@ def check_data(df):
     # only one column has a hard constraint on its exact content
     assert df['trial_type'].isin(['study', 'recall']).all(), (
         'trial_type for all trials must be "study" or "recall".')
+
+
+def block_index(list_labels):
+    """Get index of each block in a list."""
+
+    prev_label = ''
+    curr_block = 0
+    block = np.zeros(len(list_labels), dtype=int)
+    for i, label in enumerate(list_labels):
+        if prev_label != label:
+            curr_block += 1
+        block[i] = curr_block
+        prev_label = label
+    return block
 
 
 def merge_lists(study, recall, merge_keys=None, list_keys=None, study_keys=None,
