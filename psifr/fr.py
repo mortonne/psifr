@@ -123,4 +123,15 @@ def merge_lists(study, recall, merge_keys=None, list_keys=None, study_keys=None,
     # fix repeats field to define for non-recalled items
     merged.loc[merged['repeat'].isna(), 'repeat'] = 0
     merged = merged.astype({'repeat': 'int'})
+
+    # reorder columns
+    columns = (merge_keys + ['input', 'output'] + list_keys +
+               study_keys + recall_keys + ['recalled', 'repeat', 'intrusion'])
+    merged = merged.reindex(columns=columns)
+
+    # sort rows in standard order
+    sort_keys = merge_keys.copy() + ['input']
+    sort_keys.remove('item')
+    merged = merged.sort_values(by=sort_keys, ignore_index=True)
+
     return merged
