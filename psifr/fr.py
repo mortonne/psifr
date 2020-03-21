@@ -32,7 +32,8 @@ def check_data(df):
         'trial_type for all trials must be "study" or "recall".')
 
 
-def merge_lists(study, recall, merge_keys=None, list_keys=None, position_key='position'):
+def merge_lists(study, recall, merge_keys=None, list_keys=None, study_keys=None,
+                recall_keys=None, position_key='position'):
     """Merge study and recall events together for each list.
 
     Parameters
@@ -51,9 +52,13 @@ def merge_lists(study, recall, merge_keys=None, list_keys=None, position_key='po
         the same item, but only within list.
 
     list_keys : list, optional
-        Columns that apply to an entire list, as opposed to specific
-        study events. These columns will still be defined for
-        intrusions even though they have no corresponding study event.
+        Columns that apply to both study and recall events.
+
+    study_keys : list, optional
+        Columns that only apply to study events.
+
+    recall_keys : list, optional
+        Columns that only apply to recall events.
 
     position_key : str, optional
         Column indicating the position of each item in either the study
@@ -83,19 +88,26 @@ def merge_lists(study, recall, merge_keys=None, list_keys=None, position_key='po
     if merge_keys is None:
         merge_keys = ['subject', 'list', 'item']
 
+    if list_keys is None:
+        list_keys = []
+
+    if study_keys is None:
+        study_keys = []
+
+    if recall_keys is None:
+        recall_keys = []
+
     # get running count of number of times each item is recalled in each list
     recall.loc[:, 'repeat'] = recall.groupby(merge_keys).cumcount()
 
-    # set keys to define the level of recall at items within list
-    if list_keys is not None:
-        merge_keys += list_keys
-
     # get just the fields to use in the merge
-    recall = recall[merge_keys + ['position', 'repeat']]
+    study = study[merge_keys + ['position'] + list_keys + study_keys]
+    recall = recall[merge_keys + ['repeat', 'position'] + list_keys +
+                    recall_keys]
 
     # merge information from study and recall trials
-    merged = pd.merge(study, recall, left_on=merge_keys, right_on=merge_keys,
-                      how='outer')
+    merged = pd.merge(study, recall, left_on=merge_keys + list_keys,
+                      right_on=merge_keys + list_keys, how='outer')
 
     # position from study events indicates input position;
     # position from recall events indicates output position
