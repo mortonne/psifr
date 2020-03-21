@@ -32,17 +32,18 @@ def check_data(df):
         'trial_type for all trials must be "study" or "recall".')
 
 
-def merge_lists(df, merge_keys=None, list_keys=None, position_key='position'):
+def merge_lists(study, recall, merge_keys=None, list_keys=None, position_key='position'):
     """Merge study and recall events together for each list.
 
     Parameters
     ----------
-    df : pandas.DataFrame
-        Information about all study and recall events, potentially for
-        multiple lists and/or subjects. Each row corresponds to one
-        event. Must include a 'trial_type' column with values 'study'
-        for study events and 'recall' for recall events (that is,
-        attempted recalls).
+    study : pandas.DataFrame
+        Information about all study events. Should have one row for
+        each study event.
+
+    recall : pandas.DataFrame
+        Information about all recall events. Should have one row for
+        each recall attempt.
 
     merge_keys : list, optional
         Columns to use to designate events to merge. Default is
@@ -82,24 +83,14 @@ def merge_lists(df, merge_keys=None, list_keys=None, position_key='position'):
     if merge_keys is None:
         merge_keys = ['subject', 'list', 'item']
 
-    # keys that define a unique recall but not its output position
-    rec_keys = merge_keys + ['trial_type']
-
     # get running count of number of times each item is recalled in each list
-    # also applies to study events, but leaving those out now for simplicity
-    # as that will only apply to studies with repeated presentations
-    df.loc[:, 'repeat'] = df.groupby(rec_keys).cumcount()
-
-    # get study and recall events
-    study = df.loc[df['trial_type'] == 'study']
-    recall = df.loc[df['trial_type'] == 'recall']
+    recall.loc[:, 'repeat'] = recall.groupby(merge_keys).cumcount()
 
     # set keys to define the level of recall at items within list
     if list_keys is not None:
         merge_keys += list_keys
 
     # get just the fields to use in the merge
-    study = study.drop(columns=['trial_type', 'repeat'])
     recall = recall[merge_keys + ['position', 'repeat']]
 
     # merge information from study and recall trials
