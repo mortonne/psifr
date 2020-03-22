@@ -162,6 +162,61 @@ def pairwise(iterable):
     return zip(a, b)
 
 
+def transition_masker(seq, possible, from_mask=None, to_mask=None):
+    """Iterate over transitions with masking and exclusion of repeats.
+
+    Parameters
+    ----------
+    seq : sequence
+        Sequence of item identifiers. IDs must be unique within list.
+
+    possible : sequence
+        List of all possible items that may be transitioned to next.
+        After an item has been iterated through, it will be removed
+        from the `possible` list to exclude repeats.
+
+    from_mask : sequence, optional
+        Boolean for each position in the sequence. If false, any
+        transitions from that position will be excluded.
+
+    to_mask : sequence, optional
+        Boolean for each position in the sequence. If false, any
+        transitions to that position will be excluded.
+
+    Yields
+    ------
+    current : hashable
+        ID for the current item in the sequence.
+
+    actual : hashable
+        ID for the next item in the sequence.
+
+    possible : sequence
+        IDs for all remaining possible items.
+    """
+
+    n = 0
+    possible = possible.copy()
+    while n < (len(seq) - 1):
+        if seq[n] in possible:
+            # remove item from consideration on future transitions
+            possible.remove(seq[n])
+        else:
+            # item recalled was not in the set of possible items
+            n += 1
+            continue
+
+        if seq[n + 1] not in possible:
+            continue
+
+        # check if this transition is masked
+        if from_mask[n] and to_mask[n + 1]:
+            # return the current item, actual next item,
+            # and possible next items
+            yield seq[n], seq[n + 1], possible
+        n += 1
+
+
 def lag_crp(list_recalls, list_length):
     """Conditional response probability by lag."""
 
