@@ -62,5 +62,41 @@ class TransitionsTestCase(unittest.TestCase):
             np.array([0, 0, 0, 0, 1, 1, 3, 0, 2, 1, 1, 0, 0, 0, 0]))
 
 
+class LagCRPTestCase(unittest.TestCase):
+
+    def setUp(self) -> None:
+        self.list_length = 6
+        self.recalls = [[0, 2, 3],
+                        [5, 4, 1, 2],
+                        [0, 4, 1, 2, 5]]
+        self.category = [[1, 1, 1, 1, 1, 1],
+                         [1, 1, 1, 2, 2, 2],
+                         [1, 2, 3, 4, 5, 6]]
+
+    def test_lag_crp(self):
+        actual, possible = fr.subject_lag_crp(self.recalls, self.list_length)
+
+        np.testing.assert_array_equal(
+            actual.to_numpy(),
+            np.array([0, 0, 2, 0, 1, 0, 3, 1, 1, 1, 0]))
+
+        np.testing.assert_array_equal(
+            possible.to_numpy(),
+            np.array([1, 2, 3, 3, 5, 0, 7, 5, 4, 3, 2]))
+
+    def test_lag_crp_within(self):
+        opt = {'test': lambda x, y: x == y, 'test_values': self.category}
+        actual, possible = fr.subject_lag_crp(self.recalls, self.list_length,
+                                              masker_kws=opt)
+
+        np.testing.assert_array_equal(
+            actual.to_numpy(),
+            np.array([0, 0, 0, 0, 1, 0, 2, 1, 0, 0, 0]))
+
+        np.testing.assert_array_equal(
+            possible.to_numpy(),
+            np.array([0, 0, 0, 1, 3, 0, 3, 2, 2, 1, 1]))
+
+
 if __name__ == '__main__':
     unittest.main()
