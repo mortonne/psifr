@@ -294,7 +294,7 @@ def _subject_lag_crp(list_recalls, list_length, masker_kws=None):
     return actual, possible
 
 
-def lag_crp(df):
+def lag_crp(df, category_key=None, category_filter=None):
     """Lag-CRP for multiple subjects.
 
     Parameters
@@ -302,6 +302,12 @@ def lag_crp(df):
     df : pandas.DataFrame
         Merged study and recall data. See merge_lists.
         Must have fields: subject, list, input, output, recalled.
+
+    category_key : str, optional
+        Column with category labels.
+
+    category_filter : str, optional
+        Filter for category transitions. May be 'within' or 'between'.
 
     Returns
     -------
@@ -321,14 +327,29 @@ def lag_crp(df):
     """
 
     subj_results = []
-    df = df.query('recalled').sort_values('output')
     for subject, subj_df in df.groupby('subject'):
+        # get recall events for each list
         list_length = int(subj_df['input'].max())
-        recalls = []
-        for i, rec in subj_df.groupby('list'):
-            recalls.append(rec['input'].tolist())
+        rec_df = subj_df.query('recalled').sort_values('output')
+        recalls = [rec['input'].to_list()
+                   for name, rec in rec_df.groupby('list')]
 
-        actual, possible = _subject_lag_crp(recalls, list_length)
+        opt = {}
+        if category_key is not None:
+            pres_df = subj_df.query('repeat == 0 and ~intrusion').sort_values('input')
+            category = [pres[category_key].to_numpy()
+                        for name, pres in pres_df.groupby('list')]
+
+            opt['test_values'] = category
+            if category_filter == 'within':
+                opt['test'] = lambda x, y: x == y
+            elif category_filter == 'between':
+                opt['test'] = lambda x, y: x != y
+            else:
+                raise ValueError('Invalid category filter.')
+
+        # calculate frequency of each lag
+        actual, possible = _subject_lag_crp(recalls, list_length, opt)
         results = pd.DataFrame({'subject': subject, 'lag': actual.index,
                                 'prob': actual / possible, 'actual': actual,
                                 'possible': possible})
