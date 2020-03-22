@@ -162,7 +162,8 @@ def pairwise(iterable):
     return zip(a, b)
 
 
-def transition_masker(seq, possible, from_mask=None, to_mask=None):
+def transition_masker(seq, possible, from_mask=None, to_mask=None,
+                      test_values=None, test=None):
     """Iterate over transitions with masking and exclusion of repeats.
 
     Parameters
@@ -183,6 +184,15 @@ def transition_masker(seq, possible, from_mask=None, to_mask=None):
         Boolean for each position in the sequence. If false, any
         transitions to that position will be excluded.
 
+    test : callable, optional
+        Callable to test whether a given transition is valid. Will be
+        passed the previous and current item IDs or other test values
+        (if `test_values` are specified; see below).
+
+    test_values : sequence, optional
+        Array of values to use to test whether a transition is valid.
+        Will be indexed using the item identifiers.
+
     Yields
     ------
     current : hashable
@@ -201,6 +211,9 @@ def transition_masker(seq, possible, from_mask=None, to_mask=None):
     if to_mask is None:
         to_mask = np.ones(len(seq), dtype=bool)
 
+    if test is not None and test_values is None:
+        raise ValueError('If test is specified, must specify test values.')
+
     n = 0
     possible = possible.copy()
     while n < (len(seq) - 1):
@@ -217,21 +230,33 @@ def transition_masker(seq, possible, from_mask=None, to_mask=None):
 
         # check if this transition is masked
         if from_mask[n] and to_mask[n + 1]:
+            prev = seq[n]
+            curr = seq[n + 1]
+
+            # run dynamic check if applicable
+            valid = np.array(possible)
+            if test is not None:
+                if not test(test_values[prev], test_values[curr]):
+                    continue
+                valid = valid[test(test_values[prev],
+                                   test_values[possible])]
+
             # return the current item, actual next item,
             # and possible next items
-            yield seq[n], seq[n + 1], possible
+            yield prev, curr, valid
         n += 1
 
 
-def lag_crp(list_recalls, list_length):
-    """Conditional response probability by lag."""
+def subject_lag_crp(list_recalls, list_length):
+    """Conditional response probability by lag for one subject."""
 
     lags = np.arange(-list_length + 1, list_length)
-    possible = np.zeros(lags.shape, 'int')
-    actual = np.zeros(lags.shape, 'int')
+    actual = pd.Series(0, dtype='int', index=lags)
+    possible = pd.Series(0, dtype='int', index=lags)
     inputs = list(range(1, list_length + 1))
     for recalls in list_recalls:
         allowed = inputs.copy()
+        #for prev, curr, poss in transition_masker(recalls, possible)
         for prev, curr in pairwise(recalls):
             actual[curr - prev] += 1
             allowed.remove(prev)
