@@ -1,5 +1,6 @@
 """Utilities for working with free recall data."""
 
+from itertools import tee
 import numpy as np
 import pandas as pd
 
@@ -151,3 +152,45 @@ def merge_lists(study, recall, merge_keys=None, list_keys=None, study_keys=None,
     merged = merged.sort_values(by=sort_keys, ignore_index=True)
 
     return merged
+
+
+def pairwise(iterable):
+    """Iterate over pairs of a sequence."""
+
+    a, b = tee(iterable)
+    next(b, None)
+    return zip(a, b)
+
+
+def lag_crp(list_recalls, list_length):
+    """Conditional response probability by lag."""
+
+    lags = np.arange(-list_length + 1, list_length)
+    possible = np.zeros(lags.shape, 'int')
+    actual = np.zeros(lags.shape, 'int')
+    inputs = list(range(1, list_length + 1))
+    for recalls in list_recalls:
+        allowed = inputs.copy()
+        for prev, curr in pairwise(recalls):
+            actual[curr - prev] += 1
+            allowed.remove(prev)
+            possible[np.subtract(allowed, prev)] += 1
+
+    prob = np.empty(actual.shape, dtype='float').fill(np.nan)
+    prob = np.divide(actual, possible, out=prob, where=possible != 0)
+    results = pd.Series(prob, index=lags)
+    return results
+
+
+def lag_crp_lists(df, list_length):
+    """Lag-CRP for a set of lists."""
+
+    subj_results = []
+    df = df.query('recalled').sort_values('output')
+    for subject, rec in df.groupby('subject'):
+        recalls = [r['input'].astype('int').tolist()
+                   for name, r in rec.groupby('list')]
+        prob = lag_crp(recalls, list_length)
+        results = pd.DataFrame({'subject': subject, 'lag': prob.index, 'prob': prob})
+        subj_results.append(results)
+    return pd.concat(subj_results, axis=0, ignore_index=True)
