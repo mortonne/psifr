@@ -208,6 +208,10 @@ def _transition_masker(seq, possible, from_mask=None, to_mask=None,
     n = 0
     possible = possible.copy()
     while n < (len(seq) - 1):
+        if np.isnan(seq[n]) or np.isnan(seq[n + 1]):
+            n += 1
+            continue
+
         if seq[n] in possible:
             # remove item from consideration on future transitions
             possible.remove(seq[n])
@@ -222,8 +226,8 @@ def _transition_masker(seq, possible, from_mask=None, to_mask=None,
 
         # check if this transition is masked
         if from_mask[n] and to_mask[n + 1]:
-            prev = seq[n]
-            curr = seq[n + 1]
+            prev = int(seq[n])
+            curr = int(seq[n + 1])
             n += 1
 
             # run dynamic check if applicable
@@ -290,14 +294,17 @@ def subject_lag_crp(list_recalls, list_length, masker_kws=None):
     return actual, possible
 
 
-def lag_crp(df, list_length):
+def lag_crp(df):
     """Lag-CRP for multiple subjects."""
 
     subj_results = []
     df = df.query('recalled').sort_values('output')
-    for subject, rec in df.groupby('subject'):
-        recalls = [r['input'].astype('int').tolist()
-                   for name, r in rec.groupby('list')]
+    for subject, subj_df in df.groupby('subject'):
+        list_length = int(subj_df['input'].max())
+        recalls = []
+        for i, rec in subj_df.groupby('list'):
+            recalls.append(rec['input'].tolist())
+
         actual, possible = subject_lag_crp(recalls, list_length)
         results = pd.DataFrame({'subject': subject, 'lag': actual.index,
                                 'prob': actual / possible, 'actual': actual,
