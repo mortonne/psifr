@@ -74,7 +74,7 @@ class LagCRPTestCase(unittest.TestCase):
                          [1, 2, 3, 4, 5, 6]]
 
     def test_lag_crp(self):
-        actual, possible = fr.subject_lag_crp(self.recalls, self.list_length)
+        actual, possible = fr._subject_lag_crp(self.recalls, self.list_length)
 
         np.testing.assert_array_equal(
             actual.to_numpy(),
@@ -86,8 +86,8 @@ class LagCRPTestCase(unittest.TestCase):
 
     def test_lag_crp_within(self):
         opt = {'test': lambda x, y: x == y, 'test_values': self.category}
-        actual, possible = fr.subject_lag_crp(self.recalls, self.list_length,
-                                              masker_kws=opt)
+        actual, possible = fr._subject_lag_crp(self.recalls, self.list_length,
+                                               masker_kws=opt)
 
         np.testing.assert_array_equal(
             actual.to_numpy(),

@@ -243,7 +243,7 @@ def _transition_masker(seq, possible, from_mask=None, to_mask=None,
             yield prev, curr, valid
 
 
-def subject_lag_crp(list_recalls, list_length, masker_kws=None):
+def _subject_lag_crp(list_recalls, list_length, masker_kws=None):
     """Conditional response probability by lag for one subject.
 
     Parameters
@@ -328,7 +328,7 @@ def lag_crp(df):
         for i, rec in subj_df.groupby('list'):
             recalls.append(rec['input'].tolist())
 
-        actual, possible = subject_lag_crp(recalls, list_length)
+        actual, possible = _subject_lag_crp(recalls, list_length)
         results = pd.DataFrame({'subject': subject, 'lag': actual.index,
                                 'prob': actual / possible, 'actual': actual,
                                 'possible': possible})
