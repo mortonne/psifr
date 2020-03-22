@@ -154,14 +154,6 @@ def merge_lists(study, recall, merge_keys=None, list_keys=None, study_keys=None,
     return merged
 
 
-def pairwise(iterable):
-    """Iterate over pairs of a sequence."""
-
-    a, b = tee(iterable)
-    next(b, None)
-    return zip(a, b)
-
-
 def _transition_masker(seq, possible, from_mask=None, to_mask=None,
                        test_values=None, test=None):
     """Iterate over transitions with masking and exclusion of repeats.
@@ -251,22 +243,18 @@ def _transition_masker(seq, possible, from_mask=None, to_mask=None,
 def subject_lag_crp(list_recalls, list_length):
     """Conditional response probability by lag for one subject."""
 
+    # initialize lag count for all lists
     lags = np.arange(-list_length + 1, list_length)
     actual = pd.Series(0, dtype='int', index=lags)
     possible = pd.Series(0, dtype='int', index=lags)
-    inputs = list(range(1, list_length + 1))
-    for recalls in list_recalls:
-        allowed = inputs.copy()
-        #for prev, curr, poss in transition_masker(recalls, possible)
-        for prev, curr in pairwise(recalls):
-            actual[curr - prev] += 1
-            allowed.remove(prev)
-            possible[np.subtract(allowed, prev)] += 1
 
-    prob = np.empty(actual.shape, dtype='float').fill(np.nan)
-    prob = np.divide(actual, possible, out=prob, where=possible != 0)
-    results = pd.Series(prob, index=lags)
-    return results
+    for recalls in list_recalls:
+        # calculate actual and possible lags for each included transition
+        possible_recalls = list(range(list_length))
+        for prev, curr, poss in _transition_masker(recalls, possible_recalls):
+            actual[curr - prev] += 1
+            possible[np.subtract(poss, prev)] += 1
+    return actual, possible
 
 
 def lag_crp_lists(df, list_length):
