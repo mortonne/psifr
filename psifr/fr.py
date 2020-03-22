@@ -195,6 +195,12 @@ def transition_masker(seq, possible, from_mask=None, to_mask=None):
         IDs for all remaining possible items.
     """
 
+    if from_mask is None:
+        from_mask = np.ones(len(seq), dtype=bool)
+
+    if to_mask is None:
+        to_mask = np.ones(len(seq), dtype=bool)
+
     n = 0
     possible = possible.copy()
     while n < (len(seq) - 1):
