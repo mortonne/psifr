@@ -291,15 +291,17 @@ def subject_lag_crp(list_recalls, list_length, masker_kws=None):
     return actual, possible
 
 
-def lag_crp_lists(df, list_length):
-    """Lag-CRP for a set of lists."""
+def lag_crp(df, list_length):
+    """Lag-CRP for multiple subjects."""
 
     subj_results = []
     df = df.query('recalled').sort_values('output')
     for subject, rec in df.groupby('subject'):
         recalls = [r['input'].astype('int').tolist()
                    for name, r in rec.groupby('list')]
-        prob = lag_crp(recalls, list_length)
-        results = pd.DataFrame({'subject': subject, 'lag': prob.index, 'prob': prob})
+        actual, possible = subject_lag_crp(recalls, list_length)
+        results = pd.DataFrame({'subject': subject, 'lag': actual.index,
+                                'prob': actual / possible, 'actual': actual,
+                                'possible': possible})
         subj_results.append(results)
     return pd.concat(subj_results, axis=0, ignore_index=True)
