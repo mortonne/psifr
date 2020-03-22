@@ -162,8 +162,8 @@ def pairwise(iterable):
     return zip(a, b)
 
 
-def transition_masker(seq, possible, from_mask=None, to_mask=None,
-                      test_values=None, test=None):
+def _transition_masker(seq, possible, from_mask=None, to_mask=None,
+                       test_values=None, test=None):
     """Iterate over transitions with masking and exclusion of repeats.
 
     Parameters

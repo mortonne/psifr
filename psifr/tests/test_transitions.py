@@ -17,8 +17,8 @@ class TransitionsTestCase(unittest.TestCase):
         self.possible = pd.Series(0, dtype='int', index=self.lags)
 
     def test_lag(self):
-        masker = fr.transition_masker(self.seq, self.all_possible,
-                                      self.from_mask, self.to_mask)
+        masker = fr._transition_masker(self.seq, self.all_possible,
+                                       self.from_mask, self.to_mask)
         for prev, curr, poss in masker:
             self.actual[curr - prev] += 1
             self.possible[np.subtract(poss, prev)] += 1
@@ -32,7 +32,7 @@ class TransitionsTestCase(unittest.TestCase):
             np.array([0, 0, 1, 0, 0, 1, 1, 0, 2, 2, 2, 2, 1, 1, 1]))
 
     def test_lag_no_mask(self):
-        masker = fr.transition_masker(self.seq, self.all_possible)
+        masker = fr._transition_masker(self.seq, self.all_possible)
         for prev, curr, poss in masker:
             self.actual[curr - prev] += 1
             self.possible[np.subtract(poss, prev)] += 1
@@ -46,9 +46,9 @@ class TransitionsTestCase(unittest.TestCase):
             np.array([0, 1, 1, 0, 1, 2, 3, 0, 3, 3, 3, 3, 2, 1, 1]))
 
     def test_within_category(self):
-        masker = fr.transition_masker(self.seq, self.all_possible,
-                                      test_values=self.category,
-                                      test=lambda x, y: x == y)
+        masker = fr._transition_masker(self.seq, self.all_possible,
+                                       test_values=self.category,
+                                       test=lambda x, y: x == y)
         for prev, curr, poss in masker:
             self.actual[curr - prev] += 1
             self.possible[np.subtract(poss, prev)] += 1
