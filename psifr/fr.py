@@ -226,12 +226,14 @@ def transition_masker(seq, possible, from_mask=None, to_mask=None,
             continue
 
         if seq[n + 1] not in possible:
+            n += 1
             continue
 
         # check if this transition is masked
         if from_mask[n] and to_mask[n + 1]:
             prev = seq[n]
             curr = seq[n + 1]
+            n += 1
 
             # run dynamic check if applicable
             valid = np.array(possible)
@@ -244,7 +246,6 @@ def transition_masker(seq, possible, from_mask=None, to_mask=None,
             # return the current item, actual next item,
             # and possible next items
             yield prev, curr, valid
-        n += 1
 
 
 def subject_lag_crp(list_recalls, list_length):
