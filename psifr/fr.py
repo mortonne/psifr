@@ -266,11 +266,8 @@ def subject_lag_crp(list_recalls, list_length, masker_kws=None):
         items that had not yet been recalled at each output position.
     """
 
-    # initialize lag count for all lists
-    lags = np.arange(-list_length + 1, list_length)
-    actual = pd.Series(0, dtype='int', index=lags)
-    possible = pd.Series(0, dtype='int', index=lags)
-
+    list_actual = []
+    list_possible = []
     for i, recalls in enumerate(list_recalls):
         # calculate actual and possible lags for each included transition
         possible_recalls = list(range(list_length))
@@ -284,8 +281,13 @@ def subject_lag_crp(list_recalls, list_length, masker_kws=None):
         # iterate over valid transitions
         for prev, curr, poss in _transition_masker(recalls, possible_recalls,
                                                    **opt):
-            actual[curr - prev] += 1
-            possible[np.subtract(poss, prev)] += 1
+            list_actual.append(curr - prev)
+            list_possible.extend(np.subtract(poss, prev))
+
+    # tally all transitions
+    lags = np.arange(-list_length + 1, list_length + 1)
+    actual = pd.Series(np.histogram(list_actual, lags)[0], index=lags[:-1])
+    possible = pd.Series(np.histogram(list_possible, lags)[0], index=lags[:-1])
     return actual, possible
 
 
