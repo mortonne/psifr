@@ -240,8 +240,31 @@ def _transition_masker(seq, possible, from_mask=None, to_mask=None,
             yield prev, curr, valid
 
 
-def subject_lag_crp(list_recalls, list_length):
-    """Conditional response probability by lag for one subject."""
+def subject_lag_crp(list_recalls, list_length, **masker_options):
+    """Conditional response probability by lag for one subject.
+
+    Parameters
+    ----------
+    list_recalls : sequence
+        Recall sequence for each list. Should have one element for each
+        list, which should contain a list of serial position indices.
+
+    list_length : int
+        Length of each list. All lists must have the same length.
+
+    masker_options
+        Options to pass to _transition_masker.
+
+    Returns
+    -------
+    actual : pandas.Series
+        Count of times each lag transition was actually made, among
+        included transitions.
+
+    possible : pandas.Series
+        Count of times each lag transition could have been made, given
+        items that had not yet been recalled at each output position.
+    """
 
     # initialize lag count for all lists
     lags = np.arange(-list_length + 1, list_length)
@@ -251,7 +274,8 @@ def subject_lag_crp(list_recalls, list_length):
     for recalls in list_recalls:
         # calculate actual and possible lags for each included transition
         possible_recalls = list(range(list_length))
-        for prev, curr, poss in _transition_masker(recalls, possible_recalls):
+        for prev, curr, poss in _transition_masker(recalls, possible_recalls,
+                                                   **masker_options):
             actual[curr - prev] += 1
             possible[np.subtract(poss, prev)] += 1
     return actual, possible
