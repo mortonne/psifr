@@ -294,7 +294,7 @@ def _subject_lag_crp(list_recalls, list_length, masker_kws=None):
     return actual, possible
 
 
-def lag_crp(df, category_key=None, category_filter=None):
+def lag_crp(df, test_key=None, test=None):
     """Lag-CRP for multiple subjects.
 
     Parameters
@@ -303,11 +303,13 @@ def lag_crp(df, category_key=None, category_filter=None):
         Merged study and recall data. See merge_lists.
         Must have fields: subject, list, input, output, recalled.
 
-    category_key : str, optional
-        Column with category labels.
+    test_key : str, optional
+        Column with labels to use when testing transitions for
+        inclusion.
 
-    category_filter : str, optional
-        Filter for category transitions. May be 'within' or 'between'.
+    test : callable, optional
+        Callable that takes in previous and current item values and
+        returns True for transitions that should be included.
 
     Returns
     -------
@@ -334,19 +336,13 @@ def lag_crp(df, category_key=None, category_filter=None):
         recalls = [rec['input'].to_list()
                    for name, rec in rec_df.groupby('list')]
 
+        # set up dynamic masking
         opt = {}
-        if category_key is not None:
+        if test_key is not None:
             pres_df = subj_df.query('repeat == 0 and ~intrusion').sort_values('input')
-            category = [pres[category_key].to_numpy()
-                        for name, pres in pres_df.groupby('list')]
-
-            opt['test_values'] = category
-            if category_filter == 'within':
-                opt['test'] = lambda x, y: x == y
-            elif category_filter == 'between':
-                opt['test'] = lambda x, y: x != y
-            else:
-                raise ValueError('Invalid category filter.')
+            opt['test_values'] = [pres[test_key].to_numpy()
+                                  for name, pres in pres_df.groupby('list')]
+            opt['test'] = test
 
         # calculate frequency of each lag
         actual, possible = _subject_lag_crp(recalls, list_length, opt)
