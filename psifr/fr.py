@@ -1,6 +1,5 @@
 """Utilities for working with free recall data."""
 
-from itertools import tee
 import numpy as np
 import pandas as pd
 
