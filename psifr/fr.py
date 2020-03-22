@@ -295,7 +295,30 @@ def subject_lag_crp(list_recalls, list_length, masker_kws=None):
 
 
 def lag_crp(df):
-    """Lag-CRP for multiple subjects."""
+    """Lag-CRP for multiple subjects.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Merged study and recall data. See merge_lists.
+        Must have fields: subject, list, input, output, recalled.
+
+    Returns
+    -------
+    results : pandas.DataFrame
+        Has fields:
+        subject : hashable
+            Results are separated by each subject.
+        lag : int
+            Lag of input position between two adjacent recalls.
+        prob : float
+            Probability of each lag transition.
+        actual : int
+            Total of actual made transitions at each lag.
+        possible : int
+            Total of times each lag was possible, given the prior
+            input position and the remaining items to be recalled.
+    """
 
     subj_results = []
     df = df.query('recalled').sort_values('output')
