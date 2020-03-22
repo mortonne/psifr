@@ -12,6 +12,7 @@ class TransitionsTestCase(unittest.TestCase):
         self.lags = list(range(-7, 8))
         self.from_mask = np.array([1, 1, 1, 0, 1, 1, 1, 1], dtype=bool)
         self.to_mask = np.array([1, 1, 0, 1, 1, 1, 1, 1], dtype=bool)
+        self.category = np.array([1, 1, 1, 1, 2, 2, 2, 2])
         self.actual = pd.Series(0, dtype='int', index=self.lags)
         self.possible = pd.Series(0, dtype='int', index=self.lags)
 
@@ -43,6 +44,22 @@ class TransitionsTestCase(unittest.TestCase):
         np.testing.assert_array_equal(
             self.possible.to_numpy(),
             np.array([0, 1, 1, 0, 1, 2, 3, 0, 3, 3, 3, 3, 2, 1, 1]))
+
+    def test_within_category(self):
+        masker = fr.transition_masker(self.seq, self.all_possible,
+                                      test_values=self.category,
+                                      test=lambda x, y: x == y)
+        for prev, curr, poss in masker:
+            self.actual[curr - prev] += 1
+            self.possible[np.subtract(poss, prev)] += 1
+
+        np.testing.assert_array_equal(
+            self.actual.to_numpy(),
+            np.array([0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0]))
+
+        np.testing.assert_array_equal(
+            self.possible.to_numpy(),
+            np.array([0, 0, 0, 0, 1, 1, 3, 0, 2, 1, 1, 0, 0, 0, 0]))
 
 
 if __name__ == '__main__':
