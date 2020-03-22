@@ -7,8 +7,8 @@ from .. import fr
 class TransitionsTestCase(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.seq = [1, 3, 4, 8, 5, 4, 7, 6]
-        self.all_possible = list(range(1, 9))
+        self.seq = [0, 2, 3, 7, 4, 3, 6, 5]
+        self.all_possible = list(range(8))
         self.lags = list(range(-7, 8))
         self.from_mask = np.array([1, 1, 1, 0, 1, 1, 1, 1], dtype=bool)
         self.to_mask = np.array([1, 1, 0, 1, 1, 1, 1, 1], dtype=bool)
