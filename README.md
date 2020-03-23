@@ -14,8 +14,8 @@ The name PsiFR is pronounced "cipher". It's taken from Psi, in reference to the 
 ## Quickstart
 
 See the Jupyter notebooks for demonstrations of reading and analyzing a sample free recall dataset:
-* [Recall performance](https://github.com/mortonne/psifr/blob/master/jupyter/demo_recall.ipynb)
-* [Temporal clustering](https://github.com/mortonne/psifr/blob/master/jupyter/demo_clustering.ipynb)
+* [Recall performance](https://github.com/mortonne/psifr-notebooks/blob/master/demo_recall.ipynb)
+* [Temporal clustering](https://github.com/mortonne/psifr-notebooks/blob/master/demo_clustering.ipynb)
 
 ## Installation
 
@@ -45,7 +45,7 @@ These are just the basic necessary fields. You can also include columns for any 
 
 If you have data in the standard [EMBAM](https://github.com/vucml/EMBAM) format, use `scripts/frdata2table.m` to convert your data struct to a table with standard format. Then use the Matlab function `writetable` to write a CSV file which can then be read into Python for analysis.
 
-See the [recall performance](https://github.com/mortonne/psifr/blob/master/jupyter/demo_recall.ipynb) for an example of reading in data from a CSV file for analysis.
+See the [recall performance](https://github.com/mortonne/psifr-notebooks/blob/master/demo_recall.ipynb) for an example of reading in data from a CSV file for analysis.
 
 ## Related projects
 
