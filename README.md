@@ -4,7 +4,7 @@ Advanced analysis and visualization of free recall data in Python.
 In free recall, participants study a list of items and then name all of the items they can remember in any order they choose. Many sophisticated analyses have been developed to analyze data from free recall experiments, but these analyses are often complicated and difficult to implement. PsiFR leverages the Pandas data analysis package to make precise and flexible analysis of free recall data faster and easier.
 
 <p align="center">
-  <img src="https://github.com/mortonne/psifr/blob/master/jupyter/lag_crp.png" alt="probability density function" width="350">
+  <img src="https://github.com/mortonne/psifr/blob/master/images/lag_crp.png" alt="probability density function" width="350">
 </p>
 
 This plot shows the probability of recalling two items adjacent to one another, as a function of the distance (i.e., lag) between them in the list. Different lines correspond to different stimulus categories.
