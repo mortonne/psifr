@@ -349,5 +349,6 @@ def lag_crp(df, test_key=None, test=None):
         results = pd.DataFrame({'subject': subject, 'lag': actual.index,
                                 'prob': actual / possible, 'actual': actual,
                                 'possible': possible})
+        results = results.set_index(['subject', 'lag'])
         subj_results.append(results)
-    return pd.concat(subj_results, axis=0, ignore_index=True)
+    return pd.concat(subj_results, axis=0)
