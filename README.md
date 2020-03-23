@@ -56,4 +56,4 @@ Analyses supported by PsiFR are based on analyses implemented in the Matlab tool
 [pybeh](https://github.com/pennmem/pybeh) is a direct Python port of EMBAM that supports a wide range of analyses.
 
 ### Quail
-[Quail](https://github.com/ContextLab/quail) runs automatic scoring of free recall data and provides tools for running some of the most common free recall analyses.
+[Quail](https://github.com/ContextLab/quail) runs automatic scoring of free recall data and provides tools for running some of the most common free recall analyses and measuring the "memory fingerprint" of individuals.
