@@ -300,8 +300,11 @@ def lag_crp(df, test_key=None, test=None):
     Parameters
     ----------
     df : pandas.DataFrame
-        Merged study and recall data. See merge_lists.
+        Merged study and recall data. See merge_lists. List length is
+        assumed to be the same for all lists within each subject.
         Must have fields: subject, list, input, output, recalled.
+        Input position must be defined such that the first serial
+        position is 1, not 0.
 
     test_key : str, optional
         Column with labels to use when testing transitions for
