@@ -333,8 +333,15 @@ def lag_crp(df, test_key=None, test=None):
         # get recall events for each list
         list_length = int(subj_df['input'].max())
         rec_df = subj_df.query('recalled').sort_values('output')
-        recalls = [rec['input'].to_list()
-                   for name, rec in rec_df.groupby('list')]
+        recalls = []
+        for name, rec in rec_df.groupby('list'):
+            assert (rec['output'].diff()[1:] == 1).all(), (
+                'There are gaps in the recall sequence.')
+
+            # get recalls as a list of recall input indices. Must be zero
+            # indexed to support dynamic masking
+            input_ind = rec['input'] - 1
+            recalls.append(input_ind.to_list())
 
         # set up dynamic masking
         opt = {}
