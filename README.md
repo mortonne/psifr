@@ -4,7 +4,7 @@ Python package for analysis of free recall data.
 The name is pronounced "cipher". It's taken from Psi, in reference to the field of psychology, and FR for free recall.
 
 <p align="center">
-  <img src="https://github.com/mortonne/psifr/blob/master/figs/lag_crp.png" alt="probability density function" width="400">
+  <img src="https://github.com/mortonne/psifr/blob/master/jupyter/lag_crp.png" alt="probability density function" width="400">
 </p>
 
 ## Quickstart
