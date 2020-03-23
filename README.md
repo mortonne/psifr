@@ -34,7 +34,7 @@ python setup.py install
 
 ## Importing data
 
-Generally the best way to get your data into shape for analysis in PsiFR is to create a CSV file with one row for each event in the experiment, including study events (i.e., item presentations) and all recall attempts (including repeats and intrusions). Your spreadsheet should have the following columns:
+Generally the best way to get your data into shape for analysis in Psifr is to create a CSV file with one row for each event in the experiment, including study events (i.e., item presentations) and all recall attempts (including repeats and intrusions). Your spreadsheet should have the following columns:
 * `subject` - some code that is unique for each subject. May be text or a number.
 * `list` - list number.
 * `item` - item identifier (text or numeric code). Must be unique to a specific item.
@@ -50,7 +50,7 @@ See the [recall performance](https://github.com/mortonne/psifr-notebooks/blob/ma
 ## Related projects
 
 ### EMBAM
-Analyses supported by PsiFR are based on analyses implemented in the Matlab toolbox [EMBAM](https://github.com/vucml/EMBAM).
+Analyses supported by Psifr are based on analyses implemented in the Matlab toolbox [EMBAM](https://github.com/vucml/EMBAM).
 
 ### pybeh
 [pybeh](https://github.com/pennmem/pybeh) is a direct Python port of EMBAM that supports a wide range of analyses.
