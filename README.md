@@ -1,18 +1,21 @@
 # PsiFR
 Python package for analysis of free recall data.
 
-The name is pronounced "cipher". It's taken from Psi, in reference to the field of psychology, and FR for free recall.
+In free recall, participants study a list of items and then name all of the items they can remember in any order they choose. Many sophisticated analyses have been developed to analyze data from free recall experiments, but these analyses are often complicated and difficult to implement. PsiFR leverages the Pandas data analysis package to make precise and flexible analysis of free recall data easier.
 
 <p align="center">
-  <img src="https://github.com/mortonne/psifr/blob/master/jupyter/lag_crp.png" alt="probability density function" width="300">
+  <img src="https://github.com/mortonne/psifr/blob/master/jupyter/lag_crp.png" alt="probability density function" width="350">
 </p>
+
+This plot shows the probability of recalling two items adjacent to one another, as a function of the distance (i.e., lag) between them in the list. Different lines correspond to different stimulus categories.
+
+The name is pronounced "cipher". It's taken from Psi, in reference to the field of psychology, and FR for free recall.
 
 ## Quickstart
 
 See the Jupyter notebooks for demonstrations of reading and analyzing a sample free recall dataset:
 * [Recall performance](https://github.com/mortonne/psifr/blob/master/jupyter/demo_recall.ipynb)
 * [Temporal clustering](https://github.com/mortonne/psifr/blob/master/jupyter/demo_clustering.ipynb)
-
 
 ## Installation
 
@@ -43,3 +46,14 @@ These are just the basic necessary fields. You can also include columns for any 
 If you have data in the standard [EMBAM](https://github.com/vucml/EMBAM) format, use `scripts/frdata2table.m` to convert your data struct to a table with standard format. Then use the Matlab function `writetable` to write a CSV file which can then be read into Python for analysis.
 
 See the [recall performance](https://github.com/mortonne/psifr/blob/master/jupyter/demo_recall.ipynb) for an example of reading in data from a CSV file for analysis.
+
+## Related projects
+
+### EMBAM
+Analyses supported by PsiFR are based on analyses implemented in the Matlab toolbox [EMBAM](https://github.com/vucml/EMBAM).
+
+### pybeh
+[pybeh](https://github.com/pennmem/pybeh) is a direct Python port of EMBAM that supports a wide range of analyses.
+
+### Quail
+[Quail](https://github.com/ContextLab/quail) runs automatic scoring of free recall data and provides tools for running some of the most common free recall analyses.
