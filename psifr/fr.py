@@ -373,7 +373,7 @@ def _subject_lag_crp(list_recalls, list_length, masker_kws=None):
     return actual, possible
 
 
-def lag_crp(df, test_key=None, test=None):
+def lag_crp(df, **masker_kws):
     """Lag-CRP for multiple subjects.
 
     Parameters
@@ -392,6 +392,16 @@ def lag_crp(df, test_key=None, test=None):
     test : callable, optional
         Callable that takes in previous and current item values and
         returns True for transitions that should be included.
+
+    from_mask : str or tuple, optional
+        Specification for boolean mask to exclude output positions
+        being transitioned from. If str, will select a column from
+        `df`. If tuple, expect a (str, callable) pair that will select
+        a column and then apply the callable to that column.
+
+    to_mask : str or tuple, optional
+        Specification for a boolean mask to exclude output positions
+        being transitioned to.
 
     Returns
     -------
@@ -416,11 +426,11 @@ def lag_crp(df, test_key=None, test=None):
         list_length = int(subj_df['input'].max())
         recalls = get_recall_index(subj_df)
 
-        # set up dynamic masking
-        opt = {}
-        if test_key is not None:
-            opt['test_values'] = get_study_value(subj_df, test_key)
-            opt['test'] = test
+        # set masker options
+        if masker_kws is not None:
+            opt = _masker_opt(subj_df, **masker_kws)
+        else:
+            opt = {}
 
         # calculate frequency of each lag
         actual, possible = _subject_lag_crp(recalls, list_length, opt)
