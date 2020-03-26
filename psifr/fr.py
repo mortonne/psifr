@@ -153,6 +153,18 @@ def merge_lists(study, recall, merge_keys=None, list_keys=None, study_keys=None,
     return merged
 
 
+def get_study_value(df, column, list_cols=None):
+    """Get study column value by list."""
+
+    if list_cols is None:
+        list_cols = ['list']
+
+    pres_df = df.query('repeat == 0 and ~intrusion').sort_values('input')
+    values = [pres[column].to_numpy()
+              for name, pres in pres_df.groupby(list_cols)]
+    return values
+
+
 def get_recall_index(df, list_cols=None):
     """Get recall input position index by list."""
 
@@ -361,9 +373,7 @@ def lag_crp(df, test_key=None, test=None):
         # set up dynamic masking
         opt = {}
         if test_key is not None:
-            pres_df = subj_df.query('repeat == 0 and ~intrusion').sort_values('input')
-            opt['test_values'] = [pres[test_key].to_numpy()
-                                  for name, pres in pres_df.groupby('list')]
+            opt['test_values'] = get_study_value(subj_df, test_key)
             opt['test'] = test
 
         # calculate frequency of each lag
