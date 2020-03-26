@@ -211,7 +211,8 @@ def get_recall_mask(df, mask_spec, list_cols=None):
 
 
 def _transition_masker(seq, possible, from_mask=None, to_mask=None,
-                       test_values=None, test=None):
+                       input_values=None, input_test=None,
+                       output_values=None, output_test=None):
     """Iterate over transitions with masking and exclusion of repeats.
 
     Parameters
@@ -259,7 +260,7 @@ def _transition_masker(seq, possible, from_mask=None, to_mask=None,
     if to_mask is None:
         to_mask = np.ones(len(seq), dtype=bool)
 
-    if test is not None and test_values is None:
+    if input_test is not None and input_values is None:
         raise ValueError('If test is specified, must specify test values.')
 
     n = 0
@@ -281,6 +282,11 @@ def _transition_masker(seq, possible, from_mask=None, to_mask=None,
             n += 1
             continue
 
+        if output_test is not None:
+            if not output_test(output_values[n], output_values[n + 1]):
+                n += 1
+                continue
+
         # check if this transition is masked
         if from_mask[n] and to_mask[n + 1]:
             prev = int(seq[n])
@@ -289,25 +295,38 @@ def _transition_masker(seq, possible, from_mask=None, to_mask=None,
 
             # run dynamic check if applicable
             valid = np.array(possible)
-            if test is not None:
-                if not test(test_values[prev], test_values[curr]):
+            if input_test is not None:
+                if not input_test(input_values[prev], input_values[curr]):
                     continue
-                valid = valid[test(test_values[prev],
-                                   test_values[possible])]
+                valid = valid[input_test(input_values[prev],
+                                         input_values[possible])]
 
             # return the current item, actual next item,
             # and possible next items
             yield prev, curr, valid
 
 
-def _masker_opt(df, test_key=None, test=None, from_mask=None, to_mask=None,
+def _masker_opt(df, input_key=None, input_test=None,
+                output_key=None, output_test=None,
+                from_mask=None, to_mask=None,
                 list_cols=None):
     """Define masker settings for a data frame."""
 
+    if list_cols is None:
+        list_cols = ['list']
+
     opt = {}
-    if test_key is not None:
-        opt['test_values'] = get_study_value(df, test_key, list_cols)
-        opt['test'] = test
+    if input_key is not None:
+        opt['input_values'] = get_study_value(df, input_key, list_cols)
+        opt['input_test'] = input_test
+
+    if output_key is not None:
+        rec_df = df.query('recalled').sort_values('output')
+        values = []
+        for name, rec in rec_df.groupby(list_cols):
+            values.append(rec[output_key])
+        opt['output_values'] = values
+        opt['output_test'] = output_test
 
     if from_mask is not None:
         opt['from_mask'] = get_recall_mask(df, from_mask, list_cols)
