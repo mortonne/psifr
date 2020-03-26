@@ -1,7 +1,7 @@
-# PsiFR
+# Psifr
 Advanced analysis and visualization of free recall data in Python.
 
-In free recall, participants study a list of items and then name all of the items they can remember in any order they choose. Many sophisticated analyses have been developed to analyze data from free recall experiments, but these analyses are often complicated and difficult to implement. PsiFR leverages the Pandas data analysis package to make precise and flexible analysis of free recall data faster and easier.
+In free recall, participants study a list of items and then name all of the items they can remember in any order they choose. Many sophisticated analyses have been developed to analyze data from free recall experiments, but these analyses are often complicated and difficult to implement. Psifr leverages the Pandas data analysis package to make precise and flexible analysis of free recall data faster and easier.
 
 <p align="center">
   <img src="https://github.com/mortonne/psifr/blob/master/images/lag_crp.png" alt="probability density function" width="350">
@@ -9,7 +9,7 @@ In free recall, participants study a list of items and then name all of the item
 
 This plot shows the probability of recalling two items adjacent to one another, as a function of the distance (i.e., lag) between them in the list. Different lines correspond to different stimulus categories.
 
-The name PsiFR is pronounced "cipher". It's taken from Psi, in reference to the field of psychology, and FR for free recall.
+The name Psifr is pronounced "cipher". It's taken from Psi, in reference to the field of psychology, and FR for free recall.
 
 ## Quickstart
 
@@ -34,7 +34,7 @@ python setup.py install
 
 ## Importing data
 
-Generally the best way to get your data into shape for analysis in PsiFR is to create a CSV file with one row for each event in the experiment, including study events (i.e., item presentations) and all recall attempts (including repeats and intrusions). Your spreadsheet should have the following columns:
+Generally the best way to get your data into shape for analysis in Psifr is to create a CSV file with one row for each event in the experiment, including study events (i.e., item presentations) and all recall attempts (including repeats and intrusions). Your spreadsheet should have the following columns:
 * `subject` - some code that is unique for each subject. May be text or a number.
 * `list` - list number.
 * `item` - item identifier (text or numeric code). Must be unique to a specific item.
@@ -50,7 +50,7 @@ See the [recall performance](https://github.com/mortonne/psifr-notebooks/blob/ma
 ## Related projects
 
 ### EMBAM
-Analyses supported by PsiFR are based on analyses implemented in the Matlab toolbox [EMBAM](https://github.com/vucml/EMBAM).
+Analyses supported by Psifr are based on analyses implemented in the Matlab toolbox [EMBAM](https://github.com/vucml/EMBAM).
 
 ### pybeh
 [pybeh](https://github.com/pennmem/pybeh) is a direct Python port of EMBAM that supports a wide range of analyses.
