@@ -305,6 +305,23 @@ def _transition_masker(seq, possible, from_mask=None, to_mask=None,
             yield prev, curr, valid
 
 
+def _masker_opt(df, test_key=None, test=None, from_mask=None, to_mask=None,
+                list_cols=None):
+    """Define masker settings for a data frame."""
+
+    opt = {}
+    if test_key is not None:
+        opt['test_values'] = get_study_value(df, test_key, list_cols)
+        opt['test'] = test
+
+    if from_mask is not None:
+        opt['from_mask'] = get_recall_mask(df, from_mask, list_cols)
+
+    if to_mask is not None:
+        opt['to_mask'] = get_recall_mask(df, to_mask, list_cols)
+    return opt
+
+
 def _subject_lag_crp(list_recalls, list_length, masker_kws=None):
     """Conditional response probability by lag for one subject.
 
