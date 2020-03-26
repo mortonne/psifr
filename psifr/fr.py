@@ -208,9 +208,9 @@ def get_recall_mask(df, mask_spec, list_cols=None):
     mask = []
     for name, rec in rec_df.groupby(list_cols):
         if include_test is not None:
-            list_mask = include_test(rec[column])
+            list_mask = include_test(rec[column].to_numpy())
         else:
-            list_mask = rec[column]
+            list_mask = rec[column].to_numpy()
         mask.append(list_mask)
     return mask
 
