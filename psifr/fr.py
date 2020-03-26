@@ -196,21 +196,16 @@ def get_recall_mask(df, mask_spec, list_cols=None):
     rec_df = df.query('recalled').sort_values('output')
 
     # unpack spec
-    if isinstance(mask_spec, str):
-        column = mask_spec
-        include_test = None
-    elif isinstance(mask_spec, tuple) and len(mask_spec) == 2:
-        column, include_test = mask_spec
-    else:
+    if not callable(mask_spec) or isinstance(mask_spec, str):
         raise ValueError('Invalid mask specification.')
 
     # get mask for each list
     mask = []
     for name, rec in rec_df.groupby(list_cols):
-        if include_test is not None:
-            list_mask = include_test(rec[column].to_numpy())
+        if callable(mask_spec):
+            list_mask = mask_spec(rec)
         else:
-            list_mask = rec[column].to_numpy()
+            list_mask = rec[mask_spec].to_numpy()
         mask.append(list_mask)
     return mask
 
