@@ -153,6 +153,27 @@ def merge_lists(study, recall, merge_keys=None, list_keys=None, study_keys=None,
     return merged
 
 
+def get_recall_index(df, list_cols=None):
+    """Get recall input position index by list."""
+
+    if list_cols is None:
+        list_cols = ['list']
+
+    # get just recall trials and sort by output position
+    rec_df = df.query('recalled').sort_values('output')
+
+    # compile recalls for each list
+    recalls = []
+    for name, rec in rec_df.groupby(list_cols):
+        assert (rec['output'].diff()[1:] == 1).all(), (
+            'There are gaps in the recall sequence.')
+
+        # get recalls as a list of recall input indices
+        input_ind = rec['input'] - 1
+        recalls.append(input_ind.to_numpy())
+    return recalls
+
+
 def _transition_masker(seq, possible, from_mask=None, to_mask=None,
                        test_values=None, test=None):
     """Iterate over transitions with masking and exclusion of repeats.
@@ -335,16 +356,7 @@ def lag_crp(df, test_key=None, test=None):
     for subject, subj_df in df.groupby('subject'):
         # get recall events for each list
         list_length = int(subj_df['input'].max())
-        rec_df = subj_df.query('recalled').sort_values('output')
-        recalls = []
-        for name, rec in rec_df.groupby('list'):
-            assert (rec['output'].diff()[1:] == 1).all(), (
-                'There are gaps in the recall sequence.')
-
-            # get recalls as a list of recall input indices. Must be zero
-            # indexed to support dynamic masking
-            input_ind = rec['input'] - 1
-            recalls.append(input_ind.to_list())
+        recalls = get_recall_index(subj_df)
 
         # set up dynamic masking
         opt = {}
