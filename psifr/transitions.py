@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 
-def transitions_masker(outputs, n_recalls, from_mask, to_mask,
+def transitions_masker(outputs, n_recall, from_mask, to_mask,
                        test_values=None, test=None):
     """Iterate over transitions with masking.
 
@@ -13,7 +13,7 @@ def transitions_masker(outputs, n_recalls, from_mask, to_mask,
     outputs : numpy.array
         Values to output for each transition.
 
-    n_recalls : int
+    n_recall : int
         Number of recall attempts.
 
     from_mask : numpy.array
@@ -51,20 +51,13 @@ def transitions_masker(outputs, n_recalls, from_mask, to_mask,
     # counter for recall and counter for valid recall
     n = 0
     m = 0
-    while n < n_recalls - 1:
+    while n < n_recall - 1:
         # check if the positions involved in this transition are valid
-        if not from_mask[n]:
+        if not from_mask[n] or not to_mask[n + 1]:
             n += 1
+            if to_mask[n]:
+                m += 1
             continue
-
-        if not to_mask[n + 1]:
-            n += 1
-            m += 1
-            continue
-
-        # transition outputs
-        prev = outputs[n]
-        curr = outputs[n + 1]
 
         # valid next items at this output position
         step_outputs = valid_outputs[m + 1:]
@@ -73,7 +66,8 @@ def transitions_masker(outputs, n_recalls, from_mask, to_mask,
             # check if this transition is included
             if not test(test_values[n], test_values[n + 1]):
                 n += 1
-                m += 1
+                if to_mask[n]:
+                    m += 1
                 continue
 
             # get valid possible recalls that are included
@@ -82,8 +76,12 @@ def transitions_masker(outputs, n_recalls, from_mask, to_mask,
         else:
             poss = step_outputs
 
+        prev = outputs[n]
+        curr = outputs[n + 1]
+
         n += 1
-        m += 1
+        if to_mask[n]:
+            m += 1
         yield prev, curr, poss
 
 
