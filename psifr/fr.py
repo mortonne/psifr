@@ -368,6 +368,15 @@ def _subject_lag_crp(list_recalls, list_length, test_values=None, test=None):
     return actual, possible
 
 
+def get_column(df, column_def):
+    """Get a column through access or a callable."""
+
+    if callable(column_def):
+        return column_def(df)
+    else:
+        return df[column_def]
+
+
 def lag_crp(df, from_mask_def=None, to_mask_def=None, test_key=None,
             test=None):
     """Lag-CRP for multiple subjects.
@@ -418,8 +427,18 @@ def lag_crp(df, from_mask_def=None, to_mask_def=None, test_key=None,
     """
 
     # define masks
-    df.loc[:, '_from_mask'] = (df['repeat'] == 0) & ~df['intrusion']
-    df.loc[:, '_to_mask'] = (df['repeat'] == 0) & ~df['intrusion']
+    if from_mask_def is None or to_mask_def is None:
+        default_mask = (df['repeat'] == 0) & ~df['intrusion']
+
+    if from_mask_def is not None:
+        df.loc[:, '_from_mask'] = get_column(df, from_mask_def)
+    else:
+        df.loc[:, '_from_mask'] = default_mask
+
+    if to_mask_def is not None:
+        df.loc[:, '_to_mask'] = get_column(df, to_mask_def)
+    else:
+        df.loc[:, '_to_mask'] = default_mask
 
     subj_results = []
     df = df.sort_values(['subject', 'list', 'output'])
