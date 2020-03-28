@@ -2,6 +2,7 @@
 
 import numpy as np
 import pandas as pd
+from . import transitions
 
 
 def check_data(df):
@@ -367,7 +368,8 @@ def _subject_lag_crp(list_recalls, list_length, test_values=None, test=None):
     return actual, possible
 
 
-def lag_crp(df, test_key=None, test=None):
+def lag_crp(df, from_mask_def=None, to_mask_def=None, test_key=None,
+            test=None):
     """Lag-CRP for multiple subjects.
 
     Parameters
@@ -379,6 +381,17 @@ def lag_crp(df, test_key=None, test=None):
         Input position must be defined such that the first serial
         position is 1, not 0.
 
+    from_mask_def : str or callable, optional
+        Specification for boolean mask to exclude output positions
+        being transitioned from. If str, will select a column from
+        `df`. If callable, will run with `df` as input and must return
+        a boolean Series. Default is to exclude repeats and intrusions.
+
+    to_mask_def : str or callable, optional
+        Specification for a boolean mask to exclude output positions
+        being transitioned to. Default is to exclude repeats and
+        intrusions.
+
     test_key : str, optional
         Column with labels to use when testing transitions for
         inclusion.
@@ -386,16 +399,6 @@ def lag_crp(df, test_key=None, test=None):
     test : callable, optional
         Callable that takes in previous and current item values and
         returns True for transitions that should be included.
-
-    from_mask : str or tuple, optional
-        Specification for boolean mask to exclude output positions
-        being transitioned from. If str, will select a column from
-        `df`. If tuple, expect a (str, callable) pair that will select
-        a column and then apply the callable to that column.
-
-    to_mask : str or tuple, optional
-        Specification for a boolean mask to exclude output positions
-        being transitioned to.
 
     Returns
     -------
@@ -414,34 +417,43 @@ def lag_crp(df, test_key=None, test=None):
             input position and the remaining items to be recalled.
     """
 
+    # define masks
+    df.loc[:, '_from_mask'] = (df['repeat'] == 0) & ~df['intrusion']
+    df.loc[:, '_to_mask'] = (df['repeat'] == 0) & ~df['intrusion']
+
     subj_results = []
+    df = df.sort_values(['subject', 'list', 'output'])
     for subject, subj_df in df.groupby('subject'):
         # get recall events for each list
         list_length = int(subj_df['input'].max())
-        recalls = get_recall_index(subj_df)
-
-        # get just recall trials and sort by output position
-        rec_df = df.query('recalled').sort_values('output')
 
         # compile recalls for each list
         recalls = []
+        from_mask = []
+        to_mask = []
         if test_key is not None:
             test_values = []
         else:
             test_values = None
-        for name, rec in rec_df.groupby(['list']):
-            assert (rec['output'].diff()[1:] == 1).all(), (
+        n_recall = subj_df.groupby('list')['output'].max().to_numpy()
+        for name, rec in subj_df.groupby(['list']):
+            assert (rec['output'].diff().dropna() == 1).all(), (
                 'There are gaps in the recall sequence.')
 
             # get recalls as a list of recall input indices
-            input_ind = rec['input'] - 1
-            recalls.append(input_ind.to_numpy())
+            recalls.append(rec['input'].to_numpy())
+
+            # static masks defining valid recalls
+            from_mask.append(rec['_from_mask'].to_numpy())
+            to_mask.append(rec['_to_mask'].to_numpy())
+
+            # dynamic mask defining included transitions
             if test_key is not None:
                 test_values.append(rec[test_key])
 
         # calculate frequency of each lag
-        actual, possible = _subject_lag_crp(recalls, list_length,
-                                            test_values=test_values, test=test)
+        actual, possible = transitions.count_lags(recalls, list_length, n_recall,
+                                                  from_mask, to_mask, test_values, test)
         results = pd.DataFrame({'subject': subject, 'lag': actual.index,
                                 'prob': actual / possible, 'actual': actual,
                                 'possible': possible})
