@@ -53,8 +53,13 @@ def transitions_masker(outputs, n_recalls, from_mask, to_mask,
     m = 0
     while n < n_recalls - 1:
         # check if the positions involved in this transition are valid
-        if not from_mask[n] or not to_mask[n + 1]:
+        if not from_mask[n]:
             n += 1
+            continue
+
+        if not to_mask[n + 1]:
+            n += 1
+            m += 1
             continue
 
         # transition outputs
