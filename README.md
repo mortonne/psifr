@@ -22,7 +22,7 @@ See the Jupyter notebooks for demonstrations of reading and analyzing a sample f
 
 ## Installation
 
-First get a copy of the code from GitHub, including the Jupyter notebooks:
+First get a copy of the code from GitHub:
 
 ```bash
 git clone git@github.com:mortonne/psifr.git
