@@ -426,30 +426,22 @@ def lag_crp(df, from_mask_def=None, to_mask_def=None, test_key=None,
     for subject, subj_df in df.groupby('subject'):
         # get recall events for each list
         list_length = int(subj_df['input'].max())
+        n_recall = subj_df.groupby('list')['output'].max().to_numpy()
 
-        # compile recalls for each list
-        recalls = []
-        from_mask = []
-        to_mask = []
+        # export required columns to numpy array
+        all_recalls = subj_df['input'].to_numpy()
+        all_from = subj_df['_from_mask'].to_numpy()
+        all_to = subj_df['_to_mask'].to_numpy()
         if test_key is not None:
+            all_values = subj_df[test_key].to_numpy()
             test_values = []
         else:
             test_values = None
-        n_recall = subj_df.groupby('list')['output'].max().to_numpy()
-        for name, rec in subj_df.groupby(['list']):
-            assert (rec['output'].diff().dropna() == 1).all(), (
-                'There are gaps in the recall sequence.')
 
-            # get recalls as a list of recall input indices
-            recalls.append(rec['input'].to_numpy())
-
-            # static masks defining valid recalls
-            from_mask.append(rec['_from_mask'].to_numpy())
-            to_mask.append(rec['_to_mask'].to_numpy())
-
-            # dynamic mask defining included transitions
-            if test_key is not None:
-                test_values.append(rec[test_key])
+        indices = subj_df.reset_index().groupby(['list']).indices
+        recalls = [all_recalls[ind] for name, ind in indices.items()]
+        from_mask = [all_from[ind] for name, ind in indices.items()]
+        to_mask = [all_to[ind] for name, ind in indices.items()]
 
         # calculate frequency of each lag
         actual, possible = transitions.count_lags(recalls, list_length, n_recall,
