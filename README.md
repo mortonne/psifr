@@ -12,8 +12,6 @@ In free recall, participants study a list of items and then name all of the item
   </div>
 </div>
 
-This plot shows the probability of recalling two items adjacent to one another, as a function of the distance (i.e., lag) between them in the list. Different lines correspond to different stimulus categories.
-
 The name Psifr is pronounced "cipher". It's taken from Psi, in reference to the field of psychology, and FR for free recall.
 
 ## Quickstart
