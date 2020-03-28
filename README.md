@@ -9,7 +9,7 @@ Psifr leverages the Pandas data analysis package to make precise and flexible an
   <div style="max-width:350px; margin:0 20px;">
     <img src="https://github.com/mortonne/psifr/blob/master/images/raster.png" alt="free recall visualization" width="350px">
     <div style="text-align:left; padding:10px 0;">
-      Raster plot showing each recall in a free recall experiment. Color indicates serial position; yellow items were presented late in the list, while purple items were presented at the beginning. Grey circles indicate intrusions of items that were not presented during the study list.
+      Raster plot showing each recall in a free recall experiment. Color indicates serial position; yellow items were presented late in the list, while purple items were presented at the beginning. Grey squares indicate intrusions of items that were not presented during the study list.
     </div>
   </div>
 </div>
