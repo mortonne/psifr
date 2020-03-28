@@ -210,9 +210,7 @@ def get_recall_mask(df, mask_spec, list_cols=None):
     return mask
 
 
-def _transition_masker(seq, possible, from_mask=None, to_mask=None,
-                       input_values=None, input_test=None,
-                       output_values=None, output_test=None):
+def _transition_masker(seq, possible, test_values=None, test=None):
     """Iterate over transitions with masking and exclusion of repeats.
 
     Parameters
@@ -225,22 +223,13 @@ def _transition_masker(seq, possible, from_mask=None, to_mask=None,
         After an item has been iterated through, it will be removed
         from the `possible` list to exclude repeats.
 
-    from_mask : sequence, optional
-        Boolean for each position in the sequence. If false, any
-        transitions from that position will be excluded.
-
-    to_mask : sequence, optional
-        Boolean for each position in the sequence. If false, any
-        transitions to that position will be excluded.
+    test_values : sequence, optional
+        Array of values to use to test whether a transition is valid.
 
     test : callable, optional
         Callable to test whether a given transition is valid. Will be
         passed the previous and current item IDs or other test values
         (if `test_values` are specified; see below).
-
-    test_values : sequence, optional
-        Array of values to use to test whether a transition is valid.
-        Will be indexed using the item identifiers.
 
     Yields
     ------
@@ -254,13 +243,7 @@ def _transition_masker(seq, possible, from_mask=None, to_mask=None,
         IDs for all remaining possible items.
     """
 
-    if from_mask is None:
-        from_mask = np.ones(len(seq), dtype=bool)
-
-    if to_mask is None:
-        to_mask = np.ones(len(seq), dtype=bool)
-
-    if input_test is not None and input_values is None:
+    if test is not None and test_values is None:
         raise ValueError('If test is specified, must specify test values.')
 
     n = 0
@@ -282,28 +265,25 @@ def _transition_masker(seq, possible, from_mask=None, to_mask=None,
             n += 1
             continue
 
-        if output_test is not None:
-            if not output_test(output_values[n], output_values[n + 1]):
+        if test is not None:
+            # check if this transition is included
+            if not test(test_values[n], test_values[n + 1]):
                 n += 1
                 continue
 
-        # check if this transition is masked
-        if from_mask[n] and to_mask[n + 1]:
-            prev = int(seq[n])
-            curr = int(seq[n + 1])
-            n += 1
+        prev = int(seq[n])
+        curr = int(seq[n + 1])
+        n += 1
 
-            # run dynamic check if applicable
-            valid = np.array(possible)
-            if input_test is not None:
-                if not input_test(input_values[prev], input_values[curr]):
-                    continue
-                valid = valid[input_test(input_values[prev],
-                                         input_values[possible])]
+        # run dynamic check if applicable
+        valid = np.array(possible)
+        if test is not None:
+            # filter possible recalls to get only included ones
+            valid = valid[test(test_values[n], test_values[possible])]
 
-            # return the current item, actual next item,
-            # and possible next items
-            yield prev, curr, valid
+        # return the current item, actual next item,
+        # and possible next items
+        yield prev, curr, valid
 
 
 def _masker_opt(df, input_key=None, input_test=None,
