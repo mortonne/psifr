@@ -17,6 +17,9 @@ setuptools.setup(
     license='GPLv3',
     url='http://github.com/mortonne/psifr',
     packages=setuptools.find_packages(),
+    package_data={
+        'psifr': ['data/*.csv']
+    },
     install_requires=[
         'numpy',
         'pandas',
