@@ -3,14 +3,14 @@ Advanced analysis and visualization of free recall data in Python.
 
 In free recall, participants study a list of items and then name all of the items they can remember in any order they choose. Many sophisticated analyses have been developed to analyze data from free recall experiments, but these analyses are often complicated and difficult to implement. Psifr leverages the Pandas data analysis package to make precise and flexible analysis of free recall data faster and easier.
 
-<div style="display:flex; justify-content: center;" align="center">
-  <div style="display:flex; flex-direction:column; max-width:350px; margin:0 20px;">
+<div align="center">
+  <div style="max-width:350px; margin:0 20px;">
     <img src="https://github.com/mortonne/psifr/blob/master/images/raster.png" alt="free recall visualization" width="350px">
     <div style="text-align:left; padding:10px 0;">
       Raster plot showing each recall in a free recall experiment. Color indicates serial position.
     </div>
   </div>
-  <div style="display:flex; flex-direction:column; max-width:200px; margin:0 20px;">
+  <div style="max-width:200px; margin:0 20px;">
     <img src="https://github.com/mortonne/psifr/blob/master/images/lag_crp.png" alt="free recall visualization" width="200px">
     <div style="text-align:left; padding:10px 0;">
       Response probability by serial position lag. Different lines correspond to different stimulus categories.
