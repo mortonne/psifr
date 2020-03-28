@@ -316,7 +316,7 @@ def _masker_opt(df, input_key=None, input_test=None,
     return opt
 
 
-def _subject_lag_crp(list_recalls, list_length, masker_kws=None):
+def _subject_lag_crp(list_recalls, list_length, test_values=None, test=None):
     """Conditional response probability by lag for one subject.
 
     Parameters
@@ -367,7 +367,7 @@ def _subject_lag_crp(list_recalls, list_length, masker_kws=None):
     return actual, possible
 
 
-def lag_crp(df, **masker_kws):
+def lag_crp(df, test_key=None, test=None):
     """Lag-CRP for multiple subjects.
 
     Parameters
@@ -420,14 +420,28 @@ def lag_crp(df, **masker_kws):
         list_length = int(subj_df['input'].max())
         recalls = get_recall_index(subj_df)
 
-        # set masker options
-        if masker_kws is not None:
-            opt = _masker_opt(subj_df, **masker_kws)
+        # get just recall trials and sort by output position
+        rec_df = df.query('recalled').sort_values('output')
+
+        # compile recalls for each list
+        recalls = []
+        if test_key is not None:
+            test_values = []
         else:
-            opt = {}
+            test_values = None
+        for name, rec in rec_df.groupby(['list']):
+            assert (rec['output'].diff()[1:] == 1).all(), (
+                'There are gaps in the recall sequence.')
+
+            # get recalls as a list of recall input indices
+            input_ind = rec['input'] - 1
+            recalls.append(input_ind.to_numpy())
+            if test_key is not None:
+                test_values.append(rec[test_key])
 
         # calculate frequency of each lag
-        actual, possible = _subject_lag_crp(recalls, list_length, opt)
+        actual, possible = _subject_lag_crp(recalls, list_length,
+                                            test_values=test_values, test=test)
         results = pd.DataFrame({'subject': subject, 'lag': actual.index,
                                 'prob': actual / possible, 'actual': actual,
                                 'possible': possible})
