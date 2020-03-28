@@ -10,19 +10,19 @@ def transitions_masker(outputs, n_recalls, from_mask, to_mask,
 
     Parameters
     ----------
-    outputs : array
+    outputs : numpy.array
         Values to output for each transition.
 
     n_recalls : int
         Number of recall attempts.
 
-    from_mask : array
+    from_mask : numpy.array
         Boolean array indicating valid positions to transition from.
 
-    to_mask : array
+    to_mask : numpy.array
         Boolean array indicating valid positions to transition to.
 
-    test_values : array
+    test_values : numpy.array
         Same shape and order as `outputs`. Used to test whether
         individual transitions should be included.
 
@@ -39,7 +39,7 @@ def transitions_masker(outputs, n_recalls, from_mask, to_mask,
     curr : object
         Output value for the "to" item.
 
-    poss : array
+    poss : numpy.array
         Output values for all possible valid "to" items.
     """
 
@@ -96,7 +96,7 @@ def count_lags(recalls, list_length, n_recall, from_mask, to_mask,
     list_length : int
          Number of serial positions in each list.
 
-    n_recall : array
+    n_recall : numpy.array
         Number of recall attempts in each list.
 
     from_mask : list
