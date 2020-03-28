@@ -10,12 +10,6 @@ In free recall, participants study a list of items and then name all of the item
       Raster plot showing each recall in a free recall experiment. Color indicates serial position.
     </div>
   </div>
-  <div style="max-width:200px; margin:0 20px;">
-    <img src="https://github.com/mortonne/psifr/blob/master/images/lag_crp.png" alt="free recall visualization" width="200px">
-    <div style="text-align:left; padding:10px 0;">
-      Response probability by serial position lag. Different lines correspond to different stimulus categories.
-    </div>
-  </div>
 </div>
 
 This plot shows the probability of recalling two items adjacent to one another, as a function of the distance (i.e., lag) between them in the list. Different lines correspond to different stimulus categories.
