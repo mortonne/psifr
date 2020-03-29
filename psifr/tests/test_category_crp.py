@@ -2,7 +2,7 @@ import unittest
 from .. import transitions
 
 
-class MyTestCase(unittest.TestCase):
+class CategoryCRPTestCase(unittest.TestCase):
 
     def setUp(self) -> None:
         self.pool_position = [1, 2, 3, 4, 5, 6, 7, 8]
