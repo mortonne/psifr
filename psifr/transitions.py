@@ -155,3 +155,23 @@ def count_lags(pool_items, recall_items, pool_test=None, recall_test=None,
     possible = pd.Series(np.histogram(list_possible, lags)[0],
                          index=lags[:-1])
     return actual, possible
+
+
+def count_pairs(n_item, pool_items, recall_items,
+                pool_test=None, recall_test=None, test=None):
+    """Count transitions between pairs of specific items."""
+
+    actual = np.zeros((n_item, n_item))
+    possible = np.zeros((n_item, n_item))
+    for i, recall_items_list in enumerate(recall_items):
+        # set up masker to filter transitions
+        pool_test_list = None if pool_test is None else pool_test[i]
+        recall_test_list = None if recall_test is None else recall_test[i]
+        masker = transitions_masker(pool_items[i], recall_items_list,
+                                    pool_items[i], recall_items_list,
+                                    pool_test_list, recall_test_list, test)
+
+        for prev, curr, poss in masker:
+            actual[prev, curr] += 1
+            possible[prev, poss] += 1
+    return actual, possible
