@@ -105,49 +105,41 @@ def transitions_masker(pool_items, recall_items, pool_output, recall_output,
         yield prev, curr, poss
 
 
-def count_lags(recalls, list_length, n_recall, from_mask, to_mask,
-               test_values=None, test=None):
+def count_lags(pool_items, recall_items, pool_test=None, recall_test=None, test=None):
     """Count actual and possible serial position lags.
 
     Parameters
     ----------
-    recalls : list
-        List of arrays. Each array should have one element for each
-        recall attempt, in output order, indicating the serial position
-        of that recall (NaN for intrusions).
+    pool_items : list
+        List of the serial positions available for recall in each list.
+        Must match the serial position codes used in `recall_items`.
 
-    list_length : int
-         Number of serial positions in each list.
+    recall_items : list
+        List indicating the serial position of each recall in output
+        order (NaN for intrusions).
 
-    n_recall : numpy.array
-        Number of recall attempts in each list.
+    pool_test : list, optional
+         List of some test value for each item in the pool.
 
-    from_mask : list
-        List of boolean arrays. Each array should be the same order as
-        `recalls` and indicates valid recall attempts to transition
-        from.
-
-    to_mask : list
-        List of boolean arrays. Indicates valid recall attempts to
-        transition to.
-
-    test_values : list
-        List of arrays. Gives values to use for a transition inclusion
-        test.
+    recall_test : list, optional
+        List of some test value for each recall attempt by output
+        position.
 
     test : callable
         Callable that evaluates each transition between items n and
-        n+1. Must take test_values[n] and test_values[n + 1] and return
-        True if a given transition should be included.
+        n+1. Must take test values for items n and n+1 and return True
+        if a given transition should be included.
     """
 
     list_actual = []
     list_possible = []
-    for i, output in enumerate(recalls):
+    for i, recall_items_list in enumerate(recall_items):
         # set up masker to filter transitions
-        values = None if test_values is None else test_values[i]
-        masker = transitions_masker(output, n_recall[i], from_mask[i], to_mask[i],
-                                    test_values=values, test=test)
+        pool_test_list = None if pool_test is None else pool_test[i]
+        recall_test_list = None if recall_test is None else recall_test[i]
+        masker = transitions_masker(pool_items, recall_items_list,
+                                    pool_items, recall_items_list,
+                                    pool_test_list, recall_test_list, test)
 
         for prev, curr, poss in masker:
             # for this step, calculate actual lag and all possible lags
@@ -155,7 +147,8 @@ def count_lags(recalls, list_length, n_recall, from_mask, to_mask,
             list_possible.extend(poss - prev)
 
     # count the actual and possible transitions for each lag
-    lags = np.arange(-list_length + 1, list_length + 1)
+    max_lag = np.max(pool_items) - np.min(pool_items)
+    lags = np.arange(-max_lag, max_lag + 2)
     actual = pd.Series(np.histogram(list_actual, lags)[0], index=lags[:-1])
     possible = pd.Series(np.histogram(list_possible, lags)[0], index=lags[:-1])
     return actual, possible
