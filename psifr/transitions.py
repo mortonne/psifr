@@ -4,27 +4,51 @@ import numpy as np
 import pandas as pd
 
 
-def transitions_masker(pool, output, pool_test=None, output_test=None,
-                       test=None):
+def transitions_masker(pool_items, recall_items, pool_output, recall_output,
+                       pool_test=None, recall_test=None, test=None):
     """Iterate over transitions with masking.
+
+    Iterate over transitions. Transitions are between a "previous" item
+    and a "current" item. A transition is yielded if it matches the
+    following conditions:
+        Each item involved in the transition is in the pool.
+
+        Items are removed from the pool after they appear as the
+        previous item.
+
+        Optionally, an additional check is run based on test values
+        associated with the items in the transition. For example, this
+        could be used to only include transitions where the category of
+        the previous and current items is the same.
+
+    Non-included transitions will be skipped.
+
+    The masker will yield "output" values, which may be distinct from
+    the item identifiers used to determine item repeats.
 
     Parameters
     ----------
-    pool : list
+    pool_items : list
         Items available for recall. Order does not matter. May contain
-        repeated values.
+        repeated values. Item identifiers must be unique within pool.
 
-    output : list
+    recall_items : list
         Recalled items in output position order.
 
-    pool_test : list
+    pool_output : list
+        Output values for pool items. Must be the same order as pool.
+
+    recall_output : list
+        Output values in output position order.
+
+    pool_test : list, optional
         Test values for items available for recall. Must be the same
         order as pool.
 
-    output_test : list
+    recall_test : list, optional
         Test values for items in output position order.
 
-    test : callable
+    test : callable, optional
         Used to test whether individual transitions should be included,
         based on test values.
             test(prev, curr) - test for included transition
@@ -43,38 +67,40 @@ def transitions_masker(pool, output, pool_test=None, output_test=None,
     """
 
     n = 0
-    possible = pool.copy()
+    pool_items = pool_items.copy()
+    pool_output = pool_output.copy()
     if test is not None:
-        possible_test = pool_test.copy()
+        pool_test = pool_test.copy()
 
-    while n < len(output) - 1:
+    while n < len(recall_items) - 1:
         # test if the previous item is in the pool
-        if output[n] not in possible:
+        if recall_items[n] not in pool_items:
             n += 1
             continue
 
         # remove the item from the pool
-        ind = possible.index(output[n])
-        del possible[ind]
+        ind = pool_items.index(recall_items[n])
+        del pool_items[ind]
+        del pool_output[ind]
         if test is not None:
-            del possible_test[ind]
+            del pool_test[ind]
 
         # test if the current item is in the pool
-        if output[n + 1] not in possible:
+        if recall_items[n + 1] not in pool_items:
             n += 1
             continue
 
-        prev = output[n]
-        curr = output[n + 1]
-        poss = np.array(possible)
+        prev = recall_output[n]
+        curr = recall_output[n + 1]
+        poss = np.array(pool_output)
         if test is not None:
             # test if this transition is included
-            if not test(output_test[n], output_test[n + 1]):
+            if not test(recall_test[n], recall_test[n + 1]):
                 n += 1
                 continue
 
             # get included possible items
-            poss = poss[test(output_test[n], np.array(possible_test))]
+            poss = poss[test(recall_test[n], np.array(pool_test))]
         n += 1
         yield prev, curr, poss
 
