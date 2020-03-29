@@ -368,13 +368,27 @@ def _subject_lag_crp(list_recalls, list_length, test_values=None, test=None):
     return actual, possible
 
 
-def get_column(df, column_def):
-    """Get a column through access or a callable."""
+def _prep_column(df, col_spec, default_key, default_mask=None):
+    """Set up a mask column in a data frame."""
 
-    if callable(column_def):
-        return column_def(df)
+    if isinstance(col_spec, str):
+        col_key = col_spec
     else:
-        return df[column_def]
+        col_key = default_key
+        if isinstance(col_spec, pd.Series):
+            df[col_key] = col_spec
+        elif callable(col_spec):
+            df[col_key] = col_spec(df)
+        elif default_mask is not None:
+            if isinstance(default_mask, str):
+                col_key = default_mask
+            elif callable(default_mask):
+                df[col_key] = default_mask(df)
+            else:
+                raise ValueError('Invalid default mask specification.')
+        else:
+            raise ValueError('Invalid mask specification.')
+    return df, col_key
 
 
 def lag_crp(df, from_mask_def=None, to_mask_def=None, test_key=None,
