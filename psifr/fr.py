@@ -264,6 +264,53 @@ def _prep_column(df, col_spec, default_key, default_mask=None):
     return df, col_key
 
 
+def _subject_lag_crp(df, test_values=None, test=None):
+    """Calculate lag-CRP for one subject."""
+
+    # sort by output so we can extract recall sequences
+    df_output = df.query('recalled').sort_values(['list', 'output'])
+
+    # recall pool
+    list_length = int(df_output['input'].max())
+    pool_items = list(range(1, list_length + 1))
+
+    # recall input positions
+    all_recalls = df_output['input'].to_numpy()
+    indices = df_output.reset_index().groupby(['list']).indices
+    recall_items = [all_recalls[ind] for name, ind in indices.items()]
+
+    if test_values is not None:
+        # create column if necessary
+        df, test_key = _prep_column(df, test_values, '_test_values')
+
+        # get pool values
+        study_df = (df.query('repeat == 0 and ~intrusion')
+                    .sort_values('input'))
+        study_values = study_df[test_key].to_numpy()
+        study_indices = study_df.reset_index().groupby('list').indices
+        pool_test = [study_values[ind]
+                     for name, ind in study_indices.items()]
+
+        # get recall values
+        all_values = df_output[test_key].to_numpy()
+        recall_test = [all_values[ind] for name, ind in indices.items()]
+    else:
+        pool_test = None
+        recall_test = None
+
+    # count lags
+    actual, possible = transitions.count_lags(pool_items, recall_items,
+                                              pool_test, recall_test, test)
+
+    # calculate and annotate crp
+    subject = df['subject'].iloc[0]
+    crp = pd.DataFrame({'subject': subject, 'lag': actual.index,
+                        'prob': actual / possible,
+                        'actual': actual, 'possible': possible})
+    crp = crp.set_index(['subject', 'lag'])
+    return crp
+
+
 def lag_crp(df, test_values=None, test=None):
     """Lag-CRP for multiple subjects.
 
@@ -301,45 +348,9 @@ def lag_crp(df, test_values=None, test=None):
             input position and the remaining items to be recalled.
     """
 
-    # define test values
-    if test_values is not None:
-        df, test_key = _prep_column(df, test_values, '_test_values')
-    else:
-        test_key = None
-
     subj_results = []
-    df = df.sort_values(['subject', 'list', 'output'])
     for subject, subj_df in df.groupby('subject'):
-        # get recall events for each list
-        list_length = int(subj_df['input'].max())
-        pool_items = list(range(1, list_length + 1))
-
-        # export required columns to numpy array
-        all_recalls = subj_df['input'].to_numpy()
-
-        indices = subj_df.reset_index().groupby(['list']).indices
-        recall_items = [all_recalls[ind] for name, ind in indices.items()]
-
-        if test_key is not None:
-            study_df = (subj_df.query('repeat == 0 and ~intrusion')
-                        .sort_values('input'))
-            study_values = study_df[test_key].to_numpy()
-            study_indices = study_df.reset_index().groupby('list').indices
-
-            all_values = subj_df[test_key].to_numpy()
-            pool_test = [study_values[ind]
-                         for name, ind in study_indices.items()]
-            recall_test = [all_values[ind] for name, ind in indices.items()]
-        else:
-            pool_test = None
-            recall_test = None
-
-        # calculate frequency of each lag
-        actual, possible = transitions.count_lags(
-            pool_items, recall_items, pool_test, recall_test, test)
-        results = pd.DataFrame({'subject': subject, 'lag': actual.index,
-                                'prob': actual / possible, 'actual': actual,
-                                'possible': possible})
-        results = results.set_index(['subject', 'lag'])
+        results = _subject_lag_crp(subj_df, test_values, test)
         subj_results.append(results)
-    return pd.concat(subj_results, axis=0)
+    crp = pd.concat(subj_results, axis=0)
+    return crp
