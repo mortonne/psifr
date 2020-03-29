@@ -288,7 +288,7 @@ def _subject_lag_crp(df, test_values=None, test=None):
                     .sort_values('input'))
         study_values = study_df[test_key].to_numpy()
         study_indices = study_df.reset_index().groupby('list').indices
-        pool_test = [study_values[ind]
+        pool_test = [study_values[ind].tolist()
                      for name, ind in study_indices.items()]
 
         # get recall values
