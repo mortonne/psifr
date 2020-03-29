@@ -187,62 +187,8 @@ def get_recall_index(df, list_cols=None):
     return recalls
 
 
-def get_recall_mask(df, mask_spec, list_cols=None):
-    """Create a recall mask from a data frame."""
-
-    if list_cols is None:
-        list_cols = ['list']
-
-    # get just recall trials and sort by output position
-    rec_df = df.query('recalled').sort_values('output')
-
-    # unpack spec
-    if not callable(mask_spec) or isinstance(mask_spec, str):
-        raise ValueError('Invalid mask specification.')
-
-    # get mask for each list
-    mask = []
-    for name, rec in rec_df.groupby(list_cols):
-        if callable(mask_spec):
-            list_mask = mask_spec(rec)
-        else:
-            list_mask = rec[mask_spec].to_numpy()
-        mask.append(list_mask)
-    return mask
-
-
-def _masker_opt(df, input_key=None, input_test=None,
-                output_key=None, output_test=None,
-                from_mask=None, to_mask=None,
-                list_cols=None):
-    """Define masker settings for a data frame."""
-
-    if list_cols is None:
-        list_cols = ['list']
-
-    opt = {}
-    if input_key is not None:
-        opt['input_values'] = get_study_value(df, input_key, list_cols)
-        opt['input_test'] = input_test
-
-    if output_key is not None:
-        rec_df = df.query('recalled').sort_values('output')
-        values = []
-        for name, rec in rec_df.groupby(list_cols):
-            values.append(rec[output_key])
-        opt['output_values'] = values
-        opt['output_test'] = output_test
-
-    if from_mask is not None:
-        opt['from_mask'] = get_recall_mask(df, from_mask, list_cols)
-
-    if to_mask is not None:
-        opt['to_mask'] = get_recall_mask(df, to_mask, list_cols)
-    return opt
-
-
 def _prep_column(df, col_spec, default_key, default_mask=None):
-    """Set up a mask column in a data frame."""
+    """Set up a column in a data frame."""
 
     if isinstance(col_spec, str):
         col_key = col_spec
