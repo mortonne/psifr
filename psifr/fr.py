@@ -391,8 +391,7 @@ def _prep_column(df, col_spec, default_key, default_mask=None):
     return df, col_key
 
 
-def lag_crp(df, from_mask_def=None, to_mask_def=None, test_key=None,
-            test=None):
+def lag_crp(df, from_mask=None, to_mask=None, test_values=None, test=None):
     """Lag-CRP for multiple subjects.
 
     Parameters
@@ -404,18 +403,17 @@ def lag_crp(df, from_mask_def=None, to_mask_def=None, test_key=None,
         Input position must be defined such that the first serial
         position is 1, not 0.
 
-    from_mask_def : str or callable, optional
-        Specification for boolean mask to exclude output positions
-        being transitioned from. If str, will select a column from
-        `df`. If callable, will run with `df` as input and must return
-        a boolean Series. Default is to exclude repeats and intrusions.
+    from_mask : pandas.Series or column name, optional
+        Boolean mask to exclude output positions being transitioned
+        from. Must have the same index as `df` so that they can be
+        merged. Default is to exclude repeats and intrusions.
 
-    to_mask_def : str or callable, optional
+    to_mask : pandas.Series or column name, optional
         Specification for a boolean mask to exclude output positions
         being transitioned to. Default is to exclude repeats and
         intrusions.
 
-    test_key : str, optional
+    test_values : pandas.Series or column name, optional
         Column with labels to use when testing transitions for
         inclusion.
 
@@ -440,19 +438,21 @@ def lag_crp(df, from_mask_def=None, to_mask_def=None, test_key=None,
             input position and the remaining items to be recalled.
     """
 
-    # define masks
-    if from_mask_def is None or to_mask_def is None:
+    # set default mask
+    if from_mask is None or to_mask is None:
         default_mask = (df['repeat'] == 0) & ~df['intrusion']
-
-    if from_mask_def is not None:
-        df.loc[:, '_from_mask'] = get_column(df, from_mask_def)
     else:
-        df.loc[:, '_from_mask'] = default_mask
+        default_mask = None
 
-    if to_mask_def is not None:
-        df.loc[:, '_to_mask'] = get_column(df, to_mask_def)
+    # define masks
+    df, from_key = _prep_column(df, from_mask, '_from_mask', default_mask)
+    df, to_key = _prep_column(df, to_mask, '_to_mask', default_mask)
+
+    # define test values
+    if test_values is not None:
+        df, test_key = _prep_column(df, test_values, '_test_values')
     else:
-        df.loc[:, '_to_mask'] = default_mask
+        test_key = None
 
     subj_results = []
     df = df.sort_values(['subject', 'list', 'output'])
@@ -463,8 +463,8 @@ def lag_crp(df, from_mask_def=None, to_mask_def=None, test_key=None,
 
         # export required columns to numpy array
         all_recalls = subj_df['input'].to_numpy()
-        all_from = subj_df['_from_mask'].to_numpy()
-        all_to = subj_df['_to_mask'].to_numpy()
+        all_from = subj_df[from_key].to_numpy()
+        all_to = subj_df[to_key].to_numpy()
         if test_key is not None:
             all_values = subj_df[test_key].to_numpy()
             test_values = []
