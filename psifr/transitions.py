@@ -105,7 +105,8 @@ def transitions_masker(pool_items, recall_items, pool_output, recall_output,
         yield prev, curr, poss
 
 
-def count_lags(pool_items, recall_items, pool_test=None, recall_test=None, test=None):
+def count_lags(pool_items, recall_items, pool_test=None, recall_test=None,
+               test=None):
     """Count actual and possible serial position lags.
 
     Parameters
@@ -149,6 +150,8 @@ def count_lags(pool_items, recall_items, pool_test=None, recall_test=None, test=
     # count the actual and possible transitions for each lag
     max_lag = np.max(pool_items) - np.min(pool_items)
     lags = np.arange(-max_lag, max_lag + 2)
-    actual = pd.Series(np.histogram(list_actual, lags)[0], index=lags[:-1])
-    possible = pd.Series(np.histogram(list_possible, lags)[0], index=lags[:-1])
+    actual = pd.Series(np.histogram(list_actual, lags)[0],
+                       index=lags[:-1])
+    possible = pd.Series(np.histogram(list_possible, lags)[0],
+                         index=lags[:-1])
     return actual, possible
