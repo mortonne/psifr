@@ -264,14 +264,16 @@ def _prep_column(df, col_spec, default_key, default_mask=None):
     return df, col_key
 
 
-def _subject_lag_crp(df, test_values=None, test=None):
+def _subject_lag_crp(df, test_values=None, test=None, first_output=None):
     """Calculate lag-CRP for one subject."""
 
     # sort by output so we can extract recall sequences
     df_output = df.query('recalled').sort_values(['list', 'output'])
+    if first_output is not None:
+        df_output = df_output.query(f'output >= {first_output}')
 
     # recall pool
-    list_length = int(df_output['input'].max())
+    list_length = int(df['input'].max())
     pool_items = list(range(1, list_length + 1))
 
     # recall input positions
@@ -311,7 +313,7 @@ def _subject_lag_crp(df, test_values=None, test=None):
     return crp
 
 
-def lag_crp(df, test_values=None, test=None):
+def lag_crp(df, test_values=None, test=None, first_output=None):
     """Lag-CRP for multiple subjects.
 
     Parameters
@@ -330,6 +332,11 @@ def lag_crp(df, test_values=None, test=None):
     test : callable, optional
         Callable that takes in previous and current item values and
         returns True for transitions that should be included.
+
+    first_output : int, optional
+        First output position to include when calculating transition
+        probabilities. Used to exclude initial outputs. Default is
+        to start at the first recall on each list.
 
     Returns
     -------
@@ -350,7 +357,7 @@ def lag_crp(df, test_values=None, test=None):
 
     subj_results = []
     for subject, subj_df in df.groupby('subject'):
-        results = _subject_lag_crp(subj_df, test_values, test)
+        results = _subject_lag_crp(subj_df, test_values, test, first_output)
         subj_results.append(results)
     crp = pd.concat(subj_results, axis=0)
     return crp
