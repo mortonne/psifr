@@ -391,7 +391,7 @@ def _prep_column(df, col_spec, default_key, default_mask=None):
     return df, col_key
 
 
-def lag_crp(df, from_mask=None, to_mask=None, test_values=None, test=None):
+def lag_crp(df, test_values=None, test=None):
     """Lag-CRP for multiple subjects.
 
     Parameters
@@ -402,16 +402,6 @@ def lag_crp(df, from_mask=None, to_mask=None, test_values=None, test=None):
         Must have fields: subject, list, input, output, recalled.
         Input position must be defined such that the first serial
         position is 1, not 0.
-
-    from_mask : pandas.Series or column name, optional
-        Boolean mask to exclude output positions being transitioned
-        from. Must have the same index as `df` so that they can be
-        merged. Default is to exclude repeats and intrusions.
-
-    to_mask : pandas.Series or column name, optional
-        Specification for a boolean mask to exclude output positions
-        being transitioned to. Default is to exclude repeats and
-        intrusions.
 
     test_values : pandas.Series or column name, optional
         Column with labels to use when testing transitions for
@@ -438,16 +428,6 @@ def lag_crp(df, from_mask=None, to_mask=None, test_values=None, test=None):
             input position and the remaining items to be recalled.
     """
 
-    # set default mask
-    if from_mask is None or to_mask is None:
-        default_mask = (df['repeat'] == 0) & ~df['intrusion']
-    else:
-        default_mask = None
-
-    # define masks
-    df, from_key = _prep_column(df, from_mask, '_from_mask', default_mask)
-    df, to_key = _prep_column(df, to_mask, '_to_mask', default_mask)
-
     # define test values
     if test_values is not None:
         df, test_key = _prep_column(df, test_values, '_test_values')
@@ -459,26 +439,31 @@ def lag_crp(df, from_mask=None, to_mask=None, test_values=None, test=None):
     for subject, subj_df in df.groupby('subject'):
         # get recall events for each list
         list_length = int(subj_df['input'].max())
-        n_recall = subj_df.groupby('list')['output'].max().to_numpy()
+        pool_items = list(range(1, list_length + 1))
 
         # export required columns to numpy array
         all_recalls = subj_df['input'].to_numpy()
-        all_from = subj_df[from_key].to_numpy()
-        all_to = subj_df[to_key].to_numpy()
-        if test_key is not None:
-            all_values = subj_df[test_key].to_numpy()
-            test_values = []
-        else:
-            test_values = None
 
         indices = subj_df.reset_index().groupby(['list']).indices
-        recalls = [all_recalls[ind] for name, ind in indices.items()]
-        from_mask = [all_from[ind] for name, ind in indices.items()]
-        to_mask = [all_to[ind] for name, ind in indices.items()]
+        recall_items = [all_recalls[ind] for name, ind in indices.items()]
+
+        if test_key is not None:
+            study_df = (subj_df.query('repeat == 0 and ~intrusion')
+                        .sort_values('input'))
+            study_values = study_df[test_key].to_numpy()
+            study_indices = study_df.reset_index().groupby('list').indices
+
+            all_values = subj_df[test_key].to_numpy()
+            pool_test = [study_values[ind]
+                         for name, ind in study_indices.items()]
+            recall_test = [all_values[ind] for name, ind in indices.items()]
+        else:
+            pool_test = None
+            recall_test = None
 
         # calculate frequency of each lag
-        actual, possible = transitions.count_lags(recalls, list_length, n_recall,
-                                                  from_mask, to_mask, test_values, test)
+        actual, possible = transitions.count_lags(
+            pool_items, recall_items, pool_test, recall_test, test)
         results = pd.DataFrame({'subject': subject, 'lag': actual.index,
                                 'prob': actual / possible, 'actual': actual,
                                 'possible': possible})
