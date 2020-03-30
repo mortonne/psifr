@@ -54,7 +54,7 @@ Example
 
 .. csv-table:: Sample data
     :header: "subject", "list", "trial_type", "position", "item"
-    :widths: 15, 15, 15, 15, 15
+    :widths: 8, 8, 8, 8, 8
 
     1, 1, "study", 1, "absence"
     1, 1, "study", 2, "hollow"

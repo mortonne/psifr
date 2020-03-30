@@ -21,10 +21,3 @@ analysis of free recall data faster and easier.
    /usage/import
    /tutorials/overview
    /api/overview
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
