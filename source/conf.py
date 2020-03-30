@@ -78,6 +78,7 @@ html_theme_options = {
         ("Import Data", "usage/import"),
         ("Tutorials", "tutorials/overview"),
         ("API", "api/overview"),
+        ("GitHub", "https://github.com/mortonne/psifr", True)
     ],
 
     # Render the next and previous page links in navbar. (Default: true)
