@@ -75,7 +75,7 @@ html_theme_options = {
     # an arbitrary url.
     'navbar_links': [
         ("Install", "usage/installation"),
-        ("Import Data", "usage/import"),
+        ("User Guide", "guide/overview"),
         ("Tutorials", "tutorials/overview"),
         ("API", "api/overview"),
         ("GitHub", "https://github.com/mortonne/psifr", True)

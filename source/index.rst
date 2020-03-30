@@ -18,6 +18,6 @@ analysis of free recall data faster and easier.
    :maxdepth: 2
 
    /usage/installation
-   /usage/import
+   /guide/overview
    /tutorials/overview
    /api/overview
