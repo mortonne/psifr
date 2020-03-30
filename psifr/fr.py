@@ -14,12 +14,16 @@ def check_data(df):
         Contains one row for each trial (study and recall). Must have fields:
             subject : number or str
                 Subject identifier.
+
             list : number
                 List identifier. This applies to both study and recall trials.
+
             trial_type : str
                 Type of trial; may be 'study' or 'recall'.
+
             position : number
                 Position within the study list or recall sequence.
+
             item : str
                 Item that was either presented or recalled on this trial.
     """
@@ -87,16 +91,21 @@ def merge_lists(study, recall, merge_keys=None, list_keys=None, study_keys=None,
         corresponds to one unique input/output pair.
 
         The following columns will be added:
+
         input : int
             Position of each item in the input list (i.e., serial
             position).
+
         output : int
             Position of each item in the recall sequence.
+
         recalled : bool
             True for rows with an associated recall event.
+
         repeat : int
             Number of times this recall event has been repeated (0 for
             the first recall of an item).
+
         intrusion : bool
             True for recalls that do not correspond to any study event.
     """
@@ -288,14 +297,19 @@ def lag_crp(df, test_values=None, test=None, first_output=None):
     -------
     results : pandas.DataFrame
         Has fields:
+
         subject : hashable
             Results are separated by each subject.
+
         lag : int
             Lag of input position between two adjacent recalls.
+
         prob : float
             Probability of each lag transition.
+
         actual : int
             Total of actual made transitions at each lag.
+
         possible : int
             Total of times each lag was possible, given the prior
             input position and the remaining items to be recalled.

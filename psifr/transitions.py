@@ -8,20 +8,17 @@ def transitions_masker(pool_items, recall_items, pool_output, recall_output,
                        pool_test=None, recall_test=None, test=None):
     """Iterate over transitions with masking.
 
-    Iterate over transitions. Transitions are between a "previous" item
-    and a "current" item. A transition is yielded if it matches the
-    following conditions:
-        Each item involved in the transition is in the pool.
+    Transitions are between a "previous" item and a "current" item.
+    Non-included transitions will be skipped. A transition is yielded
+    only if it matches the following conditions:
 
-        Items are removed from the pool after they appear as the
-        previous item.
+    (1) Each item involved in the transition is in the pool. Items are
+    removed from the pool after they appear as the previous item.
 
-        Optionally, an additional check is run based on test values
-        associated with the items in the transition. For example, this
-        could be used to only include transitions where the category of
-        the previous and current items is the same.
-
-    Non-included transitions will be skipped.
+    (2) Optionally, an additional check is run based on test values
+    associated with the items in the transition. For example, this
+    could be used to only include transitions where the category of
+    the previous and current items is the same.
 
     The masker will yield "output" values, which may be distinct from
     the item identifiers used to determine item repeats.
@@ -51,7 +48,9 @@ def transitions_masker(pool_items, recall_items, pool_output, recall_output,
     test : callable, optional
         Used to test whether individual transitions should be included,
         based on test values.
+
             test(prev, curr) - test for included transition
+
             test(prev, poss) - test for included possible transition
 
     Yields
