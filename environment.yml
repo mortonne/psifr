@@ -80,5 +80,6 @@ dependencies:
   - zlib=1.2.11
   - pip:
     - sphinx-bootstrap-theme==0.7.1
+    - psifr==0.1.0
 prefix: //anaconda3/envs/psifr
 
