@@ -205,9 +205,6 @@ class TransitionMeasure(object):
 
         self.data = data
         self.keys = {'items': items_key, 'label': label_key, 'test': test_key}
-        self.items_key = items_key
-        self.label_key = label_key
-        self.test_key = test_key
         self.test = test
 
     def split_lists(self, data, phase):
