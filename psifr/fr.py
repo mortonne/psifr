@@ -123,9 +123,11 @@ def merge_lists(study, recall, merge_keys=None, list_keys=None, study_keys=None,
         recall_keys = []
 
     # get running count of number of times each item is recalled in each list
+    recall = recall.copy()
     recall.loc[:, 'repeat'] = recall.groupby(merge_keys).cumcount()
 
     # get just the fields to use in the merge
+    study = study.copy()
     study = study[merge_keys + ['position'] + list_keys + study_keys]
     recall = recall[merge_keys + ['repeat', 'position'] + list_keys +
                     recall_keys]
