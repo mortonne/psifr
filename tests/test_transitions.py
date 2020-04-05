@@ -120,7 +120,7 @@ class TransitionsMeasureTestCase(unittest.TestCase):
         np.testing.assert_array_equal(crp['prob'], prob)
 
     def test_lag_crp_cat(self):
-        crp = fr.lag_crp(self.data, 'task', lambda x, y: x == y)
+        crp = fr.lag_crp(self.data, test_key='task', test=lambda x, y: x == y)
         actual = np.array([1, 0, 0, 0, 0])
         possible = np.array([1, 0, 0, 0, 0])
         prob = np.array([1., np.nan, np.nan, np.nan, np.nan])

@@ -202,9 +202,11 @@ def count_pairs(n_item, pool_items, recall_items,
 
 class TransitionMeasure(object):
 
-    def __init__(self, items_key, label_key, test_key=None, test=None):
+    def __init__(self, items_key, label_key, item_query=None, test_key=None,
+                 test=None):
 
         self.keys = {'items': items_key, 'label': label_key, 'test': test_key}
+        self.item_query = item_query
         self.test = test
 
     def split_lists(self, data, phase):
@@ -216,6 +218,10 @@ class TransitionMeasure(object):
             phase_data = data.query('recall').sort_values(['list', 'output'])
         else:
             raise ValueError(f'Invalid phase: {phase}')
+
+        if phase == 'input' and self.item_query is not None:
+            # get the subset of the pool that is of interest
+            phase_data = phase_data.query(self.item_query)
 
         indices = phase_data.reset_index().groupby('list').indices
 
@@ -251,8 +257,9 @@ class TransitionMeasure(object):
 
 class TransitionLag(TransitionMeasure):
 
-    def __init__(self, test_key=None, test=None):
-        super().__init__('input', 'input', test_key=test_key, test=test)
+    def __init__(self, item_query=None, test_key=None, test=None):
+        super().__init__('input', 'input', item_query=item_query,
+                         test_key=test_key, test=test)
 
     def analyze_subject(self, subject, pool, recall):
 

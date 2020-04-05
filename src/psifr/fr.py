@@ -228,7 +228,7 @@ def _prep_column(df, col_spec, default_key, default_mask=None):
     return df, col_key
 
 
-def lag_crp(df, test_values=None, test=None):
+def lag_crp(df, item_query=None, test_key=None, test=None):
     """Lag-CRP for multiple subjects.
 
     Parameters
@@ -240,8 +240,13 @@ def lag_crp(df, test_values=None, test=None):
         Input position must be defined such that the first serial
         position is 1, not 0.
 
-    test_values : pandas.Series or column name, optional
-        Column with labels to use when testing transitions for
+    item_query : str, optional
+        Query string to select items to include in the pool of possible
+        recalls to be examined. See `pandas.DataFrame.query` for
+        allowed format.
+
+    test_key : str, optional
+        Name of column with labels to use when testing transitions for
         inclusion.
 
     test : callable, optional
@@ -270,9 +275,7 @@ def lag_crp(df, test_values=None, test=None):
             input position and the remaining items to be recalled.
     """
 
-    if test_values is not None:
-        df, test_values = _prep_column(df, test_values, None, None)
-
-    measure = transitions.TransitionLag(test_values, test)
+    measure = transitions.TransitionLag(item_query=item_query,
+                                        test_key=test_key, test=test)
     crp = measure.analyze(df)
     return crp
