@@ -137,8 +137,8 @@ def count_lags(pool_items, recall_items, pool_test=None, recall_test=None,
         # set up masker to filter transitions
         pool_test_list = None if pool_test is None else pool_test[i]
         recall_test_list = None if recall_test is None else recall_test[i]
-        masker = transitions_masker(pool_items, recall_items_list,
-                                    pool_items, recall_items_list,
+        masker = transitions_masker(pool_items[i], recall_items_list,
+                                    pool_items[i], recall_items_list,
                                     pool_test_list, recall_test_list, test)
 
         for prev, curr, poss in masker:

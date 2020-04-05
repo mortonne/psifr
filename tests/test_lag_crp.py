@@ -13,7 +13,7 @@ class LagCRPTestCase(unittest.TestCase):
 
     def test_lag_count(self):
         actual, possible = transitions.count_lags(
-            self.pool_position, [self.output_position],
+            [self.pool_position], [self.output_position],
         )
 
         np.testing.assert_array_equal(
@@ -26,7 +26,7 @@ class LagCRPTestCase(unittest.TestCase):
 
     def test_lag_count_category(self):
         actual, possible = transitions.count_lags(
-            self.pool_position, [self.output_position],
+            [self.pool_position], [self.output_position],
             [self.pool_category], [self.output_category],
             lambda x, y: x == y
         )
