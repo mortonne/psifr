@@ -85,10 +85,12 @@ class TransitionsMeasureTestCase(unittest.TestCase):
              'item': ['absence', 'hollow', 'pupil',
                       'hollow', 'pupil', 'empty',
                       'fountain', 'piano', 'pillow',
-                      'pillow', 'fountain', 'pillow']})
+                      'pillow', 'fountain', 'pillow'],
+             'task': [1, 2, 1, 2, 1, np.nan,
+                      1, 2, 1, 1, 1, 1]})
         study = raw.query('trial_type == "study"').copy()
         recall = raw.query('trial_type == "recall"').copy()
-        self.data = fr.merge_lists(study, recall)
+        self.data = fr.merge_lists(study, recall, study_keys=['task'])
 
     def test_lists_input(self):
         m = transitions.TransitionMeasure(self.data, 'input', 'input')
@@ -113,6 +115,18 @@ class TransitionsMeasureTestCase(unittest.TestCase):
         actual = np.array([1, 0, 0, 1, 0])
         possible = np.array([1, 2, 0, 1, 0])
         prob = np.array([1., 0., np.nan, 1., np.nan])
+
+        np.testing.assert_array_equal(crp['actual'], actual)
+        np.testing.assert_array_equal(crp['possible'], possible)
+        np.testing.assert_array_equal(crp['prob'], prob)
+
+    def test_lag_crp_cat(self):
+        m = transitions.TransitionLag(self.data, test_key='task',
+                                      test=lambda x, y: x == y)
+        crp = m.analyze()
+        actual = np.array([1, 0, 0, 0, 0])
+        possible = np.array([1, 0, 0, 0, 0])
+        prob = np.array([1., np.nan, np.nan, np.nan, np.nan])
 
         np.testing.assert_array_equal(crp['actual'], actual)
         np.testing.assert_array_equal(crp['possible'], possible)
