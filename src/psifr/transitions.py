@@ -1,5 +1,6 @@
 """Module to analyze transitions during free recall."""
 
+import abc
 import numpy as np
 import pandas as pd
 
@@ -233,17 +234,32 @@ class TransitionMeasure(object):
                            for name, ind in indices.items()]
         return split
 
-    def get_subject_lists(self, subject):
-        """Get pool and recall information by list for one subject."""
-        # filter for this subject
-        subject = self.data.query(f'subject == {subject}')
+    @abc.abstractmethod
+    def analyze_subject(self, subject, pool_lists, recall_lists):
+        pass
 
-        # get pool information by excluding invalid recalls
-        pool = subject.query('repeat == 0 and ~intrusion').sort_values('list')
-        pool_lists = self.split_lists(pool)
+    def analyze(self):
+        subj_results = []
+        for subject, data in self.data.groupby('subject'):
+            pool_lists = self.split_lists(data, 'input')
+            recall_lists = self.split_lists(data, 'output')
+            results = self.analyze_subject(subject, pool_lists, recall_lists)
+            subj_results.append(results)
+        stat = pd.concat(subj_results, axis=0)
+        return stat
 
-        # get recall information in sorted order
-        recall = subject.query('recalled').sort_values(['list', 'output'])
-        recall_lists = self.split_lists(recall)
 
-        return pool_lists, recall_lists
+class TransitionLag(TransitionMeasure):
+
+    def __init__(self, data):
+        super().__init__(data, 'input', 'input')
+
+    def analyze_subject(self, subject, pool, recall):
+
+        actual, possible = count_lags(pool['items'], recall['items'],
+                                      pool['label'], recall['label'])
+        crp = pd.DataFrame({'subject': subject, 'lag': actual.index,
+                            'prob': actual / possible,
+                            'actual': actual, 'possible': possible})
+        crp = crp.set_index(['subject', 'lag'])
+        return crp
