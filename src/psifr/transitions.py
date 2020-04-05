@@ -211,11 +211,9 @@ class TransitionMeasure(object):
         """Get relevant fields and split by list."""
 
         if phase == 'input':
-            phase_data = data.query('repeat == 0 and ~intrusion')
-            phase_data = phase_data.sort_values('list')
+            phase_data = data.query('study').sort_values('list')
         elif phase == 'output':
-            phase_data = data.query('recalled')
-            phase_data = phase_data.sort_values(['list', 'input'])
+            phase_data = data.query('recall').sort_values(['list', 'output'])
         else:
             raise ValueError(f'Invalid phase: {phase}')
 
@@ -226,12 +224,13 @@ class TransitionMeasure(object):
             if val == 'position':
                 key = phase
             else:
+                if val is None:
+                    continue
                 key = val
 
-            if key is None:
-                continue
-            all_values = phase_data[val].to_numpy()
-            split[name] = [all_values[ind] for name, ind in indices.items()]
+            all_values = phase_data[key].to_numpy()
+            split[name] = [all_values[ind].tolist()
+                           for name, ind in indices.items()]
         return split
 
     def get_subject_lists(self, subject):
