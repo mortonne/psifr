@@ -1,6 +1,7 @@
 import unittest
 import numpy as np
-from .. import transitions
+import pandas as pd
+from psifr import transitions
 
 
 class TransitionsMaskerTestCase(unittest.TestCase):
@@ -64,3 +65,25 @@ class TransitionsMaskerTestCase(unittest.TestCase):
                     [2, 2, [2, 2, 2]],
                     [2, 2, [2]]]
         assert steps == expected
+
+
+# class TransitionsMeasureTestCase(unittest.TestCase):
+#
+#     def setUp(self) -> None:
+#         self.data = pd.DataFrame(
+#             {'subject': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+#              'list': [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2],
+#              'trial_type': ['study', 'study', 'study',
+#                             'recall', 'recall',
+#                             'study', 'study', 'study',
+#                             'recall', 'recall', 'recall'],
+#              'position': [1, 2, 3, 1, 2, 1, 2, 3, 1, 2, 3],
+#              'item': ['absence', 'hollow', 'pupil',
+#                       'pupil', 'absence',
+#                       'fountain', 'piano', 'pillow',
+#                       'pillow', 'fountain', 'piano']})
+#
+#     def test_lists_input(self):
+#         m = transitions.TransitionMeasure(self.data, 'position', 'position')
+#         pool_lists = m.split_lists(self.data, 'input')
+#         breakpoint()

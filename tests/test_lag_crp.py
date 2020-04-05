@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from .. import transitions
+from psifr import transitions
 
 
 class LagCRPTestCase(unittest.TestCase):

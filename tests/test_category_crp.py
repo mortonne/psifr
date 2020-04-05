@@ -1,5 +1,5 @@
 import unittest
-from .. import transitions
+from psifr import transitions
 
 
 class CategoryCRPTestCase(unittest.TestCase):
