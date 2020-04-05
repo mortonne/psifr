@@ -153,10 +153,10 @@ def merge_lists(study, recall, merge_keys=None, list_keys=None, study_keys=None,
 
     # TODO: deal with repeats in the study list
     # field to indicate unique recall events
-    merged.loc[:, 'recall'] = merged['output'].notna().astype('bool')
+    merged.loc[:, 'recall'] = merged['output'].notna()
 
     # field to indicate whether a given recall was an intrusion
-    merged.loc[:, 'intrusion'] = merged['input'].isna().astype('bool')
+    merged.loc[:, 'intrusion'] = merged['input'].isna()
 
     # reorder columns
     columns = (merge_keys + ['input', 'output'] +
