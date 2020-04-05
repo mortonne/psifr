@@ -1,5 +1,5 @@
 # Psifr
-[![Documentation Status](https://readthedocs.org/projects/psifr/badge/?version=latest)](https://psifr.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/psifr/badge/?version=latest)](https://psifr.readthedocs.io/en/latest/?badge=latest) [![Build Status](https://travis-ci.com/mortonne/psifr.svg?branch=master)](https://travis-ci.com/mortonne/psifr)
 
 Advanced analysis and visualization of free recall data in Python.
 
@@ -22,7 +22,7 @@ See the Jupyter notebooks for demonstrations of reading and analyzing a sample f
 * [Recall performance](https://github.com/mortonne/psifr-notebooks/blob/master/demo_recall.ipynb)
 * [Temporal clustering](https://github.com/mortonne/psifr-notebooks/blob/master/demo_clustering.ipynb)
 
-See the [documentation](https://psifr.readthedocs.io/en/latest/?badge=latest) for more details.
+See the [user guide](https://psifr.readthedocs.io/en/latest/guide/overview.html) for more details.
 
 ## Installation
 
@@ -41,18 +41,9 @@ python setup.py install
 
 ## Importing data
 
-Generally the best way to get your data into shape for analysis in Psifr is to create a CSV file with one row for each event in the experiment, including study events (i.e., item presentations) and all recall attempts (including repeats and intrusions). Your spreadsheet should have the following columns:
-* `subject` - some code that is unique for each subject. May be text or a number.
-* `list` - list number.
-* `item` - item identifier (text or numeric code). Must be unique to a specific item.
-* `position` - for study events, codes position within the list (i.e., serial position), starting from 1 for the first item in the list; for recall events, codes output position (i.e., recall attempt number), starting from 1 for the first recall attempt.
-* `trial_type` - indicates whether each row corresponds to 'study' or 'recall'.
-
-These are just the basic necessary fields. You can also include columns for any other information you need to know about each trial. See `data/cfr_raw_data.csv` for an example.
+Generally the best way to get your data into shape for analysis in Psifr is to create a CSV file with one row for each event in the experiment, including study events (i.e., item presentations) and all recall attempts (including repeats and intrusions). See [importing data](https://psifr.readthedocs.io/en/latest/guide/import.html) for details.
 
 If you have data in the standard [EMBAM](https://github.com/vucml/EMBAM) format, use `scripts/frdata2table.m` to convert your data struct to a table with standard format. Then use the Matlab function `writetable` to write a CSV file which can then be read into Python for analysis.
-
-See the [recall performance](https://github.com/mortonne/psifr-notebooks/blob/master/demo_recall.ipynb) for an example of reading in data from a CSV file for analysis.
 
 ## Related projects
 
