@@ -197,3 +197,57 @@ def count_pairs(n_item, pool_items, recall_items,
             actual[prev, curr] += 1
             possible[prev, poss] += 1
     return actual, possible
+
+
+class TransitionMeasure(object):
+
+    def __init__(self, data, items_key, label_key, test_key=None, test=None):
+
+        self.data = data
+        self.keys = {'items': items_key, 'label': label_key, 'test': test_key}
+        self.items_key = items_key
+        self.label_key = label_key
+        self.test_key = test_key
+        self.test = test
+
+    def split_lists(self, data, phase):
+        """Get relevant fields and split by list."""
+
+        if phase == 'input':
+            phase_data = data.query('repeat == 0 and ~intrusion')
+            phase_data = phase_data.sort_values('list')
+        elif phase == 'output':
+            phase_data = data.query('recalled')
+            phase_data = phase_data.sort_values(['list', 'input'])
+        else:
+            raise ValueError(f'Invalid phase: {phase}')
+
+        indices = phase_data.reset_index().groupby('list').indices
+
+        split = {}
+        for name, val in self.keys.items():
+            if val == 'position':
+                key = phase
+            else:
+                key = val
+
+            if key is None:
+                continue
+            all_values = phase_data[val].to_numpy()
+            split[name] = [all_values[ind] for name, ind in indices.items()]
+        return split
+
+    def get_subject_lists(self, subject):
+        """Get pool and recall information by list for one subject."""
+        # filter for this subject
+        subject = self.data.query(f'subject == {subject}')
+
+        # get pool information by excluding invalid recalls
+        pool = subject.query('repeat == 0 and ~intrusion').sort_values('list')
+        pool_lists = self.split_lists(pool)
+
+        # get recall information in sorted order
+        recall = subject.query('recalled').sort_values(['list', 'output'])
+        recall_lists = self.split_lists(recall)
+
+        return pool_lists, recall_lists
