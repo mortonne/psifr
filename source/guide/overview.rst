@@ -5,3 +5,4 @@ User guide
    :maxdepth: 2
 
    /guide/import
+   /guide/crp
