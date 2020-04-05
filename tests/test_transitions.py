@@ -2,6 +2,7 @@ import unittest
 import numpy as np
 import pandas as pd
 from psifr import transitions
+from psifr import fr
 
 
 class TransitionsMaskerTestCase(unittest.TestCase):
@@ -67,23 +68,40 @@ class TransitionsMaskerTestCase(unittest.TestCase):
         assert steps == expected
 
 
-# class TransitionsMeasureTestCase(unittest.TestCase):
-#
-#     def setUp(self) -> None:
-#         self.data = pd.DataFrame(
-#             {'subject': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-#              'list': [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2],
-#              'trial_type': ['study', 'study', 'study',
-#                             'recall', 'recall',
-#                             'study', 'study', 'study',
-#                             'recall', 'recall', 'recall'],
-#              'position': [1, 2, 3, 1, 2, 1, 2, 3, 1, 2, 3],
-#              'item': ['absence', 'hollow', 'pupil',
-#                       'pupil', 'absence',
-#                       'fountain', 'piano', 'pillow',
-#                       'pillow', 'fountain', 'piano']})
-#
-#     def test_lists_input(self):
-#         m = transitions.TransitionMeasure(self.data, 'position', 'position')
-#         pool_lists = m.split_lists(self.data, 'input')
-#         breakpoint()
+class TransitionsMeasureTestCase(unittest.TestCase):
+
+    def setUp(self) -> None:
+        raw = pd.DataFrame(
+            {'subject': [1, 1, 1, 1, 1, 1,
+                         1, 1, 1, 1, 1, 1],
+             'list': [1, 1, 1, 1, 1, 1,
+                      2, 2, 2, 2, 2, 2],
+             'trial_type': ['study', 'study', 'study',
+                            'recall', 'recall', 'recall',
+                            'study', 'study', 'study',
+                            'recall', 'recall', 'recall'],
+             'position': [1, 2, 3, 1, 2, 3,
+                          1, 2, 3, 1, 2, 3],
+             'item': ['absence', 'hollow', 'pupil',
+                      'pupil', 'absence', 'empty',
+                      'fountain', 'piano', 'pillow',
+                      'pillow', 'fountain', 'pillow']})
+        study = raw.query('trial_type == "study"').copy()
+        recall = raw.query('trial_type == "recall"').copy()
+        self.data = fr.merge_lists(study, recall)
+
+    def test_lists_input(self):
+        m = transitions.TransitionMeasure(self.data, 'input', 'input')
+        pool_lists = m.split_lists(self.data, 'input')
+        pool_expected = {'items': [[1.0, 2.0, 3.0], [1.0, 2.0, 3.0]],
+                         'label': [[1.0, 2.0, 3.0], [1.0, 2.0, 3.0]]}
+        assert pool_lists == pool_expected
+
+        recall_lists = m.split_lists(self.data, 'output')
+        recall_expected = {'items': [[3.0, 1.0, np.nan], [3.0, 1.0, 3.0]],
+                           'label': [[3.0, 1.0, np.nan], [3.0, 1.0, 3.0]]}
+        for key in recall_expected.keys():
+            assert key in recall_lists
+            np.testing.assert_array_equal(recall_lists[key],
+                                          recall_expected[key])
+        assert 'test' not in recall_lists
