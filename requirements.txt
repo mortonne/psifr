@@ -2,3 +2,5 @@ numpy
 pandas
 seaborn
 pytest
+pytest-cov
+codecov
