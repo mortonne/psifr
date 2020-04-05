@@ -2,7 +2,7 @@
 
 import numpy as np
 import pandas as pd
-from . import transitions
+from psifr import transitions
 
 
 def check_data(df):
