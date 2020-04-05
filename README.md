@@ -22,7 +22,7 @@ See the Jupyter notebooks for demonstrations of reading and analyzing a sample f
 * [Recall performance](https://github.com/mortonne/psifr-notebooks/blob/master/demo_recall.ipynb)
 * [Temporal clustering](https://github.com/mortonne/psifr-notebooks/blob/master/demo_clustering.ipynb)
 
-See the [documentation](https://psifr.readthedocs.io/en/latest/?badge=latest) for more details.
+See the [user guide](https://psifr.readthedocs.io/en/latest/guide/overview.html) for more details.
 
 ## Installation
 
