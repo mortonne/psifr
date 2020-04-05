@@ -16,7 +16,8 @@ setuptools.setup(
     author_email='mortonne@gmail.com',
     license='GPLv3',
     url='http://github.com/mortonne/psifr',
-    packages=setuptools.find_packages(),
+    packages=setuptools.find_packages('src'),
+    package_dir={'': 'src'},
     package_data={
         'psifr': ['data/*.csv']
     },
