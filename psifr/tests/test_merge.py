@@ -32,7 +32,8 @@ class MergeTestCase(unittest.TestCase):
         correct = merged.query('item == "pupil"')
         correct = correct.reset_index().loc[0]
         assert correct['input'] == 3
-        assert correct['recalled']
+        assert correct['study']
+        assert correct['recall']
         assert correct['repeat'] == 0
         assert not correct['intrusion']
 
@@ -40,14 +41,16 @@ class MergeTestCase(unittest.TestCase):
         forgot = merged.query('item == "hollow"')
         forgot = forgot.reset_index().loc[0]
         assert forgot['input'] == 2
-        assert not forgot['recalled']
+        assert forgot['study']
+        assert not forgot['recall']
         assert not forgot['intrusion']
 
         # intrusion
         intrusion = merged.query('item == "empty"')
         intrusion = intrusion.reset_index().loc[0]
         assert np.isnan(intrusion['input'])
-        assert intrusion['recalled']
+        assert not intrusion['study']
+        assert intrusion['recall']
         assert intrusion['repeat'] == 0
         assert intrusion['intrusion']
 
@@ -55,7 +58,8 @@ class MergeTestCase(unittest.TestCase):
         repeat = merged.query('item == "pillow" and output == 3')
         repeat = repeat.reset_index().loc[0]
         assert repeat['input'] == 3
-        assert repeat['recalled']
+        assert not repeat['study']
+        assert repeat['recall']
         assert repeat['repeat'] == 1
         assert not repeat['intrusion']
 
