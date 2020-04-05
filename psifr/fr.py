@@ -99,8 +99,11 @@ def merge_lists(study, recall, merge_keys=None, list_keys=None, study_keys=None,
         output : int
             Position of each item in the recall sequence.
 
-        recalled : bool
-            True for rows with an associated recall event.
+        study : bool
+            True for rows corresponding to a unique study event.
+
+        recall : bool
+            True for rows corresponding to a unique recall event.
 
         repeat : int
             Number of times this recall event has been repeated (0 for
@@ -141,19 +144,23 @@ def merge_lists(study, recall, merge_keys=None, list_keys=None, study_keys=None,
     merged = merged.rename(columns={position_key + '_x': 'input',
                                     position_key + '_y': 'output'})
 
-    # field to indicate whether a given item was recalled
-    merged.loc[:, 'recalled'] = merged['output'].notna().astype('bool')
-
-    # field to indicate whether a given recall was an intrusion
-    merged.loc[:, 'intrusion'] = merged['input'].isna().astype('bool')
-
     # fix repeats field to define for non-recalled items
     merged.loc[merged['repeat'].isna(), 'repeat'] = 0
     merged = merged.astype({'repeat': 'int'})
 
+    # field to indicate unique study events
+    merged.loc[:, 'study'] = merged['input'].notna() & (merged['repeat'] == 0)
+
+    # TODO: deal with repeats in the study list
+    # field to indicate unique recall events
+    merged.loc[:, 'recall'] = merged['output'].notna().astype('bool')
+
+    # field to indicate whether a given recall was an intrusion
+    merged.loc[:, 'intrusion'] = merged['input'].isna().astype('bool')
+
     # reorder columns
     columns = (merge_keys + ['input', 'output'] +
-               ['recalled', 'repeat', 'intrusion'] +
+               ['study', 'recall', 'repeat', 'intrusion'] +
                list_keys + study_keys + recall_keys)
     merged = merged.reindex(columns=columns)
 
