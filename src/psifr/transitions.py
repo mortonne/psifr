@@ -202,9 +202,8 @@ def count_pairs(n_item, pool_items, recall_items,
 
 class TransitionMeasure(object):
 
-    def __init__(self, data, items_key, label_key, test_key=None, test=None):
+    def __init__(self, items_key, label_key, test_key=None, test=None):
 
-        self.data = data
         self.keys = {'items': items_key, 'label': label_key, 'test': test_key}
         self.test = test
 
@@ -239,11 +238,11 @@ class TransitionMeasure(object):
     def analyze_subject(self, subject, pool_lists, recall_lists):
         pass
 
-    def analyze(self):
+    def analyze(self, data):
         subj_results = []
-        for subject, data in self.data.groupby('subject'):
-            pool_lists = self.split_lists(data, 'input')
-            recall_lists = self.split_lists(data, 'output')
+        for subject, subject_data in data.groupby('subject'):
+            pool_lists = self.split_lists(subject_data, 'input')
+            recall_lists = self.split_lists(subject_data, 'output')
             results = self.analyze_subject(subject, pool_lists, recall_lists)
             subj_results.append(results)
         stat = pd.concat(subj_results, axis=0)
@@ -252,8 +251,8 @@ class TransitionMeasure(object):
 
 class TransitionLag(TransitionMeasure):
 
-    def __init__(self, data, test_key=None, test=None):
-        super().__init__(data, 'input', 'input', test_key=test_key, test=test)
+    def __init__(self, test_key=None, test=None):
+        super().__init__('input', 'input', test_key=test_key, test=test)
 
     def analyze_subject(self, subject, pool, recall):
 

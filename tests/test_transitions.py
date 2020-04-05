@@ -93,7 +93,7 @@ class TransitionsMeasureTestCase(unittest.TestCase):
         self.data = fr.merge_lists(study, recall, study_keys=['task'])
 
     def test_lists_input(self):
-        m = transitions.TransitionMeasure(self.data, 'input', 'input')
+        m = transitions.TransitionMeasure('input', 'input')
         pool_lists = m.split_lists(self.data, 'input')
         pool_expected = {'items': [[1.0, 2.0, 3.0], [1.0, 2.0, 3.0]],
                          'label': [[1.0, 2.0, 3.0], [1.0, 2.0, 3.0]],
@@ -110,8 +110,8 @@ class TransitionsMeasureTestCase(unittest.TestCase):
                                           recall_expected[key])
 
     def test_lag_crp(self):
-        m = transitions.TransitionLag(self.data)
-        crp = m.analyze()
+        m = transitions.TransitionLag()
+        crp = m.analyze(self.data)
         actual = np.array([1, 0, 0, 1, 0])
         possible = np.array([1, 2, 0, 1, 0])
         prob = np.array([1., 0., np.nan, 1., np.nan])
@@ -121,9 +121,8 @@ class TransitionsMeasureTestCase(unittest.TestCase):
         np.testing.assert_array_equal(crp['prob'], prob)
 
     def test_lag_crp_cat(self):
-        m = transitions.TransitionLag(self.data, test_key='task',
-                                      test=lambda x, y: x == y)
-        crp = m.analyze()
+        m = transitions.TransitionLag(test_key='task', test=lambda x, y: x == y)
+        crp = m.analyze(self.data)
         actual = np.array([1, 0, 0, 0, 0])
         possible = np.array([1, 0, 0, 0, 0])
         prob = np.array([1., np.nan, np.nan, np.nan, np.nan])
