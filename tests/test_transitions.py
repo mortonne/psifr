@@ -83,7 +83,7 @@ class TransitionsMeasureTestCase(unittest.TestCase):
              'position': [1, 2, 3, 1, 2, 3,
                           1, 2, 3, 1, 2, 3],
              'item': ['absence', 'hollow', 'pupil',
-                      'pupil', 'absence', 'empty',
+                      'hollow', 'pupil', 'empty',
                       'fountain', 'piano', 'pillow',
                       'pillow', 'fountain', 'pillow']})
         study = raw.query('trial_type == "study"').copy()
@@ -98,10 +98,21 @@ class TransitionsMeasureTestCase(unittest.TestCase):
         assert pool_lists == pool_expected
 
         recall_lists = m.split_lists(self.data, 'output')
-        recall_expected = {'items': [[3.0, 1.0, np.nan], [3.0, 1.0, 3.0]],
-                           'label': [[3.0, 1.0, np.nan], [3.0, 1.0, 3.0]]}
+        recall_expected = {'items': [[2.0, 3.0, np.nan], [3.0, 1.0, 3.0]],
+                           'label': [[2.0, 3.0, np.nan], [3.0, 1.0, 3.0]]}
         for key in recall_expected.keys():
             assert key in recall_lists
             np.testing.assert_array_equal(recall_lists[key],
                                           recall_expected[key])
         assert 'test' not in recall_lists
+
+    def test_lag_crp(self):
+        m = transitions.TransitionLag(self.data)
+        crp = m.analyze()
+        actual = np.array([1, 0, 0, 1, 0])
+        possible = np.array([1, 2, 0, 1, 0])
+        prob = np.array([1., 0., np.nan, 1., np.nan])
+
+        np.testing.assert_array_equal(crp['actual'], actual)
+        np.testing.assert_array_equal(crp['possible'], possible)
+        np.testing.assert_array_equal(crp['prob'], prob)
