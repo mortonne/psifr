@@ -80,6 +80,6 @@ dependencies:
   - zlib=1.2.11
   - pip:
     - sphinx-bootstrap-theme==0.7.1
-    - psifr
+    - git+https://github.com/mortonne/psifr
 prefix: //anaconda3/envs/psifr
 
