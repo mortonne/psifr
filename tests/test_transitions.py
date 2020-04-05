@@ -119,6 +119,16 @@ class TransitionsMeasureTestCase(unittest.TestCase):
         np.testing.assert_array_equal(crp['possible'], possible)
         np.testing.assert_array_equal(crp['prob'], prob)
 
+    def test_lag_crp_query(self):
+        crp = fr.lag_crp(self.data, item_query='input != 2')
+        actual = np.array([1, 0, 0, 0, 0])
+        possible = np.array([1, 0, 0, 0, 0])
+        prob = np.array([1., np.nan, np.nan, np.nan, np.nan])
+
+        np.testing.assert_array_equal(crp['actual'], actual)
+        np.testing.assert_array_equal(crp['possible'], possible)
+        np.testing.assert_array_equal(crp['prob'], prob)
+
     def test_lag_crp_cat(self):
         crp = fr.lag_crp(self.data, test_key='task', test=lambda x, y: x == y)
         actual = np.array([1, 0, 0, 0, 0])
