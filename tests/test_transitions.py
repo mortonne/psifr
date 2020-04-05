@@ -94,17 +94,18 @@ class TransitionsMeasureTestCase(unittest.TestCase):
         m = transitions.TransitionMeasure(self.data, 'input', 'input')
         pool_lists = m.split_lists(self.data, 'input')
         pool_expected = {'items': [[1.0, 2.0, 3.0], [1.0, 2.0, 3.0]],
-                         'label': [[1.0, 2.0, 3.0], [1.0, 2.0, 3.0]]}
+                         'label': [[1.0, 2.0, 3.0], [1.0, 2.0, 3.0]],
+                         'test': None}
         assert pool_lists == pool_expected
 
         recall_lists = m.split_lists(self.data, 'output')
         recall_expected = {'items': [[2.0, 3.0, np.nan], [3.0, 1.0, 3.0]],
-                           'label': [[2.0, 3.0, np.nan], [3.0, 1.0, 3.0]]}
+                           'label': [[2.0, 3.0, np.nan], [3.0, 1.0, 3.0]],
+                           'test': None}
         for key in recall_expected.keys():
             assert key in recall_lists
             np.testing.assert_array_equal(recall_lists[key],
                                           recall_expected[key])
-        assert 'test' not in recall_lists
 
     def test_lag_crp(self):
         m = transitions.TransitionLag(self.data)

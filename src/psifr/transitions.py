@@ -226,6 +226,7 @@ class TransitionMeasure(object):
                 key = phase
             else:
                 if val is None:
+                    split[name] = None
                     continue
                 key = val
 
@@ -251,13 +252,13 @@ class TransitionMeasure(object):
 
 class TransitionLag(TransitionMeasure):
 
-    def __init__(self, data):
-        super().__init__(data, 'input', 'input')
+    def __init__(self, data, test_key=None, test=None):
+        super().__init__(data, 'input', 'input', test_key=test_key, test=test)
 
     def analyze_subject(self, subject, pool, recall):
 
         actual, possible = count_lags(pool['items'], recall['items'],
-                                      pool['label'], recall['label'])
+                                      pool['test'], recall['test'], self.test)
         crp = pd.DataFrame({'subject': subject, 'lag': actual.index,
                             'prob': actual / possible,
                             'actual': actual, 'possible': possible})
