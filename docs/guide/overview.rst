@@ -6,4 +6,4 @@ User guide
 
    /guide/import
    /guide/score
-   /guide/crp
+   /guide/order
