@@ -105,8 +105,8 @@ def transitions_masker(pool_items, recall_items, pool_output, recall_output,
         yield prev, curr, poss
 
 
-def count_lags(pool_items, recall_items, pool_test=None, recall_test=None,
-               test=None):
+def count_lags(pool_items, recall_items, pool_label=None, recall_label=None,
+               pool_test=None, recall_test=None, test=None):
     """Count actual and possible serial position lags.
 
     Parameters
@@ -118,6 +118,14 @@ def count_lags(pool_items, recall_items, pool_test=None, recall_test=None,
     recall_items : list
         List indicating the serial position of each recall in output
         order (NaN for intrusions).
+
+    pool_label : list, optional
+        List of the positions to use for calculating lag. Default is to
+        use `pool_items`.
+
+    recall_label : list, optional
+        List of position labels in recall order. Default is to use
+        `recall_items`.
 
     pool_test : list, optional
          List of some test value for each item in the pool.
@@ -132,6 +140,12 @@ def count_lags(pool_items, recall_items, pool_test=None, recall_test=None,
         if a given transition should be included.
     """
 
+    if pool_label is None:
+        pool_label = pool_items
+
+    if recall_label is None:
+        recall_label = recall_items
+
     list_actual = []
     list_possible = []
     for i, recall_items_list in enumerate(recall_items):
@@ -139,7 +153,7 @@ def count_lags(pool_items, recall_items, pool_test=None, recall_test=None,
         pool_test_list = None if pool_test is None else pool_test[i]
         recall_test_list = None if recall_test is None else recall_test[i]
         masker = transitions_masker(pool_items[i], recall_items_list,
-                                    pool_items[i], recall_items_list,
+                                    pool_label[i], recall_label[i],
                                     pool_test_list, recall_test_list, test)
 
         for prev, curr, poss in masker:
@@ -264,6 +278,7 @@ class TransitionLag(TransitionMeasure):
     def analyze_subject(self, subject, pool, recall):
 
         actual, possible = count_lags(pool['items'], recall['items'],
+                                      pool['label'], recall['label'],
                                       pool['test'], recall['test'], self.test)
         crp = pd.DataFrame({'subject': subject, 'lag': actual.index,
                             'prob': actual / possible,
