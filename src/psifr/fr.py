@@ -274,8 +274,8 @@ def lag_crp(df, item_query=None, test_key=None, test=None):
             Total of times each lag was possible, given the prior
             input position and the remaining items to be recalled.
     """
-
-    measure = transitions.TransitionLag(item_query=item_query,
+    list_length = df['input'].max()
+    measure = transitions.TransitionLag(list_length, item_query=item_query,
                                         test_key=test_key, test=test)
     crp = measure.analyze(df)
     return crp

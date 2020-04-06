@@ -6,6 +6,7 @@ from psifr import transitions
 class LagCRPTestCase(unittest.TestCase):
 
     def setUp(self) -> None:
+        self.list_length = 8
         self.pool_position = [1, 2, 3, 4, 5, 6, 7, 8]
         self.pool_category = [1, 1, 1, 1, 2, 2, 2, 2]
         self.output_position = [1, 3, 4, 8, 5, 4, 7, 6]
@@ -13,7 +14,7 @@ class LagCRPTestCase(unittest.TestCase):
 
     def test_lag_count(self):
         actual, possible = transitions.count_lags(
-            [self.pool_position], [self.output_position],
+            self.list_length, [self.pool_position], [self.output_position],
         )
 
         np.testing.assert_array_equal(
@@ -26,7 +27,7 @@ class LagCRPTestCase(unittest.TestCase):
 
     def test_lag_count_category(self):
         actual, possible = transitions.count_lags(
-            [self.pool_position], [self.output_position],
+            self.list_length, [self.pool_position], [self.output_position],
             pool_test=[self.pool_category], recall_test=[self.output_category],
             test=lambda x, y: x == y
         )

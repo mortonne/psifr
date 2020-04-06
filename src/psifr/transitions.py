@@ -105,12 +105,16 @@ def transitions_masker(pool_items, recall_items, pool_output, recall_output,
         yield prev, curr, poss
 
 
-def count_lags(pool_items, recall_items, pool_label=None, recall_label=None,
+def count_lags(list_length, pool_items, recall_items,
+               pool_label=None, recall_label=None,
                pool_test=None, recall_test=None, test=None):
     """Count actual and possible serial position lags.
 
     Parameters
     ----------
+    list_length : int
+        Number of items in each list.
+
     pool_items : list
         List of the serial positions available for recall in each list.
         Must match the serial position codes used in `recall_items`.
@@ -162,7 +166,7 @@ def count_lags(pool_items, recall_items, pool_label=None, recall_label=None,
             list_possible.extend(poss - prev)
 
     # count the actual and possible transitions for each lag
-    max_lag = np.max(pool_items) - np.min(pool_items)
+    max_lag = list_length - 1
     lags = np.arange(-max_lag, max_lag + 2)
     actual = pd.Series(np.histogram(list_actual, lags)[0],
                        index=lags[:-1])
@@ -235,7 +239,9 @@ class TransitionMeasure(object):
 
         if phase == 'input' and self.item_query is not None:
             # get the subset of the pool that is of interest
-            phase_data = phase_data.query(self.item_query)
+            mask = phase_data.eval(self.item_query).to_numpy()
+        else:
+            mask = np.ones(data.shape[0], dtype=bool)
 
         indices = phase_data.reset_index().groupby('list').indices
 
@@ -250,7 +256,7 @@ class TransitionMeasure(object):
                 key = val
 
             all_values = phase_data[key].to_numpy()
-            split[name] = [all_values[ind].tolist()
+            split[name] = [all_values[ind][mask[ind]].tolist()
                            for name, ind in indices.items()]
         return split
 
@@ -271,13 +277,15 @@ class TransitionMeasure(object):
 
 class TransitionLag(TransitionMeasure):
 
-    def __init__(self, item_query=None, test_key=None, test=None):
+    def __init__(self, list_length, item_query=None, test_key=None, test=None):
         super().__init__('input', 'input', item_query=item_query,
                          test_key=test_key, test=test)
+        self.list_length = list_length
 
     def analyze_subject(self, subject, pool, recall):
 
-        actual, possible = count_lags(pool['items'], recall['items'],
+        actual, possible = count_lags(self.list_length,
+                                      pool['items'], recall['items'],
                                       pool['label'], recall['label'],
                                       pool['test'], recall['test'], self.test)
         crp = pd.DataFrame({'subject': subject, 'lag': actual.index,
