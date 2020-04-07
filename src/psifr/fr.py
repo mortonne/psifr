@@ -228,6 +228,36 @@ def _prep_column(df, col_spec, default_key, default_mask=None):
     return df, col_key
 
 
+def spc(df):
+    """
+    Serial position curve.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Merged study and recall data. See merge_lists.
+
+    Returns
+    -------
+    recall : pandas.Series
+        Index includes:
+
+        subject : hashable
+            Subject identifier.
+
+        input : int
+            Serial position in the list.
+
+        Values are:
+
+        recall : float
+            Recall probability for each serial position.
+    """
+    clean = df.query('study')
+    recall = clean.groupby(['subject', 'input'])['recall'].mean()
+    return recall
+
+
 def lag_crp(df, item_query=None, test_key=None, test=None):
     """Lag-CRP for multiple subjects.
 
