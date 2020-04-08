@@ -2,6 +2,7 @@
 
 import numpy as np
 import pandas as pd
+import seaborn as sns
 from psifr import transitions
 
 
@@ -255,7 +256,25 @@ def spc(df):
     """
     clean = df.query('study')
     recall = clean.groupby(['subject', 'input'])['recall'].mean()
-    return recall
+    return pd.DataFrame(recall)
+
+
+def plot_spc(recall, **kwargs):
+    """
+    Plot a serial position curve.
+
+    Additional arguments are passed to seaborn.relplot.
+
+    Parameters
+    ----------
+    recall : pandas.DataFrame
+        Results from calling spc.
+    """
+    g = sns.relplot(x='input', y='recall', kind='line', legend='full',
+                    data=recall.reset_index(), **kwargs)
+    g.set_xlabels('Serial position')
+    g.set_ylabels('Recall probability')
+    return g
 
 
 def lag_crp(df, item_query=None, test_key=None, test=None):

@@ -30,7 +30,7 @@ class SPCTestCase(unittest.TestCase):
     def test_spc(self):
         recall = fr.spc(self.data)
         expected = np.array([.5, .5, 1])
-        np.testing.assert_array_equal(recall.to_numpy(), expected)
+        np.testing.assert_array_equal(recall['recall'].to_numpy(), expected)
 
 
 if __name__ == '__main__':
