@@ -30,17 +30,9 @@ probability as a function of lag.
 
     In [17]: crp
 
-The results can be easily plotted using Seaborn:
+Use :py:func:`~psifr.fr.plot_lag_crp` to display the results:
 
 .. ipython::
 
-   In [1]: import seaborn as sns
-
-   In [2]: neg = crp.query('-5 <= lag < 0').reset_index()
-
-   In [3]: pos = crp.query('5 >= lag > 0').reset_index()
-
-   In [2]: sns.lineplot(x='lag', y='prob', color='b', data=neg)
-
    @savefig lag_crp.png
-   In [2]: sns.lineplot(x='lag', y='prob', color='b', data=pos)
+   In [1]: g = fr.plot_lag_crp(crp, height=5)
