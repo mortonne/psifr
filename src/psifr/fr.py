@@ -268,7 +268,7 @@ def plot_spc(recall, **kwargs):
     Parameters
     ----------
     recall : pandas.DataFrame
-        Results from calling spc.
+        Results from calling `spc`.
     """
     g = sns.relplot(x='input', y='recall', kind='line', legend='full',
                     data=recall.reset_index(), **kwargs)
@@ -328,3 +328,31 @@ def lag_crp(df, item_query=None, test_key=None, test=None):
                                         test_key=test_key, test=test)
     crp = measure.analyze(df)
     return crp
+
+
+def plot_lag_crp(recall, max_lag=5, **facet_kws):
+    """
+    Plot conditional response probability by lag.
+
+    Additional arguments are passed to seaborn.FacetGrid.
+
+    Parameters
+    ----------
+    recall : pandas.DataFrame
+        Results from calling `lag_crp`.
+
+    max_lag : int
+        Maximum absolute lag to plot.
+    """
+    filt_neg = f'{-max_lag} < lag < 0'
+    filt_pos = f'0 < lag < {max_lag}'
+    g = sns.FacetGrid(**facet_kws, data=recall.reset_index())
+    g.map_dataframe(
+        lambda data, **kws: sns.lineplot(data=data.query(filt_neg),
+                                         x='lag', y='prob', **kws))
+    g.map_dataframe(
+        lambda data, **kws: sns.lineplot(data=data.query(filt_pos),
+                                         x='lag', y='prob', **kws))
+    g.set_xlabels('Lag')
+    g.set_ylabels('Conditional response probability')
+    return g
