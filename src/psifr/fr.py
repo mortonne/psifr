@@ -344,8 +344,8 @@ def plot_lag_crp(recall, max_lag=5, **facet_kws):
     max_lag : int
         Maximum absolute lag to plot.
     """
-    filt_neg = f'{-max_lag} < lag < 0'
-    filt_pos = f'0 < lag < {max_lag}'
+    filt_neg = f'{-max_lag} <= lag < 0'
+    filt_pos = f'0 < lag <= {max_lag}'
     g = sns.FacetGrid(**facet_kws, data=recall.reset_index())
     g.map_dataframe(
         lambda data, **kws: sns.lineplot(data=data.query(filt_neg),
