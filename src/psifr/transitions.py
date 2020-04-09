@@ -179,7 +179,54 @@ def count_distance(distances, edges, pool_items, recall_items,
                    pool_index, recall_index,
                    pool_test=None, recall_test=None, test=None,
                    count_unique=False):
-    """Count transitions within distance bins."""
+    """
+    Count transitions within distance bins.
+
+    Parameters
+    ----------
+    distances : numpy.array
+        Items x items matrix of pairwise distances or similarities.
+
+    edges : array-like
+        Edges of bins to apply to distances.
+
+    pool_items : list of list
+        Unique item codes for each item in the pool available for recall.
+
+    recall_items : list of list
+        Unique item codes of recalled items.
+
+    pool_index : list of list
+        Index of each item in the distances matrix.
+
+    recall_index : list of list
+        Index of each recalled item.
+
+    pool_test : list of list, optional
+        Test value for each item in the pool.
+
+    recall_test : list of list, optional
+        Test value for each recalled item.
+
+    test : callable
+        Called as test(prev, curr) or test(prev, poss) to screen
+        actual and possible transitions, respectively.
+
+    count_unique : bool, optional
+        If true, only unique values will be counted toward the possible
+        transitions. If multiple items are avilable for recall for a
+        given transition and a given bin, that bin will only be
+        incremented once. If false, all possible transitions will add
+        to the count.
+
+    Returns
+    -------
+    actual : pandas.Series
+        Count of actual transitions made for each bin.
+
+    possible : pandas.Series
+        Count of possible transitions for each bin.
+    """
 
     list_actual = []
     list_possible = []
