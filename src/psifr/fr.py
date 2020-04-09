@@ -357,3 +357,12 @@ def plot_lag_crp(recall, max_lag=5, **facet_kws):
     g.set_xlabels('Lag')
     g.set_ylabels('Conditional response probability')
     return g
+
+
+def distance_crp(df, index_key, distances, edges, count_unique=False,
+                 item_query=None, test_key=None, test=None):
+    measure = transitions.TransitionDistance(
+        index_key, distances, edges, count_unique=count_unique,
+        item_query=item_query, test_key=test_key, test=test)
+    crp = measure.analyze(df)
+    return crp
