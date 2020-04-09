@@ -175,6 +175,32 @@ def count_lags(list_length, pool_items, recall_items,
     return actual, possible
 
 
+def count_distance(distances, edges, pool_items, recall_items,
+                   pool_index, recall_index,
+                   pool_test=None, recall_test=None, test=None,
+                   count_unique=False):
+    """Count transitions within distance bins."""
+
+    list_actual = []
+    list_possible = []
+    for i in range(len(recall_items)):
+        pool_test_list = None if pool_test is None else pool_test[i]
+        recall_test_list = None if recall_test is None else recall_test[i]
+        masker = transitions_masker(pool_items[i], recall_items[i],
+                                    pool_index[i], recall_index[i],
+                                    pool_test_list, recall_test_list, test)
+        for prev, curr, poss in masker:
+            list_actual.append(distances[prev, curr])
+            if count_unique:
+                list_possible.extend(np.unique(distances[prev, poss]).tolist())
+            else:
+                list_possible.extend(distances[prev, poss])
+
+    actual = pd.cut(list_actual, edges).value_counts()
+    possible = pd.cut(list_possible, edges).value_counts()
+    return actual, possible
+
+
 def count_category(pool_items, recall_items, pool_category,
                    recall_category, pool_test=None,
                    recall_test=None, test=None):
