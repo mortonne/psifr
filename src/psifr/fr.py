@@ -323,6 +323,10 @@ def distance_crp(df, index_key, distances, edges, centers=None,
     edges : array-like
         Edges of bins to apply to the distances.
 
+    centers : array-like, optional
+        Centers to label each bin with. If not specified, the center
+        point between edges will be used.
+
     count_unique : bool, optional
         If true, possible transitions to a given distance bin will only
          count once for a given transition.
