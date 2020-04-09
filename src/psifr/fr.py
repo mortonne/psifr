@@ -173,62 +173,6 @@ def merge_lists(study, recall, merge_keys=None, list_keys=None, study_keys=None,
     return merged
 
 
-def get_study_value(df, column, list_cols=None):
-    """Get study column value by list."""
-
-    if list_cols is None:
-        list_cols = ['list']
-
-    pres_df = df.query('repeat == 0 and ~intrusion').sort_values('input')
-    values = [pres[column].to_numpy()
-              for name, pres in pres_df.groupby(list_cols)]
-    return values
-
-
-def get_recall_index(df, list_cols=None):
-    """Get recall input position index by list."""
-
-    if list_cols is None:
-        list_cols = ['list']
-
-    # get just recall trials and sort by output position
-    rec_df = df.query('recalled').sort_values('output')
-
-    # compile recalls for each list
-    recalls = []
-    for name, rec in rec_df.groupby(list_cols):
-        assert (rec['output'].diff()[1:] == 1).all(), (
-            'There are gaps in the recall sequence.')
-
-        # get recalls as a list of recall input indices
-        input_ind = rec['input'] - 1
-        recalls.append(input_ind.to_numpy())
-    return recalls
-
-
-def _prep_column(df, col_spec, default_key, default_mask=None):
-    """Set up a column in a data frame."""
-
-    if isinstance(col_spec, str):
-        col_key = col_spec
-    else:
-        col_key = default_key
-        if isinstance(col_spec, pd.Series):
-            df[col_key] = col_spec
-        elif callable(col_spec):
-            df[col_key] = col_spec(df)
-        elif default_mask is not None:
-            if isinstance(default_mask, str):
-                col_key = default_mask
-            elif callable(default_mask):
-                df[col_key] = default_mask(df)
-            else:
-                raise ValueError('Invalid default mask specification.')
-        else:
-            raise ValueError('Invalid mask specification.')
-    return df, col_key
-
-
 def spc(df):
     """
     Serial position curve.
