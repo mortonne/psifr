@@ -367,3 +367,31 @@ def distance_crp(df, index_key, distances, edges, centers=None,
         item_query=item_query, test_key=test_key, test=test)
     crp = measure.analyze(df)
     return crp
+
+
+def plot_distance_crp(crp, min_samples=None, **facet_kws):
+    """
+    Plot response probability by distance bin.
+
+    Parameters
+    ----------
+    crp : pandas.DataFrame
+        Results from `fr.distance_crp`.
+
+    min_samples : int
+        Minimum number of samples a bin must have per subject to
+        include in the plot.
+
+    **facet_kws
+        Additional inputs to pass to `seaborn.relplot`.
+    """
+    crp = crp.reset_index()
+    if min_samples is not None:
+        min_n = crp.groupby('center')['possible'].min()
+        include = min_n.loc[min_n >= min_samples].index.to_numpy()
+        crp = crp.loc[crp['center'].isin(include)]
+    g = sns.relplot(x='center', y='prob', kind='line', legend='full',
+                    data=crp, **facet_kws)
+    g.set_xlabels('Distance')
+    g.set_ylabels('Conditional response probability')
+    return g
