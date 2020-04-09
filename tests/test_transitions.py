@@ -86,11 +86,21 @@ class TransitionsMeasureTestCase(unittest.TestCase):
                       'hollow', 'pupil', 'empty',
                       'fountain', 'piano', 'pillow',
                       'pillow', 'fountain', 'pillow'],
+             'item_index': [0, 1, 2, 1, 2, np.nan,
+                            3, 4, 5, 5, 3, 5],
              'task': [1, 2, 1, 2, 1, np.nan,
                       1, 2, 1, 1, 1, 1]})
         study = raw.query('trial_type == "study"').copy()
         recall = raw.query('trial_type == "recall"').copy()
-        self.data = fr.merge_lists(study, recall, study_keys=['task'])
+        self.data = fr.merge_lists(study, recall, study_keys=['task'],
+                                   list_keys=['item_index'])
+        self.distances = np.array([[0, 1, 3, 3, 3, 3],
+                                   [1, 0, 3, 3, 3, 3],
+                                   [3, 3, 0, 2, 1, 2],
+                                   [3, 3, 2, 0, 2, 2],
+                                   [3, 3, 1, 2, 0, 2],
+                                   [3, 3, 2, 2, 2, 0]])
+        self.edges = [.5, 1.5, 2.5, 3.5]
 
     def test_lists_input(self):
         m = transitions.TransitionMeasure('input', 'input')
@@ -134,6 +144,28 @@ class TransitionsMeasureTestCase(unittest.TestCase):
         actual = np.array([1, 0, 0, 0, 0])
         possible = np.array([1, 0, 0, 0, 0])
         prob = np.array([1., np.nan, np.nan, np.nan, np.nan])
+
+        np.testing.assert_array_equal(crp['actual'], actual)
+        np.testing.assert_array_equal(crp['possible'], possible)
+        np.testing.assert_array_equal(crp['prob'], prob)
+
+    def test_distance_crp(self):
+        crp = fr.distance_crp(self.data, 'item_index', self.distances,
+                              self.edges, count_unique=False)
+        actual = np.array([0, 1, 1])
+        possible = np.array([1, 2, 1])
+        prob = np.array([0, .5, 1])
+
+        np.testing.assert_array_equal(crp['actual'], actual)
+        np.testing.assert_array_equal(crp['possible'], possible)
+        np.testing.assert_array_equal(crp['prob'], prob)
+
+    def test_distance_crp_unique(self):
+        crp = fr.distance_crp(self.data, 'item_index', self.distances,
+                              self.edges, count_unique=True)
+        actual = np.array([0, 1, 1])
+        possible = np.array([1, 1, 1])
+        prob = np.array([0, 1, 1])
 
         np.testing.assert_array_equal(crp['actual'], actual)
         np.testing.assert_array_equal(crp['possible'], possible)
