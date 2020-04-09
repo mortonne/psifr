@@ -278,7 +278,8 @@ def plot_spc(recall, **kwargs):
 
 
 def lag_crp(df, item_query=None, test_key=None, test=None):
-    """Lag-CRP for multiple subjects.
+    """
+    Lag-CRP for multiple subjects.
 
     Parameters
     ----------
