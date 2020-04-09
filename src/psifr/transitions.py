@@ -237,6 +237,10 @@ def count_distance(distances, edges, pool_items, recall_items,
                                     pool_index[i], recall_index[i],
                                     pool_test_list, recall_test_list, test)
         for prev, curr, poss in masker:
+            prev = int(prev)
+            curr = int(curr)
+            poss = poss.astype(int)
+
             list_actual.append(distances[prev, curr])
             if count_unique:
                 list_possible.extend(np.unique(distances[prev, poss]).tolist())
