@@ -20,7 +20,7 @@ Psifr leverages the Pandas data analysis package to make precise and flexible an
 
 See the Jupyter notebooks for demonstrations of reading and analyzing a sample free recall dataset:
 * [Recall performance](https://github.com/mortonne/psifr-notebooks/blob/master/demo_recall.ipynb)
-* [Temporal clustering](https://github.com/mortonne/psifr-notebooks/blob/master/demo_clustering.ipynb)
+* [Temporal clustering](https://github.com/mortonne/psifr-notebooks/blob/master/demo_lag_crp.ipynb)
 
 See the [user guide](https://psifr.readthedocs.io/en/latest/guide/overview.html) for more details.
 
