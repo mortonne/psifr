@@ -303,8 +303,8 @@ def plot_lag_crp(recall, max_lag=5, **facet_kws):
     return g
 
 
-def distance_crp(df, index_key, distances, edges, count_unique=False,
-                 item_query=None, test_key=None, test=None):
+def distance_crp(df, index_key, distances, edges, centers=None,
+                 count_unique=False, item_query=None, test_key=None, test=None):
     """
     Conditional response probability by distance bin.
 
@@ -363,7 +363,7 @@ def distance_crp(df, index_key, distances, edges, count_unique=False,
             recalled.
     """
     measure = transitions.TransitionDistance(
-        index_key, distances, edges, count_unique=count_unique,
+        index_key, distances, edges, centers=centers, count_unique=count_unique,
         item_query=item_query, test_key=test_key, test=test)
     crp = measure.analyze(df)
     return crp

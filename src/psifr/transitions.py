@@ -375,11 +375,15 @@ class TransitionLag(TransitionMeasure):
 class TransitionDistance(TransitionMeasure):
 
     def __init__(self, index_key, distances, edges, count_unique=False,
-                 item_query=None, test_key=None, test=None):
+                 centers=None, item_query=None, test_key=None, test=None):
         super().__init__('input', index_key, item_query=item_query,
                          test_key=test_key, test=test)
         self.distances = distances
         self.edges = edges
+        if centers is None:
+            # if no explicit centers, use halfway between edges
+            centers = edges[:-1] + (np.diff(edges) / 2)
+        self.centers = centers
         self.count_unique = count_unique
 
     def analyze_subject(self, subject, pool, recall):
@@ -388,8 +392,9 @@ class TransitionDistance(TransitionMeasure):
             self.distances, self.edges, pool['items'], recall['items'],
             pool['label'], recall['label'], pool['test'], recall['test'],
             self.test, count_unique=self.count_unique)
-        crp = pd.DataFrame({'subject': subject, 'bin': actual.index,
+        crp = pd.DataFrame({'subject': subject, 'center': self.centers,
+                            'bin': actual.index,
                             'prob': actual / possible,
                             'actual': actual, 'possible': possible})
-        crp = crp.set_index(['subject', 'bin'])
+        crp = crp.set_index(['subject', 'center'])
         return crp
