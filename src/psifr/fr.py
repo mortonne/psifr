@@ -305,6 +305,63 @@ def plot_lag_crp(recall, max_lag=5, **facet_kws):
 
 def distance_crp(df, index_key, distances, edges, count_unique=False,
                  item_query=None, test_key=None, test=None):
+    """
+    Conditional response probability by distance bin.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Merged free recall data.
+
+    index_key : str
+        Name of column containing the index of each item in the
+        `distances` matrix.
+
+    distances : numpy.array
+        Items x items matrix of pairwise distances or similarities.
+
+    edges : array-like
+        Edges of bins to apply to the distances.
+
+    count_unique : bool, optional
+        If true, possible transitions to a given distance bin will only
+         count once for a given transition.
+
+    item_query : str, optional
+        Query string to select items to include in the pool of possible
+        recalls to be examined. See `pandas.DataFrame.query` for
+        allowed format.
+
+    test_key : str, optional
+        Name of column with labels to use when testing transitions for
+        inclusion.
+
+    test : callable, optional
+        Callable that takes in previous and current item values and
+        returns True for transitions that should be included.
+
+    Returns
+    -------
+    crp : pandas.DataFrame
+        Has fields:
+
+        subject : hashable
+            Results are separated by each subject.
+
+        bin : int
+            Distance bin.
+
+        prob : float
+            Probability of each distance bin.
+
+        actual : int
+            Total of actual transitions for each distance bin.
+
+        possible : int
+            Total of times each distance bin was possible, given the
+            prior input position and the remaining items to be
+            recalled.
+    """
     measure = transitions.TransitionDistance(
         index_key, distances, edges, count_unique=count_unique,
         item_query=item_query, test_key=test_key, test=test)
