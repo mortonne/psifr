@@ -218,6 +218,7 @@ def plot_spc(recall, **kwargs):
                     data=recall.reset_index(), **kwargs)
     g.set_xlabels('Serial position')
     g.set_ylabels('Recall probability')
+    g.set(ylim=(0, 1))
     return g
 
 
@@ -299,7 +300,8 @@ def plot_lag_crp(recall, max_lag=5, **facet_kws):
         lambda data, **kws: sns.lineplot(data=data.query(filt_pos),
                                          x='lag', y='prob', **kws))
     g.set_xlabels('Lag')
-    g.set_ylabels('Conditional response probability')
+    g.set_ylabels('CRP')
+    g.set(ylim=(0, 1))
     return g
 
 
@@ -397,5 +399,6 @@ def plot_distance_crp(crp, min_samples=None, **facet_kws):
     g = sns.relplot(x='center', y='prob', kind='line', legend='full',
                     data=crp, **facet_kws)
     g.set_xlabels('Distance')
-    g.set_ylabels('Conditional response probability')
+    g.set_ylabels('CRP')
+    g.set(ylim=(0, 1))
     return g
