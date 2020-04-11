@@ -414,4 +414,5 @@ class TransitionCategory(TransitionMeasure):
         crp = pd.DataFrame({'subject': subject, 'prob': actual / possible,
                            'actual': actual, 'possible': possible},
                            index=[subject])
+        crp = crp.set_index('subject')
         return crp
