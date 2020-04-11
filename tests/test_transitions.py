@@ -170,3 +170,12 @@ class TransitionsMeasureTestCase(unittest.TestCase):
         np.testing.assert_array_equal(crp['actual'], actual)
         np.testing.assert_array_equal(crp['possible'], possible)
         np.testing.assert_array_equal(crp['prob'], prob)
+
+    def test_category_crp(self):
+        # TODO: replace with more diagnostic test
+        measure = transitions.TransitionCategory('task')
+        crp = measure.analyze(self.data)
+
+        assert crp['prob'].iloc[0] == 1
+        assert crp['actual'].iloc[0] == 1
+        assert crp['possible'].iloc[0] == 1
