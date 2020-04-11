@@ -398,3 +398,20 @@ class TransitionDistance(TransitionMeasure):
                             'actual': actual, 'possible': possible})
         crp = crp.set_index(['subject', 'center'])
         return crp
+
+
+class TransitionCategory(TransitionMeasure):
+
+    def __init__(self, category_key, item_query=None, test_key=None, test=None):
+        super().__init__('input', category_key, item_query=item_query,
+                         test_key=test_key, test=test)
+
+    def analyze_subject(self, subject, pool, recall):
+        actual, possible = count_category(
+            pool['items'], recall['items'],
+            pool['label'], recall['label'], pool['test'],
+            recall['test'], self.test)
+        crp = pd.DataFrame({'subject': subject, 'prob': actual / possible,
+                           'actual': actual, 'possible': possible},
+                           index=[subject])
+        return crp
