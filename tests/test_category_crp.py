@@ -14,7 +14,7 @@ class CategoryCRPTestCase(unittest.TestCase):
         # six transitions, but only five have a valid within-category
         # transition that is possible
         actual, possible = transitions.count_category(
-            self.pool_position, [self.output_position],
+            [self.pool_position], [self.output_position],
             [self.pool_category], [self.output_category]
         )
         assert actual == 4

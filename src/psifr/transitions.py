@@ -263,7 +263,7 @@ def count_category(pool_items, recall_items, pool_category,
         # set up masker to filter transitions
         pool_test_list = None if pool_test is None else pool_test[i]
         recall_test_list = None if recall_test is None else recall_test[i]
-        masker = transitions_masker(pool_items, recall_items[i],
+        masker = transitions_masker(pool_items[i], recall_items[i],
                                     pool_category[i], recall_category[i],
                                     pool_test_list, recall_test_list, test)
 
