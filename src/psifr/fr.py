@@ -453,3 +453,14 @@ def category_crp(df, category_key, item_query=None, test_key=None, test=None):
         category_key, item_query=item_query, test_key=test_key, test=test)
     crp = measure.analyze(df)
     return crp
+
+
+def plot_swarm_error(data, x=None, y=None, swarm_color=None, point_color='k',
+                     **facet_kws):
+    """Plot points as a swarm plus mean with error bars."""
+
+    g = sns.FacetGrid(data=data.reset_index(), **facet_kws)
+    g.map_dataframe(sns.swarmplot, x=x, y=y, color=swarm_color,
+                    zorder=1)
+    g.map_dataframe(sns.pointplot, x=x, y=y, color=point_color,
+                    join=False, capsize=.5, linewidth=1)
