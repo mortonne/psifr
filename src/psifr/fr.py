@@ -402,3 +402,54 @@ def plot_distance_crp(crp, min_samples=None, **facet_kws):
     g.set_ylabels('CRP')
     g.set(ylim=(0, 1))
     return g
+
+
+def category_crp(df, category_key, item_query=None, test_key=None, test=None):
+    """
+    Conditional response probability of within-category transitions.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Merged study and recall data. See merge_lists. List length is
+        assumed to be the same for all lists within each subject.
+        Must have fields: subject, list, input, output, recalled.
+
+    category_key : str
+        Name of column with category labels.
+
+    item_query : str, optional
+        Query string to select items to include in the pool of possible
+        recalls to be examined. See `pandas.DataFrame.query` for
+        allowed format.
+
+    test_key : str, optional
+        Name of column with labels to use when testing transitions for
+        inclusion.
+
+    test : callable, optional
+        Callable that takes in previous and current item values and
+        returns True for transitions that should be included.
+
+    Returns
+    -------
+    results : pandas.DataFrame
+        Has fields:
+
+        subject : hashable
+            Results are separated by each subject.
+
+        prob : float
+            Probability of each lag transition.
+
+        actual : int
+            Total of actual made transitions at each lag.
+
+        possible : int
+            Total of times each lag was possible, given the prior
+            input position and the remaining items to be recalled.
+    """
+    measure = transitions.TransitionCategory(
+        category_key, item_query=item_query, test_key=test_key, test=test)
+    crp = measure.analyze(df)
+    return crp

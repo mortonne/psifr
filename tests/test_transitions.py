@@ -173,8 +173,7 @@ class TransitionsMeasureTestCase(unittest.TestCase):
 
     def test_category_crp(self):
         # TODO: replace with more diagnostic test
-        measure = transitions.TransitionCategory('task')
-        crp = measure.analyze(self.data)
+        crp = fr.category_crp(self.data, 'task')
 
         assert crp['prob'].iloc[0] == 1
         assert crp['actual'].iloc[0] == 1
