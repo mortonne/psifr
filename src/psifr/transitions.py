@@ -366,10 +366,11 @@ class TransitionLag(TransitionMeasure):
                                       pool['items'], recall['items'],
                                       pool['label'], recall['label'],
                                       pool['test'], recall['test'], self.test)
-        crp = pd.DataFrame({'subject': subject, 'lag': actual.index,
-                            'prob': actual / possible,
-                            'actual': actual, 'possible': possible})
-        crp = crp.set_index(['subject', 'lag'])
+        index = pd.MultiIndex.from_product([[subject], actual.index],
+                                           names=['subject', 'lag'])
+        crp = pd.DataFrame({'prob': actual / possible,
+                            'actual': actual, 'possible': possible},
+                           index=index)
         return crp
 
 
