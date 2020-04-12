@@ -464,3 +464,4 @@ def plot_swarm_error(data, x=None, y=None, swarm_color=None, point_color='k',
                     zorder=1)
     g.map_dataframe(sns.pointplot, x=x, y=y, color=point_color,
                     join=False, capsize=.5, linewidth=1)
+    return g
