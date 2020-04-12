@@ -139,3 +139,6 @@ docs/savefig
 
 # benchmarks
 .profile
+
+# macOS
+.DS_Store
