@@ -133,3 +133,6 @@ docs/savefig
 
 # Pycharm
 .idea/
+
+# asv
+.asv/
