@@ -308,9 +308,10 @@ class TransitionMeasure(object):
         """Get relevant fields and split by list."""
 
         if phase == 'input':
-            phase_data = data.query('study').sort_values('list')
+            phase_data = data.loc[data['study']]
         elif phase == 'output':
-            phase_data = data.query('recall').sort_values(['list', 'output'])
+            phase_data = data.loc[data['recall']].sort_values(
+                ['list', 'output'])
         else:
             raise ValueError(f'Invalid phase: {phase}')
 
