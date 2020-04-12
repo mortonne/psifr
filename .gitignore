@@ -136,3 +136,6 @@ docs/savefig
 
 # asv
 .asv/
+
+# benchmarks
+.profile
