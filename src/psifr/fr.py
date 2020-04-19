@@ -53,6 +53,39 @@ def block_index(list_labels):
     return block
 
 
+def split_lists(frame, phase, keys, names=None, item_query=None):
+    """Convert free recall data from one phase to split format."""
+    split = {}
+    if keys is None:
+        return split
+    if names is None:
+        names = keys
+
+    if phase == 'study':
+        phase_data = frame.loc[frame['study']]
+    elif phase == 'recall':
+        phase_data = frame.loc[frame['recall']].sort_values(
+            ['list', 'output'])
+    else:
+        raise ValueError(f'Invalid phase: {phase}')
+
+    if phase == 'study' and item_query is not None:
+        # get the subset of the pool that is of interest
+        mask = phase_data.eval(item_query).to_numpy()
+    else:
+        mask = np.ones(phase_data.shape[0], dtype=bool)
+
+    frame_idx = phase_data.reset_index().groupby('list').indices
+    for key, name in zip(keys, names):
+        if key is None or key not in frame.columns:
+            split[name] = None
+            continue
+        all_values = phase_data[key].to_numpy()
+        split[name] = [all_values[idx][mask[idx]].tolist()
+                       for idx in frame_idx.values()]
+    return split
+
+
 def merge_lists(study, recall, merge_keys=None, list_keys=None, study_keys=None,
                 recall_keys=None, position_key='position'):
     """Merge study and recall events together for each list.
