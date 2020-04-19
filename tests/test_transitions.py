@@ -104,13 +104,13 @@ class TransitionsMeasureTestCase(unittest.TestCase):
 
     def test_lists_input(self):
         m = transitions.TransitionMeasure('input', 'input')
-        pool_lists = m.split_lists(self.data, 'input')
+        pool_lists = m.split_lists(self.data, 'study')
         pool_expected = {'items': [[1.0, 2.0, 3.0], [1.0, 2.0, 3.0]],
                          'label': [[1.0, 2.0, 3.0], [1.0, 2.0, 3.0]],
                          'test': None}
         assert pool_lists == pool_expected
 
-        recall_lists = m.split_lists(self.data, 'output')
+        recall_lists = m.split_lists(self.data, 'recall')
         recall_expected = {'items': [[2.0, 3.0, np.nan], [3.0, 1.0, 3.0]],
                            'label': [[2.0, 3.0, np.nan], [3.0, 1.0, 3.0]],
                            'test': None}

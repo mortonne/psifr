@@ -3,6 +3,7 @@
 import abc
 import numpy as np
 import pandas as pd
+from psifr import fr
 
 
 def transitions_masker(pool_items, recall_items, pool_output, recall_output,
@@ -306,36 +307,9 @@ class TransitionMeasure(object):
 
     def split_lists(self, data, phase):
         """Get relevant fields and split by list."""
-
-        if phase == 'input':
-            phase_data = data.loc[data['study']]
-        elif phase == 'output':
-            phase_data = data.loc[data['recall']].sort_values(
-                ['list', 'output'])
-        else:
-            raise ValueError(f'Invalid phase: {phase}')
-
-        if phase == 'input' and self.item_query is not None:
-            # get the subset of the pool that is of interest
-            mask = phase_data.eval(self.item_query).to_numpy()
-        else:
-            mask = np.ones(data.shape[0], dtype=bool)
-
-        indices = phase_data.reset_index().groupby('list').indices
-
-        split = {}
-        for name, val in self.keys.items():
-            if val == 'position':
-                key = phase
-            else:
-                if val is None:
-                    split[name] = None
-                    continue
-                key = val
-
-            all_values = phase_data[key].to_numpy()
-            split[name] = [all_values[ind][mask[ind]].tolist()
-                           for name, ind in indices.items()]
+        names = list(self.keys.keys())
+        keys = list(self.keys.values())
+        split = fr.split_lists(data, phase, keys, names, self.item_query)
         return split
 
     @abc.abstractmethod
@@ -345,8 +319,8 @@ class TransitionMeasure(object):
     def analyze(self, data):
         subj_results = []
         for subject, subject_data in data.groupby('subject'):
-            pool_lists = self.split_lists(subject_data, 'input')
-            recall_lists = self.split_lists(subject_data, 'output')
+            pool_lists = self.split_lists(subject_data, 'study')
+            recall_lists = self.split_lists(subject_data, 'recall')
             results = self.analyze_subject(subject, pool_lists, recall_lists)
             subj_results.append(results)
         stat = pd.concat(subj_results, axis=0)
