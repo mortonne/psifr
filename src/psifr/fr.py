@@ -53,7 +53,7 @@ def block_index(list_labels):
     return block
 
 
-def split_lists(frame, phase, keys, names=None, item_query=None):
+def split_lists(frame, phase, keys, names=None, item_query=None, as_list=False):
     """Convert free recall data from one phase to split format."""
     split = {}
     if keys is None:
@@ -81,8 +81,12 @@ def split_lists(frame, phase, keys, names=None, item_query=None):
             split[name] = None
             continue
         all_values = phase_data[key].to_numpy()
-        split[name] = [all_values[idx][mask[idx]].tolist()
-                       for idx in frame_idx.values()]
+        if as_list:
+            split[name] = [all_values[idx][mask[idx]].tolist()
+                           for idx in frame_idx.values()]
+        else:
+            split[name] = [all_values[idx][mask[idx]]
+                           for idx in frame_idx.values()]
     return split
 
 

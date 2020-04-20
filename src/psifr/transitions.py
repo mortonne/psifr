@@ -309,7 +309,8 @@ class TransitionMeasure(object):
         """Get relevant fields and split by list."""
         names = list(self.keys.keys())
         keys = list(self.keys.values())
-        split = fr.split_lists(data, phase, keys, names, self.item_query)
+        split = fr.split_lists(data, phase, keys, names, self.item_query,
+                               as_list=True)
         return split
 
     @abc.abstractmethod
