@@ -92,6 +92,19 @@ def split_lists(frame, phase, keys, names=None, item_query=None, as_list=False):
     return split
 
 
+def merge_free_recall(data, **kwargs):
+    """
+    Merge standard free recall events.
+
+    Split study and recall events and then merge them.
+    See `merge_lists` for details.
+    """
+    study = data.loc[data['trial_type'] == 'study'].copy()
+    recall = data.loc[data['trial_type'] == 'recall'].copy()
+    merged = merge_lists(study, recall, **kwargs)
+    return merged
+
+
 def merge_lists(study, recall, merge_keys=None, list_keys=None, study_keys=None,
                 recall_keys=None, position_key='position'):
     """
