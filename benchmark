@@ -15,7 +15,7 @@ def main(benchmark):
     m.setup()
     sub_test = getattr(m, method_name)
     cProfile.runctx('sub_test()', globals(), locals(), filename='.profile')
-    subprocess.run(['snakeviz', '.profile'])
+    subprocess.Popen(['snakeviz', '.profile'])
 
 
 if __name__ == '__main__':
