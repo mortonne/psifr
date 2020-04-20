@@ -66,6 +66,8 @@ def split_lists(frame, phase, keys, names=None, item_query=None, as_list=False):
     elif phase == 'recall':
         phase_data = frame.loc[frame['recall']].sort_values(
             ['list', 'output'])
+    elif phase == 'raw':
+        phase_data = frame
     else:
         raise ValueError(f'Invalid phase: {phase}')
 
