@@ -94,7 +94,8 @@ def split_lists(frame, phase, keys, names=None, item_query=None, as_list=False):
 
 def merge_lists(study, recall, merge_keys=None, list_keys=None, study_keys=None,
                 recall_keys=None, position_key='position'):
-    """Merge study and recall events together for each list.
+    """
+    Merge study and recall events together for each list.
 
     Parameters
     ----------
