@@ -53,6 +53,17 @@ def block_index(list_labels):
     return block
 
 
+def reset_list(df):
+    """Reset list index in a DataFrame."""
+    df = df.copy()
+    for subject in df['subject'].unique():
+        subject_lists = df.loc[df['subject'] == subject, 'list'].unique()
+        for i, listno in enumerate(subject_lists):
+            df.loc[(df['subject'] == subject) &
+                   (df['list'] == listno), 'list'] = i + 1
+    return df
+
+
 def split_lists(frame, phase, keys, names=None, item_query=None, as_list=False):
     """Convert free recall data from one phase to split format."""
     split = {}
