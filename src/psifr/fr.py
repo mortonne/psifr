@@ -518,3 +518,50 @@ def plot_swarm_error(data, x=None, y=None, swarm_color=None, point_color='k',
     g.map_dataframe(sns.pointplot, x=x, y=y, color=point_color,
                     join=False, capsize=.5, linewidth=1)
     return g
+
+
+def plot_raster(df, hue='input', palette=None, marker='s', intrusion_color=None,
+                orientation='horizontal', length=6, aspect=None, **facet_kws):
+    """Plot recalls in a raster plot."""
+
+    n_item = int(df['input'].max())
+    n_list = int(df['list'].max())
+    if palette is None and hue == 'input':
+        palette = sns.color_palette('viridis', n_item)
+
+    if intrusion_color is None:
+        intrusion_color = (.8, .1, .3)
+
+    list_lim = (0, n_list + 1)
+    item_lim = (0, n_item + 1)
+    if orientation == 'horizontal':
+        x_var, y_var = 'list', 'output'
+        x_lim, y_lim = list_lim, item_lim
+        x_label, y_label = 'List', 'Output position'
+        def_aspect = n_list / n_item
+    else:
+        x_var, y_var = 'output', 'list'
+        x_lim, y_lim = item_lim, list_lim[::-1]
+        x_label, y_label = 'Output position', 'List'
+        def_aspect = n_item / n_list
+
+    if aspect is None:
+        aspect = def_aspect
+
+    if orientation == 'horizontal':
+        height = length / aspect
+    else:
+        height = length
+
+    g = sns.FacetGrid(data=df.reset_index(), dropna=False, aspect=aspect,
+                      height=height, **facet_kws)
+    g.map_dataframe(sns.scatterplot, x=x_var, y=y_var, marker=marker,
+                    hue=hue, palette=palette)
+    g.map_dataframe(
+        lambda data, color=None, label=None: sns.scatterplot(
+            data=data.query('intrusion'), x=x_var, y=y_var,
+            color=intrusion_color, marker=marker))
+    g.set_xlabels(x_label)
+    g.set_ylabels(y_label)
+    g.set(xlim=x_lim, ylim=y_lim)
+    return g
