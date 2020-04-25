@@ -256,25 +256,6 @@ def spc(df):
     return pd.DataFrame(recall)
 
 
-def plot_spc(recall, **kwargs):
-    """
-    Plot a serial position curve.
-
-    Additional arguments are passed to seaborn.relplot.
-
-    Parameters
-    ----------
-    recall : pandas.DataFrame
-        Results from calling `spc`.
-    """
-    g = sns.FacetGrid(**kwargs, data=recall.reset_index())
-    g.map_dataframe(sns.lineplot, x='input', y='recall')
-    g.set_xlabels('Serial position')
-    g.set_ylabels('Recall probability')
-    g.set(ylim=(0, 1))
-    return g
-
-
 def lag_crp(df, item_query=None, test_key=None, test=None):
     """
     Lag-CRP for multiple subjects.
@@ -327,35 +308,6 @@ def lag_crp(df, item_query=None, test_key=None, test=None):
                                         test_key=test_key, test=test)
     crp = measure.analyze(df)
     return crp
-
-
-def plot_lag_crp(recall, max_lag=5, **facet_kws):
-    """
-    Plot conditional response probability by lag.
-
-    Additional arguments are passed to seaborn.FacetGrid.
-
-    Parameters
-    ----------
-    recall : pandas.DataFrame
-        Results from calling `lag_crp`.
-
-    max_lag : int
-        Maximum absolute lag to plot.
-    """
-    filt_neg = f'{-max_lag} <= lag < 0'
-    filt_pos = f'0 < lag <= {max_lag}'
-    g = sns.FacetGrid(**facet_kws, data=recall.reset_index())
-    g.map_dataframe(
-        lambda data, **kws: sns.lineplot(data=data.query(filt_neg),
-                                         x='lag', y='prob', **kws))
-    g.map_dataframe(
-        lambda data, **kws: sns.lineplot(data=data.query(filt_pos),
-                                         x='lag', y='prob', **kws))
-    g.set_xlabels('Lag')
-    g.set_ylabels('CRP')
-    g.set(ylim=(0, 1))
-    return g
 
 
 def distance_crp(df, index_key, distances, edges, centers=None,
@@ -428,35 +380,6 @@ def distance_crp(df, index_key, distances, edges, centers=None,
     return crp
 
 
-def plot_distance_crp(crp, min_samples=None, **facet_kws):
-    """
-    Plot response probability by distance bin.
-
-    Parameters
-    ----------
-    crp : pandas.DataFrame
-        Results from `fr.distance_crp`.
-
-    min_samples : int
-        Minimum number of samples a bin must have per subject to
-        include in the plot.
-
-    **facet_kws
-        Additional inputs to pass to `seaborn.relplot`.
-    """
-    crp = crp.reset_index()
-    if min_samples is not None:
-        min_n = crp.groupby('center')['possible'].min()
-        include = min_n.loc[min_n >= min_samples].index.to_numpy()
-        crp = crp.loc[crp['center'].isin(include)]
-    g = sns.relplot(x='center', y='prob', kind='line', legend='full',
-                    data=crp, **facet_kws)
-    g.set_xlabels('Distance')
-    g.set_ylabels('CRP')
-    g.set(ylim=(0, 1))
-    return g
-
-
 def category_crp(df, category_key, item_query=None, test_key=None, test=None):
     """
     Conditional response probability of within-category transitions.
@@ -506,6 +429,83 @@ def category_crp(df, category_key, item_query=None, test_key=None, test=None):
         category_key, item_query=item_query, test_key=test_key, test=test)
     crp = measure.analyze(df)
     return crp
+
+
+def plot_spc(recall, **kwargs):
+    """
+    Plot a serial position curve.
+
+    Additional arguments are passed to seaborn.relplot.
+
+    Parameters
+    ----------
+    recall : pandas.DataFrame
+        Results from calling `spc`.
+    """
+    g = sns.FacetGrid(**kwargs, data=recall.reset_index())
+    g.map_dataframe(sns.lineplot, x='input', y='recall')
+    g.set_xlabels('Serial position')
+    g.set_ylabels('Recall probability')
+    g.set(ylim=(0, 1))
+    return g
+
+
+def plot_lag_crp(recall, max_lag=5, **facet_kws):
+    """
+    Plot conditional response probability by lag.
+
+    Additional arguments are passed to seaborn.FacetGrid.
+
+    Parameters
+    ----------
+    recall : pandas.DataFrame
+        Results from calling `lag_crp`.
+
+    max_lag : int
+        Maximum absolute lag to plot.
+    """
+    filt_neg = f'{-max_lag} <= lag < 0'
+    filt_pos = f'0 < lag <= {max_lag}'
+    g = sns.FacetGrid(**facet_kws, data=recall.reset_index())
+    g.map_dataframe(
+        lambda data, **kws: sns.lineplot(data=data.query(filt_neg),
+                                         x='lag', y='prob', **kws))
+    g.map_dataframe(
+        lambda data, **kws: sns.lineplot(data=data.query(filt_pos),
+                                         x='lag', y='prob', **kws))
+    g.set_xlabels('Lag')
+    g.set_ylabels('CRP')
+    g.set(ylim=(0, 1))
+    return g
+
+
+def plot_distance_crp(crp, min_samples=None, **facet_kws):
+    """
+    Plot response probability by distance bin.
+
+    Parameters
+    ----------
+    crp : pandas.DataFrame
+        Results from `fr.distance_crp`.
+
+    min_samples : int
+        Minimum number of samples a bin must have per subject to
+        include in the plot.
+
+    **facet_kws
+        Additional inputs to pass to `seaborn.relplot`.
+    """
+    crp = crp.reset_index()
+    if min_samples is not None:
+        min_n = crp.groupby('center')['possible'].min()
+        include = min_n.loc[min_n >= min_samples].index.to_numpy()
+        crp = crp.loc[crp['center'].isin(include)]
+    g = sns.relplot(x='center', y='prob', kind='line', legend='full',
+                    data=crp, **facet_kws)
+    g.set_xlabels('Distance')
+    g.set_ylabels('CRP')
+    g.set(ylim=(0, 1))
+    return g
 
 
 def plot_swarm_error(data, x=None, y=None, swarm_color=None, point_color='k',
