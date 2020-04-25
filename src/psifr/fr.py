@@ -267,8 +267,8 @@ def plot_spc(recall, **kwargs):
     recall : pandas.DataFrame
         Results from calling `spc`.
     """
-    g = sns.relplot(x='input', y='recall', kind='line', legend='full',
-                    data=recall.reset_index(), **kwargs)
+    g = sns.FacetGrid(**kwargs, data=recall.reset_index())
+    g.map_dataframe(sns.lineplot, x='input', y='recall')
     g.set_xlabels('Serial position')
     g.set_ylabels('Recall probability')
     g.set(ylim=(0, 1))
