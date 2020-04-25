@@ -442,7 +442,7 @@ def plot_spc(recall, **kwargs):
     recall : pandas.DataFrame
         Results from calling `spc`.
     """
-    g = sns.FacetGrid(**kwargs, data=recall.reset_index())
+    g = sns.FacetGrid(dropna=False, **kwargs, data=recall.reset_index())
     g.map_dataframe(sns.lineplot, x='input', y='recall')
     g.set_xlabels('Serial position')
     g.set_ylabels('Recall probability')
@@ -466,7 +466,7 @@ def plot_lag_crp(recall, max_lag=5, **facet_kws):
     """
     filt_neg = f'{-max_lag} <= lag < 0'
     filt_pos = f'0 < lag <= {max_lag}'
-    g = sns.FacetGrid(**facet_kws, data=recall.reset_index())
+    g = sns.FacetGrid(dropna=False, **facet_kws, data=recall.reset_index())
     g.map_dataframe(
         lambda data, **kws: sns.lineplot(data=data.query(filt_neg),
                                          x='lag', y='prob', **kws))
@@ -512,7 +512,7 @@ def plot_swarm_error(data, x=None, y=None, swarm_color=None, point_color='k',
                      **facet_kws):
     """Plot points as a swarm plus mean with error bars."""
 
-    g = sns.FacetGrid(data=data.reset_index(), **facet_kws)
+    g = sns.FacetGrid(data=data.reset_index(), dropna=False, **facet_kws)
     g.map_dataframe(sns.swarmplot, x=x, y=y, color=swarm_color,
                     zorder=1)
     g.map_dataframe(sns.pointplot, x=x, y=y, color=point_color,
