@@ -72,6 +72,7 @@ def split_lists(frame, phase, keys, names=None, item_query=None, as_list=False):
     if names is None:
         names = keys
 
+    unique_lists = frame['list'].unique()
     if phase == 'study':
         phase_data = frame.loc[frame['study']]
     elif phase == 'recall':
@@ -95,11 +96,11 @@ def split_lists(frame, phase, keys, names=None, item_query=None, as_list=False):
             continue
         all_values = phase_data[key].to_numpy()
         if as_list:
-            split[name] = [all_values[idx][mask[idx]].tolist()
-                           for idx in frame_idx.values()]
+            split[name] = [all_values[frame_idx[n]][mask[frame_idx[n]]].tolist()
+                           for n in unique_lists]
         else:
-            split[name] = [all_values[idx][mask[idx]]
-                           for idx in frame_idx.values()]
+            split[name] = [all_values[frame_idx[n]][mask[frame_idx[n]]]
+                           for n in unique_lists]
     return split
 
 
