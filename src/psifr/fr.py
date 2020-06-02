@@ -518,8 +518,8 @@ def plot_distance_crp(crp, min_samples=None, **facet_kws):
         min_n = crp.groupby('center')['possible'].min()
         include = min_n.loc[min_n >= min_samples].index.to_numpy()
         crp = crp.loc[crp['center'].isin(include)]
-    g = sns.relplot(x='center', y='prob', kind='line', legend='full',
-                    data=crp, **facet_kws)
+    g = sns.FacetGrid(dropna=False, **facet_kws, data=crp.reset_index())
+    g.map_dataframe(sns.lineplot, x='center', y='prob')
     g.set_xlabels('Distance')
     g.set_ylabels('CRP')
     g.set(ylim=(0, 1))
