@@ -6,6 +6,41 @@ import seaborn as sns
 from psifr import transitions
 
 
+def _match_values(series, values):
+    """Get matches for a data column."""
+    if isinstance(values, int):
+        include = series == values
+    else:
+        include = series.isin(values)
+    return include
+
+
+def filter_data(data, subjects=None, lists=None, trial_type=None, positions=None,
+                inputs=None, outputs=None):
+    """Filter data to get a subset of trials."""
+    include = data['subject'].notna()
+    if subjects is not None:
+        include &= _match_values(data['subject'], subjects)
+
+    if lists is not None:
+        include &= _match_values(data['list'], lists)
+
+    if trial_type is not None:
+        include &= (data['trial_type'] == trial_type)
+
+    if positions is not None:
+        include &= _match_values(data['position'], positions)
+
+    if inputs is not None:
+        include &= _match_values(data['input'], inputs)
+
+    if outputs is not None:
+        include &= _match_values(data['output'], outputs)
+
+    filtered = data.loc[include].copy()
+    return filtered
+
+
 def check_data(df):
     """Run checks on free recall data.
 
