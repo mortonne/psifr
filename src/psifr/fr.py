@@ -363,6 +363,43 @@ def lag_crp(df, item_query=None, test_key=None, test=None):
     return crp
 
 
+def lag_rank(df, item_query=None, test_key=None, test=None):
+    """
+    Calculate rank of the absolute lags in free recall lists.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Merged study and recall data. See merge_lists. List length is
+        assumed to be the same for all lists within each subject.
+        Must have fields: subject, list, input, output, recalled.
+        Input position must be defined such that the first serial
+        position is 1, not 0.
+
+    item_query : str, optional
+        Query string to select items to include in the pool of possible
+        recalls to be examined. See `pandas.DataFrame.query` for
+        allowed format.
+
+    test_key : str, optional
+        Name of column with labels to use when testing transitions for
+        inclusion.
+
+    test : callable, optional
+        Callable that takes in previous and current item values and
+        returns True for transitions that should be included.
+
+    Returns
+    -------
+    stat : pandas.DataFrame
+        Has fields 'subject' and 'rank'.
+    """
+    measure = transitions.TransitionLagRank(item_query=item_query,
+                                            test_key=test_key, test=test)
+    rank = measure.analyze(df)
+    return rank
+
+
 def distance_crp(df, index_key, distances, edges, centers=None,
                  count_unique=False, item_query=None, test_key=None, test=None):
     """
