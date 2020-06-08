@@ -12,6 +12,8 @@ def percentile_rank(actual, possible):
     possible_rank = stats.rankdata(possible)
     actual_rank = possible_rank[actual == np.asarray(possible)]
     possible_count = np.count_nonzero(~np.isnan(possible))
+    if possible_count == 1:
+        return np.nan
     rank = (actual_rank - 1) / (possible_count - 1)
     return rank[0]
 
