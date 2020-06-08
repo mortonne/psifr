@@ -436,7 +436,7 @@ class TransitionLagRank(TransitionMeasure):
             pool['items'], recall['items'], pool['label'], recall['label'],
             pool['test'], recall['test'], self.test
         )
-        stat = pd.DataFrame({'subject': subject, 'rank': np.mean(ranks)},
+        stat = pd.DataFrame({'subject': subject, 'rank': np.nanmean(ranks)},
                             index=[subject])
         stat = stat.set_index('subject')
         return stat
