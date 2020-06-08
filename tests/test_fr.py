@@ -39,3 +39,10 @@ def test_split_lists(frame):
     np.testing.assert_allclose(study['input'][1], np.array([1., 2., 3.]))
     recall = fr.split_lists(frame, 'recall', ['input'], ['recalls'])
     np.testing.assert_allclose(recall['recalls'][0], np.array([2., 3., np.nan]))
+
+
+def test_lag_rank(frame):
+    stat = fr.lag_rank(frame)
+    expected = np.array([0.25])
+    observed = stat['rank'].to_numpy()
+    np.testing.assert_array_equal(expected, observed)
