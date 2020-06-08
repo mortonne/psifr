@@ -186,6 +186,71 @@ def count_lags(list_length, pool_items, recall_items,
     return actual, possible
 
 
+def rank_lags(pool_items, recall_items, pool_label=None, recall_label=None,
+              pool_test=None, recall_test=None, test=None):
+    """
+    Calculate rank of absolute lag for free recall lists.
+
+    Parameters
+    ----------
+    pool_items : list
+        List of the serial positions available for recall in each list.
+        Must match the serial position codes used in `recall_items`.
+
+    recall_items : list
+        List indicating the serial position of each recall in output
+        order (NaN for intrusions).
+
+    pool_label : list, optional
+        List of the positions to use for calculating lag. Default is to
+        use `pool_items`.
+
+    recall_label : list, optional
+        List of position labels in recall order. Default is to use
+        `recall_items`.
+
+    pool_test : list, optional
+         List of some test value for each item in the pool.
+
+    recall_test : list, optional
+        List of some test value for each recall attempt by output
+        position.
+
+    test : callable
+        Callable that evaluates each transition between items n and
+        n+1. Must take test values for items n and n+1 and return True
+        if a given transition should be included.
+
+    Returns
+    -------
+    rank : list
+        Absolute lag percentile rank for each included transition. The
+        rank is 0 if the lag was the most distant of the available
+        transitions, and 1 if the lag was the closest. Ties are
+        assigned to the average percentile rank.
+    """
+    if pool_label is None:
+        pool_label = pool_items
+
+    if recall_label is None:
+        recall_label = recall_items
+
+    rank = []
+    for i, recall_items_list in enumerate(recall_items):
+        # set up masker to filter transitions
+        pool_test_list = None if pool_test is None else pool_test[i]
+        recall_test_list = None if recall_test is None else recall_test[i]
+        masker = transitions_masker(pool_items[i], recall_items_list,
+                                    pool_label[i], recall_label[i],
+                                    pool_test_list, recall_test_list, test)
+
+        for prev, curr, poss in masker:
+            actual = np.abs(curr - prev)
+            possible = np.abs(poss - prev)
+            rank.append(1 - percentile_rank(actual, possible))
+    return rank
+
+
 def count_distance(distances, edges, pool_items, recall_items,
                    pool_index, recall_index,
                    pool_test=None, recall_test=None, test=None,
