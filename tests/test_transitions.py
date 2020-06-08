@@ -178,3 +178,11 @@ class TransitionsMeasureTestCase(unittest.TestCase):
         assert crp['prob'].iloc[0] == 1
         assert crp['actual'].iloc[0] == 1
         assert crp['possible'].iloc[0] == 1
+
+    def test_percentile_rank(self):
+        possible = [1, 2, 3, 4]
+        rank = []
+        for actual in possible:
+            rank.append(transitions.percentile_rank(actual, possible))
+        np.testing.assert_array_equal(np.array(rank),
+                                      np.array([0, 1 / 3, 2 / 3, 1]))
