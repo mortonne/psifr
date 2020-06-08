@@ -2,8 +2,18 @@
 
 import abc
 import numpy as np
+from scipy import stats
 import pandas as pd
 from psifr import fr
+
+
+def percentile_rank(actual, possible):
+    """Get percentile rank of a score compared to possible scores."""
+    possible_rank = stats.rankdata(possible)
+    actual_rank = possible_rank[actual == np.asarray(possible)]
+    possible_count = np.count_nonzero(~np.isnan(possible))
+    rank = (actual_rank - 1) / (possible_count - 1)
+    return rank[0]
 
 
 def transitions_masker(pool_items, recall_items, pool_output, recall_output,
