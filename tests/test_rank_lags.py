@@ -40,3 +40,23 @@ def test_rank_lags_short(list_data):
     )
     expected = np.array([1 / 4, 5 / 6, 0, 1])
     np.testing.assert_allclose(ranks, expected)
+
+
+def test_rank_lags_within(list_data):
+    ranks = transitions.rank_lags(
+        list_data['pool_items'], list_data['recall_items'],
+        pool_test=list_data['pool_test'],
+        recall_test=list_data['recall_test'], test=lambda x, y: x == y
+    )
+    expected = np.array([0.5, np.nan])
+    np.testing.assert_array_equal(ranks, expected)
+
+
+def test_rank_lags_across(list_data):
+    ranks = transitions.rank_lags(
+        list_data['pool_items'], list_data['recall_items'],
+        pool_test=list_data['pool_test'],
+        recall_test=list_data['recall_test'], test=lambda x, y: x != y
+    )
+    expected = np.array([0.5, 0])
+    np.testing.assert_array_equal(ranks, expected)
