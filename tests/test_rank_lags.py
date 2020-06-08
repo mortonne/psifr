@@ -5,6 +5,15 @@ import pytest
 from psifr import transitions
 
 
+def test_percentile_rank():
+    possible = [1, 2, 3, 4]
+    rank = []
+    for actual in possible:
+        rank.append(transitions.percentile_rank(actual, possible))
+    np.testing.assert_array_equal(np.array(rank),
+                                  np.array([0, 1 / 3, 2 / 3, 1]))
+
+
 @pytest.fixture()
 def list_data():
     data = {
