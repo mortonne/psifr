@@ -423,6 +423,23 @@ class TransitionLag(TransitionMeasure):
         return crp
 
 
+class TransitionLagRank(TransitionMeasure):
+
+    def __init__(self, item_query=None, test_key=None, test=None):
+        super().__init__('input', 'input', item_query=item_query,
+                         test_key=test_key, test=test)
+
+    def analyze_subject(self, subject, pool, recall):
+        ranks = rank_lags(
+            pool['items'], recall['items'], pool['label'], recall['label'],
+            pool['test'], recall['test'], self.test
+        )
+        stat = pd.DataFrame({'subject': subject, 'rank': np.mean(ranks)},
+                            index=[subject])
+        stat = stat.set_index('subject')
+        return stat
+
+
 class TransitionDistance(TransitionMeasure):
 
     def __init__(self, index_key, distances, edges, count_unique=False,
