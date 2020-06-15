@@ -528,6 +528,26 @@ class TransitionDistance(TransitionMeasure):
         return crp
 
 
+class TransitionDistanceRank(TransitionMeasure):
+
+    def __init__(self, index_key, distances, item_query=None,
+                 test_key=None, test=None):
+        super().__init__(index_key, index_key, item_query=item_query,
+                         test_key=test_key, test=test)
+        self.distances = distances
+
+    def analyze_subject(self, subject, pool, recall):
+        ranks = rank_distance(
+            self.distances, pool['items'], recall['items'],
+            pool['label'], recall['label'],
+            pool['test'], recall['test'], self.test
+        )
+        stat = pd.DataFrame({'subject': subject, 'rank': np.nanmean(ranks)},
+                            index=[subject])
+        stat = stat.set_index('subject')
+        return stat
+
+
 class TransitionCategory(TransitionMeasure):
 
     def __init__(self, category_key, item_query=None, test_key=None, test=None):
