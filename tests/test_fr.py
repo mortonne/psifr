@@ -34,6 +34,17 @@ def frame():
     return data
 
 
+@pytest.fixture()
+def distances():
+    mat = np.array([[0, 1, 2, 2, 2, 2],
+                    [1, 0, 1, 2, 2, 2],
+                    [2, 1, 0, 2, 2, 2],
+                    [2, 2, 2, 0, 2, 3],
+                    [2, 2, 2, 2, 0, 2],
+                    [2, 2, 2, 3, 2, 0]])
+    return mat
+
+
 def test_split_lists(frame):
     study = fr.split_lists(frame, 'study', ['item', 'input', 'task'])
     np.testing.assert_allclose(study['input'][1], np.array([1., 2., 3.]))
@@ -43,6 +54,13 @@ def test_split_lists(frame):
 
 def test_lag_rank(frame):
     stat = fr.lag_rank(frame)
+    expected = np.array([0.25])
+    observed = stat['rank'].to_numpy()
+    np.testing.assert_array_equal(expected, observed)
+
+
+def test_distance_rank(frame, distances):
+    stat = fr.distance_rank(frame, 'item_index', distances)
     expected = np.array([0.25])
     observed = stat['rank'].to_numpy()
     np.testing.assert_array_equal(expected, observed)
