@@ -330,6 +330,64 @@ def count_distance(distances, edges, pool_items, recall_items,
     return actual, possible
 
 
+def rank_distance(distances, pool_items, recall_items,
+                  pool_index, recall_index,
+                  pool_test=None, recall_test=None, test=None):
+    """
+    Calculate percentile rank of transition distances.
+
+    Parameters
+    ----------
+    distances : numpy.array
+        Items x items matrix of pairwise distances or similarities.
+
+    pool_items : list of list
+        Unique item codes for each item in the pool available for recall.
+
+    recall_items : list of list
+        Unique item codes of recalled items.
+
+    pool_index : list of list
+        Index of each item in the distances matrix.
+
+    recall_index : list of list
+        Index of each recalled item.
+
+    pool_test : list of list, optional
+        Test value for each item in the pool.
+
+    recall_test : list of list, optional
+        Test value for each recalled item.
+
+    test : callable
+        Called as test(prev, curr) or test(prev, poss) to screen
+        actual and possible transitions, respectively.
+
+    Returns
+    -------
+    rank : list
+        Distance percentile rank for each included transition. The
+        rank is 0 if the distance was the largest of the available
+        transitions, and 1 if the distance was the smallest. Ties are
+        assigned to the average percentile rank.
+    """
+    rank = []
+    for i in range(len(recall_items)):
+        pool_test_list = None if pool_test is None else pool_test[i]
+        recall_test_list = None if recall_test is None else recall_test[i]
+        masker = transitions_masker(pool_items[i], recall_items[i],
+                                    pool_index[i], recall_index[i],
+                                    pool_test_list, recall_test_list, test)
+        for prev, curr, poss in masker:
+            prev = int(prev)
+            curr = int(curr)
+            poss = poss.astype(int)
+            actual = distances[prev, curr]
+            possible = distances[prev, poss]
+            rank.append(1 - percentile_rank(actual, possible))
+    return rank
+
+
 def count_category(pool_items, recall_items, pool_category,
                    recall_category, pool_test=None,
                    recall_test=None, test=None):
