@@ -627,8 +627,9 @@ def plot_spc(recall, **kwargs):
     recall : pandas.DataFrame
         Results from calling `spc`.
     """
+    y = 'recall' if 'recall' in recall else 'prob'
     g = sns.FacetGrid(dropna=False, **kwargs, data=recall.reset_index())
-    g.map_dataframe(sns.lineplot, x='input', y='recall')
+    g.map_dataframe(sns.lineplot, x='input', y=y)
     g.set_xlabels('Serial position')
     g.set_ylabels('Recall probability')
     g.set(ylim=(0, 1))
