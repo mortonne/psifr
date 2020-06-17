@@ -1,10 +1,57 @@
+===========
 Transitions
 ===========
 
-The transitions module contains utilties to iterate over and mask
-transitions between recalled items. The
-:py:func:`psifr.transitions.transitions_masker` does most of the work
-here.
+.. currentmodule:: psifr.transitions
 
-.. automodule:: psifr.transitions
-    :members:
+Counting transitions
+~~~~~~~~~~~~~~~~~~~~
+
+.. autosummary::
+    :toctree: api/
+
+    count_lags
+    count_category
+    count_distance
+
+Ranking transitions
+~~~~~~~~~~~~~~~~~~~
+
+.. autosummary::
+    :toctree: api/
+
+    percentile_rank
+    rank_lags
+    rank_distance
+
+Iterating over recalls
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. autosummary::
+   :toctree: api/
+
+    outputs_masker
+    transitions_masker
+
+Transition measure base class
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autosummary::
+    :toctree: api/
+
+    TransitionMeasure
+    TransitionMeasure.split_lists
+    TransitionMeasure.analyze
+    TransitionMeasure.analyze_subject
+
+Transition measures
+~~~~~~~~~~~~~~~~~~~
+
+.. autosummary::
+
+    TransitionOutputs
+    TransitionLag
+    TransitionLagRank
+    TransitionCategory
+    TransitionDistance
+    TransitionDistanceRank
