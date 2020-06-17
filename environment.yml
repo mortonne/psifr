@@ -79,7 +79,7 @@ dependencies:
   - xz=5.2.4
   - zlib=1.2.11
   - pip:
-    - pydata-sphinx-theme=0.3.0
+    - pydata-sphinx-theme==0.3.0
     - git+https://github.com/mortonne/psifr
 prefix: //anaconda3/envs/psifr
 
