@@ -157,6 +157,9 @@ def count_outputs(list_length, pool_items, recall_items, pool_label,
                                 pool_test_list, recall_test_list, test)
 
         for curr, poss, op in masker:
+            curr = int(curr)
+            poss = poss.astype(int)
+
             # for this step, calculate actual lag and all possible lags
             count_actual[op - 1, curr - 1] += 1
             if count_unique:
