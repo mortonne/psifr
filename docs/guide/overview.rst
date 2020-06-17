@@ -6,4 +6,5 @@ User guide
 
    /guide/import
    /guide/score
+   /guide/recall
    /guide/order
