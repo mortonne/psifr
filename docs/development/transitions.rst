@@ -1,26 +1,13 @@
-Conditional response probability
-================================
+===========
+Transitions
+===========
 
-A key advantage of free recall is that it provides information not only about
-what items are recalled, but also the order in which they are recalled. A
-number of analyses have been developed to charactize different influences on
-recall order, such as the temporal order in which the items were presented at
-study, the category of the items themselves, or the semantic similarity between
-pairs of items.
-
-Each conditional response probability (CRP) analysis involves calculating the
-probability of some type of transition event. For the lag-CRP analysis,
-transition events of interest are the different lags between serial positions
-of items recalled adjacent to one another. Similar analyses focus not on
-the serial position in which items are presented, but the properties of the
-items themselves. A semantic-CRP analysis calculates the probability of
-transitions between items in different semantic relatedness bins. A special
-case of this analysis is when item pairs are placed into one of two bins,
-depending on whether they are in the same stimulus category or not. In Psifr,
-this is referred to as a category-CRP analysis.
+Psifr has a core set of tools for analyzing transitions in free recall data.
+These tools focus on measuring what transitions actually occurred, and which
+transitions were possible given the order in which participants recalled items.
 
 Actual and possible transitions
--------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Calculating a conditional response probability involves two parts: the frequency
 at which a given event actually occurred in the data and frequency at which a
@@ -44,7 +31,7 @@ each lag is calculated first, and then the CRP for each lag is calculated as
 the actual count divided by the possible count.
 
 The transitions masker
-----------------------
+~~~~~~~~~~~~~~~~~~~~~~
 
 The :py:func:`psifr.transitions.transitions_masker` is a generator that makes
 it simple to iterate over transitions while "masking" out events such as
