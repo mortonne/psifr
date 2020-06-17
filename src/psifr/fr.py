@@ -309,6 +309,54 @@ def spc(df):
     return pd.DataFrame(recall)
 
 
+def pnr(df, item_query=None, test_key=None, test=None):
+    """
+    Probability of recall by serial position and output position.
+
+    Calculate probability of Nth recall, where N is each output
+    position. Invalid recalls (repeats and intrusions) are ignored and
+    not counted toward output position.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Merged study and recall data. See merge_lists. List length is
+        assumed to be the same for all lists within each subject.
+        Must have fields: subject, list, input, output, study, recall.
+        Input position must be defined such that the first serial
+        position is 1, not 0.
+
+    item_query : str, optional
+        Query string to select items to include in the pool of possible
+        recalls to be examined. See `pandas.DataFrame.query` for
+        allowed format.
+
+    test_key : str, optional
+        Name of column with labels to use when testing transitions for
+        inclusion.
+
+    test : callable, optional
+        Callable that takes in previous and current item values and
+        returns True for transitions that should be included.
+
+    Returns
+    -------
+    prob : pandas.DataFrame
+        Analysis results. Has fields: subject, output, input, prob,
+        actual, possible. The prob column for output x and input y
+        indicates the probability of recalling input position y at
+        output position x. The actual and possible columns give the
+        raw tallies for how many times an event actually occurred and
+        how many times it was possible given the recall sequence.
+    """
+    list_length = int(df['input'].max())
+    measure = transitions.TransitionOutputs(
+        list_length, item_query=item_query, test_key=test_key, test=test
+    )
+    prob = measure.analyze(df)
+    return prob
+
+
 def lag_crp(df, item_query=None, test_key=None, test=None):
     """
     Lag-CRP for multiple subjects.
