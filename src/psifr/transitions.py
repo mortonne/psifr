@@ -615,6 +615,32 @@ class TransitionMeasure(object):
         return stat
 
 
+class TransitionOutputs(TransitionMeasure):
+
+    def __init__(self, list_length, item_query=None, test_key=None, test=None):
+        super().__init__('input', 'input', item_query=item_query,
+                         test_key=test_key, test=test)
+        self.list_length = list_length
+
+    def analyze_subject(self, subject, pool, recall):
+        actual, possible = count_outputs(
+            self.list_length, pool['items'], recall['items'],
+            pool['label'], recall['label'],
+            pool['test'], recall['test'], self.test
+        )
+        inputs = np.tile(np.arange(1, actual.shape[1] + 1), actual.shape[0])
+        outputs = np.repeat(np.arange(1, actual.shape[0] + 1), actual.shape[1])
+        with np.errstate(divide='ignore', invalid='ignore'):
+            prob = actual.flatten() / possible.flatten()
+        pnr = pd.DataFrame(
+            {'subject': subject, 'input': inputs, 'output': outputs,
+             'prob': prob, 'actual': actual.flatten(),
+             'possible': possible.flatten()}
+        )
+        pnr = pnr.set_index(['subject', 'output', 'input'])
+        return pnr
+
+
 class TransitionLag(TransitionMeasure):
 
     def __init__(self, list_length, item_query=None, test_key=None, test=None):
