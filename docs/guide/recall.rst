@@ -10,7 +10,7 @@
    plt.style.use('default')
    mpl.rcParams['axes.labelsize'] = 'large'
    mpl.rcParams['savefig.bbox'] = 'tight'
-   mpl.rcParams['savefig.pad_inches'] = 0.05
+   mpl.rcParams['savefig.pad_inches'] = 0.1
 
    pd.options.display.max_rows = 15
 
