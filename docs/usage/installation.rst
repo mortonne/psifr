@@ -1,15 +1,15 @@
 Installation
 ============
 
-First get a copy of the code from GitHub:
+You can install the latest stable version of Psifr using pip:
 
 .. code-block:: bash
 
-    git clone git@github.com:mortonne/psifr.git
+    pip install psifr
 
-Then install:
+You can also install the development version directly from the code
+repository on GitHub:
 
 .. code-block:: bash
 
-    cd psifr
-    python setup.py install
+    pip install git+git://github.com/mortonne/psifr
