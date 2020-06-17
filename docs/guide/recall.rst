@@ -4,6 +4,13 @@
 
    import numpy as np
    import pandas as pd
+   import matplotlib as mpl
+   import matplotlib.pyplot as plt
+
+   plt.style.use('default')
+   mpl.rcParams['axes.labelsize'] = 'large'
+   mpl.rcParams['savefig.bbox'] = 'tight'
+   mpl.rcParams['savefig.pad_inches'] = 0.05
 
    pd.options.display.max_rows = 15
 
