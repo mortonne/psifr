@@ -21,3 +21,4 @@ analysis of free recall data faster and easier.
    /guide/overview
    /tutorials/overview
    /api/overview
+   /development/overview
