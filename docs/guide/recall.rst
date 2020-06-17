@@ -18,9 +18,6 @@
 Recall performance
 ==================
 
-Serial position curve
-~~~~~~~~~~~~~~~~~~~~~
-
 First, load some sample data and create a merged DataFrame:
 
 .. ipython::
@@ -31,7 +28,26 @@ First, load some sample data and create a merged DataFrame:
 
     In [1]: data = fr.merge_free_recall(df)
 
-We can then calculate average recall for each serial position
+Raster plot
+~~~~~~~~~~~
+
+Raster plots can give you a quick overview of a whole dataset. We'll look at
+all of the first subject's recalls. This will plot every individual recall,
+colored by the serial position of the recalled item in the list. Items near
+the end of the list are shown in yellow, and items near the beginning of the
+list are shown in purple. Intrusions of items not on the list are shown in red.
+
+.. ipython::
+
+    In [1]: subj = fr.filter_data(data, 1)
+
+    @savefig raster_subject.png
+    In [1]: g = fr.plot_raster(subj)
+
+Serial position curve
+~~~~~~~~~~~~~~~~~~~~~
+
+We can calculate average recall for each serial position
 using :py:func:`~psifr.fr.spc` and plot using :py:func:`~psifr.fr.plot_spc`.
 
 .. ipython::
