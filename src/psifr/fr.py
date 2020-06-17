@@ -1,9 +1,17 @@
 """Utilities for working with free recall data."""
 
+from pkg_resources import resource_filename
 import numpy as np
 import pandas as pd
 import seaborn as sns
 from psifr import transitions
+
+
+def sample_data(study):
+    """Read sample data."""
+    data_file = resource_filename('psifr', f'data/{study}.csv')
+    df = pd.read_csv(data_file)
+    return df
 
 
 def _match_values(series, values):
