@@ -8,3 +8,4 @@ User guide
    /guide/score
    /guide/recall
    /guide/order
+   /guide/grouping
