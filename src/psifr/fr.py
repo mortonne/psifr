@@ -702,13 +702,13 @@ def plot_distance_crp(crp, min_samples=None, **facet_kws):
     return g
 
 
-def plot_swarm_error(data, x=None, y=None, swarm_color=None, point_color='k',
-                     **facet_kws):
+def plot_swarm_error(data, x=None, y=None, swarm_color=None, swarm_size=5,
+                     point_color='k', **facet_kws):
     """Plot points as a swarm plus mean with error bars."""
 
     g = sns.FacetGrid(data=data.reset_index(), dropna=False, **facet_kws)
     g.map_dataframe(sns.swarmplot, x=x, y=y, color=swarm_color,
-                    zorder=1)
+                    size=swarm_size, zorder=1)
     g.map_dataframe(sns.pointplot, x=x, y=y, color=point_color,
                     join=False, capsize=.5, linewidth=1)
     return g
