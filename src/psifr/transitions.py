@@ -265,7 +265,10 @@ def transitions_masker(pool_items, recall_items, pool_output, recall_output,
                 continue
 
             # get included possible items
-            poss = poss[test(recall_test[n], np.array(pool_test))]
+            ind = test(recall_test[n], np.array(pool_test))
+            if not isinstance(ind, np.ndarray):
+                ind = np.repeat(ind, poss.shape)
+            poss = poss[ind]
         n += 1
         yield prev, curr, poss
 
