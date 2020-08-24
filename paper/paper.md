@@ -31,8 +31,8 @@ other in time [@Kahana:1996].
 This analysis requires taking into account the items that are still
 available for recall at each transition between recalled items. 
 This analysis may need to be made conditional on other factors, such as
-the category of the items being recalled [@Polyn:2011], thus complicating the
-analysis further.
+the category of the items being recalled [@Polyn:2011; Morton:2017], 
+thus complicating the analysis further.
 
 `Psifr` was developed to consolidate a number of free recall analysis
 methods (often implemented in MATLAB) within a flexible Python
@@ -42,7 +42,7 @@ and standardize a number of different analyses of recall sequences,
 including analyses focused on serial position [@Murdock:1962],
 temporal order [@Kahana:1996; @Polyn:2011], 
 stimulus category [@Polyn:2009; @Morton:2016], and the semantic meaning 
-of presented items [@Howard:2012]. 
+of presented items [@Howard:2002]. 
 The core  utilities are also designed to facilitate implementation of 
 extensions to tailor analyses for specific experiments.
 
@@ -58,7 +58,7 @@ including analysis of recall order.
 However, while `Quail` uses a separate data structure to store free 
 recall sequences, `Psifr` uses `Pandas` `DataFrame` objects. 
 This design makes it possible for the user to make full use 
-split-apply-combine operations of `Pandas` to quickly run complex analyses. 
+of the split-apply-combine operations of `Pandas` to quickly run complex analyses. 
 Similarly, `Psifr` makes available the full power of the `Seaborn` 
 visualization package to provide expressive visualization capabilities. 
 The plotting functions in `Psifr` allow the user to easily view analysis 
