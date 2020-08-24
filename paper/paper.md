@@ -49,10 +49,14 @@ extensions to tailor analyses for specific experiments.
 # Statement of Need
 
 Existing packages for analysis of free recall data include `EMBAM`
-and `Quail`. `EMBAM` is implemented in MATLAB, making it difficult 
-to use with the extensive data science ecosystem in Python. 
+and `Quail`. `EMBAM` (also known as `Behavioral Toolbox`) is implemented 
+in MATLAB, making it difficult to use with the extensive data science ecosystem in Python. 
 It is also relatively difficult to extend, with programming of new analyses 
-often requiring substantial effort. 
+often requiring substantial effort.
+The `pybeh` package is a Python port of `EMBAM` written using `numpy`.
+As it is a fairly direct port of EMBAM, `pybeh` does not make use of some of 
+the advantages  of Python, such as the advanced data science packages of 
+`Pandas` and `Seaborn`.
 `Quail`, a Python package, provides some similar functionality to `Psifr`,
 including analysis of recall order. 
 However, while `Quail` uses a separate data structure to store free 
