@@ -31,7 +31,7 @@ other in time [@Kahana:1996].
 This analysis requires taking into account the items that are still
 available for recall at each transition between recalled items. 
 This analysis may need to be made conditional on other factors, such as
-the category of the items being recalled [@Polyn:2011; Morton:2017], 
+the category of the items being recalled [@Polyn:2011; @Morton:2017], 
 thus complicating the analysis further.
 
 `Psifr` was developed to consolidate a number of free recall analysis
