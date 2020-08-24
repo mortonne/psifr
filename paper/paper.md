@@ -56,10 +56,10 @@ often requiring substantial effort.
 The `pybeh` package is a Python port of `EMBAM` written using `numpy`.
 As it is a fairly direct port of EMBAM, `pybeh` does not make use of some of 
 the advantages  of Python, such as the advanced data science packages of 
-`Pandas` and `Seaborn`.
+`Pandas` and `Seaborn` [@Reback:2020; Waskom:2020].
 `Quail`, a Python package, provides some similar functionality to `Psifr`,
-including analysis of recall order. 
-However, while `Quail` uses a separate data structure to store free 
+including analysis of recall order [@Heusser:2017]. 
+However, while `Quail` uses a custom data structure to store free 
 recall sequences, `Psifr` uses `Pandas` `DataFrame` objects. 
 This design makes it possible for the user to make full use 
 of the split-apply-combine operations of `Pandas` to quickly run complex analyses. 
