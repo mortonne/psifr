@@ -35,7 +35,7 @@ the category of the items being recalled, thus complicating the
 analysis further.
 
 ``Psifr`` was developed to consolidate a number of free recall analysis
-methods (originally implemented in MATLAB) within a flexible Python
+methods (often implemented in MATLAB) within a flexible Python
 package. 
 The ``Psifr`` package includes core utilities that simplify
 and standardize a number of different analyses of recall sequences,
@@ -46,11 +46,13 @@ of presented items [@Howard:2012].
 The core  utilities are also designed to facilitate implementation of 
 extensions to tailor analyses for specific experiments.
 
+# Statement of Need
+
 Existing packages for analysis of free recall data include ``EMBAM``
 and ``Quail``. ``EMBAM`` is implemented in MATLAB, making it difficult 
 to use with the extensive data science ecosystem in Python. 
 It is also relatively difficult to extend, with programming of new analyses 
-often  requiring substantial effort. 
+often requiring substantial effort. 
 ``Quail``, a Python package, provides some similar functionality to ``Psifr``,
 including analysis of recall order. 
 However, while ``Quail`` uses a separate data structure to store free 
@@ -68,12 +70,14 @@ datasets to facilitate quick discovery of patterns in
 the order of recalls [@Romani:2016].
 
 ``Psifr`` was designed to be used by memory researchers and students.
-It is currently being used in two ongoing projects. The interface is
-designed to simplify common tasks while also allowing for substantial
-customization. An emphasis on visualization, including a method for
-plotting full free recall datasets, helps to support better 
-understanding of complex datasets. The source code for ``Psifr`` has 
-been archived to Zenodo with the linked DOI: TBD.
+It is currently being used in two ongoing projects that require advanced
+analysis and visualization. 
+The interface is designed to simplify common tasks while also allowing 
+for substantial customization to facilitate analysis of specific episodic
+memory experiments.
+Advanced visualization further helps to support better understanding of 
+complex datasets. 
+The source code for ``Psifr`` has  been archived to Zenodo with the linked DOI: TBD.
 
 # Acknowledgements
 
