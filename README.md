@@ -55,3 +55,7 @@ Analyses supported by Psifr are based on analyses implemented in the Matlab tool
 
 ### Quail
 [Quail](https://github.com/ContextLab/quail) runs automatic scoring of free recall data, supports calculation and plotting of some common free recall measures, and has tools for measuring the "memory fingerprint" of individuals.
+
+## Contributing to Psifr
+
+Contributions are welcome to suggest new features, add documentation, and identify bugs. See the [contributing guidelines](.github/CONTRIBUTING.md) for an overview. 
