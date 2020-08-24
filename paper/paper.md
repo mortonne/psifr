@@ -40,8 +40,8 @@ package.
 The `Psifr` package includes core utilities that simplify
 and standardize a number of different analyses of recall sequences,
 including analyses focused on serial position [@Murdock:1962],
-temporal order [@Kahana:1996,@Polyn:2011], 
-stimulus category [@Polyn:2009,@Morton:2016], and the semantic meaning 
+temporal order [@Kahana:1996; @Polyn:2011], 
+stimulus category [@Polyn:2009; @Morton:2016], and the semantic meaning 
 of presented items [@Howard:2012]. 
 The core  utilities are also designed to facilitate implementation of 
 extensions to tailor analyses for specific experiments.
