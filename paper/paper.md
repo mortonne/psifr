@@ -19,7 +19,7 @@ bibliography: paper.bib
 
 Research on human memory has been strongly influenced by data from free 
 recall experiments, wherein participants study a list of items (such as 
-words) and then freely recall them in any order they wish. 
+words) and then freely recall them in any order they wish [@Murdock:1962]. 
 Free recall provides an extremely rich dataset that not only reflects 
 which items were recalled but also the order in which they were recalled. 
 However, analysis of free recall data is difficult, as many different influences
@@ -27,11 +27,11 @@ on recall must be taken into account.
 For example, one influential analysis, conditional response probability 
 as a function of lag, has been used to measure the tendency of participants 
 to successively recall items that were originally presented near to each 
-other in time.
+other in time [@Kahana:1996].
 This analysis requires taking into account the items that are still
 available for recall at each transition between recalled items. 
 This analysis may need to be made conditional on other factors, such as
-the category of the items being recalled, thus complicating the
+the category of the items being recalled [@Polyn:2011], thus complicating the
 analysis further.
 
 ``Psifr`` was developed to consolidate a number of free recall analysis
@@ -39,7 +39,7 @@ methods (often implemented in MATLAB) within a flexible Python
 package. 
 The ``Psifr`` package includes core utilities that simplify
 and standardize a number of different analyses of recall sequences,
-including analyses focused on serial position [@Murdock1962],
+including analyses focused on serial position [@Murdock:1962],
 temporal order [@Kahana:1996,@Polyn:2011], 
 stimulus category [@Polyn:2009,@Morton:2016], and the semantic meaning 
 of presented items [@Howard:2012]. 
