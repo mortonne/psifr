@@ -34,10 +34,10 @@ This analysis may need to be made conditional on other factors, such as
 the category of the items being recalled [@Polyn:2011], thus complicating the
 analysis further.
 
-``Psifr`` was developed to consolidate a number of free recall analysis
+`Psifr` was developed to consolidate a number of free recall analysis
 methods (often implemented in MATLAB) within a flexible Python
 package. 
-The ``Psifr`` package includes core utilities that simplify
+The `Psifr` package includes core utilities that simplify
 and standardize a number of different analyses of recall sequences,
 including analyses focused on serial position [@Murdock:1962],
 temporal order [@Kahana:1996,@Polyn:2011], 
@@ -48,28 +48,28 @@ extensions to tailor analyses for specific experiments.
 
 # Statement of Need
 
-Existing packages for analysis of free recall data include ``EMBAM``
-and ``Quail``. ``EMBAM`` is implemented in MATLAB, making it difficult 
+Existing packages for analysis of free recall data include `EMBAM`
+and `Quail`. `EMBAM` is implemented in MATLAB, making it difficult 
 to use with the extensive data science ecosystem in Python. 
 It is also relatively difficult to extend, with programming of new analyses 
 often requiring substantial effort. 
-``Quail``, a Python package, provides some similar functionality to ``Psifr``,
+`Quail`, a Python package, provides some similar functionality to `Psifr`,
 including analysis of recall order. 
-However, while ``Quail`` uses a separate data structure to store free 
-recall sequences, ``Psifr`` uses ``Pandas`` ``DataFrame`` objects. 
+However, while `Quail` uses a separate data structure to store free 
+recall sequences, `Psifr` uses `Pandas` `DataFrame` objects. 
 This design makes it possible for the user to make full use 
-split-apply-combine operations of ``Pandas`` to quickly run complex analyses. 
-Similarly, ``Psifr`` makes available the full power of the ``Seaborn`` 
+split-apply-combine operations of `Pandas` to quickly run complex analyses. 
+Similarly, `Psifr` makes available the full power of the `Seaborn` 
 visualization package to provide expressive visualization capabilities. 
-The plotting functions in ``Psifr`` allow the user to easily view analysis 
+The plotting functions in `Psifr` allow the user to easily view analysis 
 results in different ways; for example, an analysis of recall by serial 
 position can be visualized either as a single plot with error bars or as a 
 grid of individual plots for each participant in the experiment.
-``Psifr`` also includes a method for visualizing whole free recall
+`Psifr` also includes a method for visualizing whole free recall
 datasets to facilitate quick discovery of patterns in
 the order of recalls [@Romani:2016].
 
-``Psifr`` was designed to be used by memory researchers and students.
+`Psifr` was designed to be used by memory researchers and students.
 It is currently being used in two ongoing projects that require advanced
 analysis and visualization. 
 The interface is designed to simplify common tasks while also allowing 
@@ -77,11 +77,11 @@ for substantial customization to facilitate analysis of specific episodic
 memory experiments.
 Advanced visualization further helps to support better understanding of 
 complex datasets. 
-The source code for ``Psifr`` has  been archived to Zenodo with the linked DOI: TBD.
+The source code for `Psifr` has  been archived to Zenodo with the linked DOI: TBD.
 
 # Acknowledgements
 
-``Psifr`` is inspired by functions initially developed for ``EMBAM``,
+`Psifr` is inspired by functions initially developed for `EMBAM`,
 which was developed by Richard Lawrence, Sean Polyn, Neal Morton,
 and Joshua McCluey.
 
