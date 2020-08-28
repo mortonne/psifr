@@ -4,6 +4,7 @@ tags:
   - Python
   - psychology
   - memory
+  - research
 authors:
   - name: Neal W Morton
     orcid: 0000-0002-2631-2710
@@ -25,9 +26,9 @@ which items were recalled but also the order in which they were recalled.
 However, analysis of free recall data is difficult, as many different influences
 on recall must be taken into account. 
 For example, one influential analysis, conditional response probability 
-as a function of lag, has been used to measure the tendency of participants 
-to successively recall items that were originally presented near to each 
-other in time [@Kahana:1996].
+as a function of lag (lag-CRP), has been used to measure the tendency of 
+participants to successively recall items that were originally presented 
+near to each other in time [@Kahana:1996].
 This analysis requires taking into account the items that are still
 available for recall at each transition between recalled items. 
 This analysis may need to be made conditional on other factors, such as
@@ -43,17 +44,19 @@ including analyses focused on serial position [@Murdock:1962],
 temporal order [@Kahana:1996; @Polyn:2011], 
 stimulus category [@Polyn:2009; @Morton:2016], and the semantic meaning 
 of presented items [@Howard:2002]. 
-The core  utilities are also designed to facilitate implementation of 
+The core utilities are also designed to facilitate implementation of 
 extensions to tailor analyses for specific experiments.
 
 # Statement of Need
 
 Existing packages for analysis of free recall data include `EMBAM`
-and `Quail`. `EMBAM` (also known as `Behavioral Toolbox`) is implemented 
-in MATLAB, making it difficult to use with the extensive data science ecosystem in Python. 
-It is also relatively difficult to extend, with programming of new analyses 
-often requiring substantial effort.
-The `pybeh` package is a Python port of `EMBAM` written using `numpy`.
+and `Quail`. 
+[EMBAM](https://github.com/vucml/EMBAM), which is a fork of the 
+[Behavioral Toolbox](http://memory.psych.upenn.edu/Behavioral_toolbox), 
+is implemented in MATLAB, making it difficult to use with the extensive 
+data science ecosystem in Python. 
+The [pybeh](https://github.com/pennmem/pybeh) package is a Python port 
+of `EMBAM` written using `numpy`.
 As it is a fairly direct port of EMBAM, `pybeh` does not make use of some of 
 the advantages  of Python, such as the advanced data science packages of 
 `Pandas` and `Seaborn` [@Reback:2020; @Waskom:2020].
@@ -69,7 +72,7 @@ The plotting functions in `Psifr` allow the user to easily view analysis
 results in different ways; for example, an analysis of recall by serial 
 position can be visualized either as a single plot with error bars or as a 
 grid of individual plots for each participant in the experiment.
-`Psifr` also includes a method for visualizing whole free recall
+`Psifr` also support raster plots, a method for visualizing whole free recall
 datasets to facilitate quick discovery of patterns in
 the order of recalls [@Romani:2016].
 
@@ -85,8 +88,12 @@ The source code for `Psifr` has  been archived to Zenodo with the linked DOI: TB
 
 # Acknowledgements
 
+Thanks to Sean Polyn for helpful discussions.
 `Psifr` is inspired by functions initially developed for `EMBAM`,
-which was developed by Richard Lawrence, Sean Polyn, Neal Morton,
-and Joshua McCluey.
+which was developed by Sean Polyn, Neal Morton, Richard Lawrence,
+Joshua McCluey, Karl Healey, Lynn Lohnas, and Jin Jeon. 
+`Psifr` also takes inspiration from the `Quail` package developed 
+by Andrew Heusser, Paxton Fitzpatrick, Campbell Field, Kirsten Ziman, 
+and Jeremy Manning.
 
 # References
