@@ -35,9 +35,9 @@ This analysis may need to be made conditional on other factors, such as
 the category of the items being recalled [@Polyn:2011; @Morton:2017], 
 thus complicating the analysis further.
 
-`Psifr` was developed to consolidate a number of free recall analysis
-methods (often implemented in MATLAB) within a flexible Python
-package. 
+`Psifr` (pronounced like "cypher") was developed to consolidate a number 
+of free recall analysis methods (often implemented in MATLAB) within a flexible 
+Python package. 
 The `Psifr` package includes core utilities that simplify
 and standardize a number of different analyses of recall sequences,
 including analyses focused on serial position [@Murdock:1962],
