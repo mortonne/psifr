@@ -10,7 +10,7 @@ authors:
     orcid: 0000-0002-2631-2710
     affiliation: 1
 affiliations:
- - name: Research Fellow, The University of Texas at Austin
+ - name: Research Fellow, Center for Learning and Memory, The University of Texas at Austin
    index: 1
 date: 24 August 2020
 bibliography: paper.bib
