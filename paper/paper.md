@@ -72,7 +72,7 @@ The plotting functions in `Psifr` allow the user to easily view analysis
 results in different ways; for example, an analysis of recall by serial 
 position can be visualized either as a single plot with error bars or as a 
 grid of individual plots for each participant in the experiment.
-`Psifr` also support raster plots, a method for visualizing whole free recall
+`Psifr` also supports raster plots, a method for visualizing whole free recall
 datasets to facilitate quick discovery of patterns in
 the order of recalls [@Romani:2016].
 
