@@ -10,7 +10,7 @@ authors:
     orcid: 0000-0002-2631-2710
     affiliation: 1
 affiliations:
- - name: Neal W Morton, Research Fellow, The University of Texas at Austin
+ - name: Research Fellow, The University of Texas at Austin
    index: 1
 date: 24 August 2020
 bibliography: paper.bib
