@@ -47,6 +47,12 @@ of presented items [@Howard:2002].
 The core utilities are also designed to facilitate implementation of 
 extensions to tailor analyses for specific experiments.
 
+![Example of a serial position curve showing the probability of recalling 
+an item based on its position in the list. Plots may be flexibly divided by 
+condition using grouping semantics supported by Seaborn. In this case,
+different list types (mixed-category or pure-category) are plotted as separate
+curves.\label{fig:spc}](spc_list_type.png)
+
 # Statement of Need
 
 Existing packages for analysis of free recall data include `EMBAM`
@@ -65,16 +71,27 @@ including analysis of recall order [@Heusser:2017].
 However, while `Quail` uses a custom data structure to store free 
 recall sequences, `Psifr` uses `Pandas` `DataFrame` objects. 
 This design makes it possible for the user to make full use 
-of the split-apply-combine operations of `Pandas` to quickly run complex analyses. 
+of the split-apply-combine operations of `Pandas` to quickly run complex analyses.
+
+![Serial position curve split by list type, with a separate panel for each
+participant in an experiment.\label{fig:spc_subject}](spc_subject.png)
+
 Similarly, `Psifr` makes available the full power of the `Seaborn` 
 visualization package to provide expressive visualization capabilities. 
 The plotting functions in `Psifr` allow the user to easily view analysis 
 results in different ways; for example, an analysis of recall by serial 
-position can be visualized either as a single plot with error bars or as a 
-grid of individual plots for each participant in the experiment.
-`Psifr` also supports creation of raster plots, a method for visualizing whole free recall
-datasets to facilitate quick discovery of patterns in
+position can be visualized either as a single plot with error bars 
+(Figure \autoref{fig:spc}) or as a grid of individual plots for each 
+participant in the experiment (Figure \autoref{fig:spc_subject}).
+`Psifr` also supports creation of raster plots 
+(Figure \autoref{fig:raster}), a method for visualizing whole 
+free recall datasets to facilitate quick discovery of patterns in
 the order of recalls [@Romani:2016].
+
+![Raster plot displaying the order of every recall for one participant.
+Each marker indicates one recall, and the color of the marker reflects
+the serial position of the recalled item.
+\label{fig:raster}](raster.png)
 
 `Psifr` was designed to be used by memory researchers and students.
 It is currently being used in two ongoing projects that require advanced
