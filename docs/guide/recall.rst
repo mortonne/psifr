@@ -42,7 +42,7 @@ list are shown in purple. Intrusions of items not on the list are shown in red.
     In [1]: subj = fr.filter_data(data, 1)
 
     @savefig raster_subject.png
-    In [1]: g = fr.plot_raster(subj)
+    In [1]: g = fr.plot_raster(subj).add_legend()
 
 Serial position curve
 ~~~~~~~~~~~~~~~~~~~~~
