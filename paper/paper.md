@@ -81,10 +81,10 @@ visualization package to provide expressive visualization capabilities.
 The plotting functions in `Psifr` allow the user to easily view analysis 
 results in different ways; for example, an analysis of recall by serial 
 position can be visualized either as a single plot with error bars 
-(Figure \autoref{fig:spc}) or as a grid of individual plots for each 
-participant in the experiment (Figure \autoref{fig:spc_subject}).
+(\autoref{fig:spc}) or as a grid of individual plots for each 
+participant in the experiment (\autoref{fig:spc_subject}).
 `Psifr` also supports creation of raster plots 
-(Figure \autoref{fig:raster}), a method for visualizing whole 
+(\autoref{fig:raster}), a method for visualizing whole 
 free recall datasets to facilitate quick discovery of patterns in
 the order of recalls [@Romani:2016].
 
