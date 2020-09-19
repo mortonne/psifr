@@ -90,8 +90,8 @@ the order of recalls [@Romani:2016].
 
 ![Raster plot displaying the order of every recall for one participant.
 Each marker indicates one recall, and the color of the marker reflects
-the serial position of the recalled item.
-\label{fig:raster}](raster.pdf)
+the serial position of the recalled item. Red markers indicate intrusions
+of items not on the studied list.\label{fig:raster}](raster.pdf)
 
 `Psifr` was designed to be used by memory researchers and students.
 It is currently being used in two ongoing projects that require advanced
