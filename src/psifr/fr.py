@@ -721,7 +721,7 @@ def plot_raster(df, hue='input', palette=None, marker='s', intrusion_color=None,
     n_item = int(df['input'].max())
     n_list = int(df['list'].max())
     if palette is None and hue == 'input':
-        palette = sns.color_palette('viridis', n_item)
+        palette = 'viridis'
 
     if intrusion_color is None:
         intrusion_color = (.8, .1, .3)
