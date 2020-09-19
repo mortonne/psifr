@@ -51,7 +51,7 @@ extensions to tailor analyses for specific experiments.
 an item based on its position in the list. Plots may be flexibly divided by 
 condition using grouping semantics supported by Seaborn. In this case,
 different list types (mixed-category or pure-category) are plotted as separate
-curves.\label{fig:spc}](spc_list_type.svg)
+curves.\label{fig:spc}](spc_list_type.pdf)
 
 # Statement of Need
 
@@ -74,7 +74,7 @@ This design makes it possible for the user to make full use
 of the split-apply-combine operations of `Pandas` to quickly run complex analyses.
 
 ![Serial position curve split by list type, with a separate panel for each
-participant in an experiment.\label{fig:spc_subject}](spc_subject.svg)
+participant in an experiment.\label{fig:spc_subject}](spc_subject.pdf)
 
 Similarly, `Psifr` makes available the full power of the `Seaborn` 
 visualization package to provide expressive visualization capabilities. 
@@ -91,7 +91,7 @@ the order of recalls [@Romani:2016].
 ![Raster plot displaying the order of every recall for one participant.
 Each marker indicates one recall, and the color of the marker reflects
 the serial position of the recalled item.
-\label{fig:raster}](raster.svg)
+\label{fig:raster}](raster.pdf)
 
 `Psifr` was designed to be used by memory researchers and students.
 It is currently being used in two ongoing projects that require advanced
