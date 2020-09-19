@@ -714,8 +714,9 @@ def plot_swarm_error(data, x=None, y=None, swarm_color=None, swarm_size=5,
     return g
 
 
-def plot_raster(df, hue='input', palette=None, marker='s', intrusion_color=None,
-                orientation='horizontal', length=6, aspect=None, **facet_kws):
+def plot_raster(df, hue='input', palette=None, marker='s',
+                intrusion_color=None, orientation='horizontal', length=6,
+                aspect=None, legend='auto', **facet_kws):
     """Plot recalls in a raster plot."""
 
     n_item = int(df['input'].max())
@@ -750,7 +751,7 @@ def plot_raster(df, hue='input', palette=None, marker='s', intrusion_color=None,
     g = sns.FacetGrid(data=df.reset_index(), dropna=False, aspect=aspect,
                       height=height, **facet_kws)
     g.map_dataframe(sns.scatterplot, x=x_var, y=y_var, marker=marker,
-                    hue=hue, palette=palette)
+                    hue=hue, palette=palette, legend=legend)
     g.map_dataframe(
         lambda data, color=None, label=None: sns.scatterplot(
             data=data.query('intrusion'), x=x_var, y=y_var,
