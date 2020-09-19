@@ -111,11 +111,11 @@ Plotting by subject
 
 All analyses can be plotted separately by subject. A nice way to do this is
 using the :code:`col` and :code:`col_wrap` optional inputs, to make a grid
-of plots with 5 columns per row:
+of plots with 8 columns per row:
 
 .. ipython::
 
     @savefig spc_subject.png
     In [1]: g = fr.plot_spc(
-       ...:     spc, hue='list_type', col='subject', col_wrap=5
+       ...:     spc, hue='list_type', col='subject', col_wrap=8, height=2
        ...: ).add_legend()
