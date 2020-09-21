@@ -49,6 +49,16 @@ def distances():
     return mat
 
 
+def test_filter_raw_data(raw):
+    filt = fr.filter_data(raw, 1, [1, 2], 'study', positions=[1, 2])
+    assert filt['item'].to_list() == ['absence', 'hollow', 'fountain', 'piano']
+
+
+def test_filter_merged_data(data):
+    filt = fr.filter_data(data, 1, [1, 2], inputs=[1, 2])
+    assert filt['item'].to_list() == ['absence', 'hollow', 'fountain', 'piano']
+
+
 def test_split_lists(data):
     study = fr.split_lists(data, 'study', ['item', 'input', 'task'])
     np.testing.assert_allclose(study['input'][1], np.array([1., 2., 3.]))
