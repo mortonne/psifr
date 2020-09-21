@@ -26,7 +26,11 @@ make changes to the codebase. Once you have obtained a copy of the code,
 you should create a development environment using Conda or virtualenv 
 that is separate from your existing Python environment so that you can make 
 and test changes without compromising your own work environment. Create a
-branch within your clone of the project and make all changes there.
+branch within your clone of the project and make all changes there. To
+install code locally for development, clone the project, checkout your
+branch, and run `pip install -e .` from the main project directory. That
+will install Psifr in editable mode so changes to the codebase will be
+reflected the next time you import (or reload) Psifr.
 
 Before submitting your changes for review, make sure to check that your 
 changes do not break any tests. You can run the test suite by installing
