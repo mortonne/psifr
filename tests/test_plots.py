@@ -104,3 +104,7 @@ def test_plot_raster(data):
     g = fr.plot_raster(data)
     plt.close()
     assert isinstance(g, sns.FacetGrid)
+
+    g = fr.plot_raster(data, orientation='vertical')
+    plt.close()
+    assert isinstance(g, sns.FacetGrid)
