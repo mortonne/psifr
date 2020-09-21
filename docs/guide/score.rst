@@ -10,38 +10,41 @@ Scoring list recall
 
 First, let's create a simple sample dataset with two lists:
 
-.. ipython::
+.. ipython:: python
 
-    In [5]: import pandas as pd
-
-    In [6]: data = pd.DataFrame(
-       ...:     {'subject': [1, 1, 1, 1, 1, 1,
-       ...:                  1, 1, 1, 1, 1, 1],
-       ...:      'list': [1, 1, 1, 1, 1, 1,
-       ...:               2, 2, 2, 2, 2, 2],
-       ...:      'trial_type': ['study', 'study', 'study',
-       ...:                     'recall', 'recall', 'recall',
-       ...:                     'study', 'study', 'study',
-       ...:                     'recall', 'recall', 'recall'],
-       ...:      'position': [1, 2, 3, 1, 2, 3,
-       ...:                   1, 2, 3, 1, 2, 3],
-       ...:      'item': ['absence', 'hollow', 'pupil',
-       ...:               'pupil', 'absence', 'empty',
-       ...:               'fountain', 'piano', 'pillow',
-       ...:               'pillow', 'fountain', 'pillow']})
-
-    In [7]: data
+    import pandas as pd
+    data = pd.DataFrame({
+        'subject': [
+            1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1
+        ],
+       'list': [
+            1, 1, 1, 1, 1, 1,
+            2, 2, 2, 2, 2, 2
+        ],
+       'trial_type': [
+            'study', 'study', 'study', 'recall', 'recall', 'recall',
+            'study', 'study', 'study', 'recall', 'recall', 'recall'
+        ],
+       'position': [
+            1, 2, 3, 1, 2, 3,
+            1, 2, 3, 1, 2, 3
+        ],
+       'item': [
+            'absence', 'hollow', 'pupil', 'pupil', 'absence', 'empty',
+            'fountain', 'piano', 'pillow', 'pillow', 'fountain', 'pillow'
+        ]
+    })
+    data
 
 Next, we'll merge together the study and recall events by matching up
 corresponding events:
 
-.. ipython::
+.. ipython:: python
 
-    In [7]: from psifr import fr
-
-    In [10]: merged = fr.merge_free_recall(data)
-
-    In [11]: merged
+    from psifr import fr
+    merged = fr.merge_free_recall(data)
+    merged
 
 For each item, there is one row for each unique combination of input and
 output position. For example, if an item is presented once in the list, but
@@ -68,16 +71,16 @@ get different views of the data. For some analyses, we may want to organize in
 terms of the study list by removing repeats and intrusions. Because our data
 are in a `DataFrame`, we can use the `DataFrame.query` method:
 
-.. ipython::
+.. ipython:: python
 
-    In [9]: merged.query('study')
+    merged.query('study')
 
 Alternatively, we may also want to get just the recall events, sorted by
 output position instead of input position:
 
-.. ipython::
+.. ipython:: python
 
-    In [11]: merged.query('recall').sort_values(['list', 'output'])
+    merged.query('recall').sort_values(['list', 'output'])
 
 Note that we first sort by list, then output position, to keep the
 lists together.

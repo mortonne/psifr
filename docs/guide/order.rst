@@ -41,29 +41,26 @@ Lag-CRP
 
 First, load some sample data and create a merged DataFrame:
 
-.. ipython::
+.. ipython:: python
 
-    In [9]: from psifr import fr
-
-    In [11]: df = fr.sample_data('Morton2013')
-
-    In [15]: data = fr.merge_free_recall(df, study_keys=['category'])
+    from psifr import fr
+    df = fr.sample_data('Morton2013')
+    data = fr.merge_free_recall(df, study_keys=['category'])
 
 Next, call :py:func:`~psifr.fr.lag_crp` to calculate conditional response
 probability as a function of lag.
 
-.. ipython::
+.. ipython:: python
 
-    In [17]: crp = fr.lag_crp(data)
-
-    In [17]: crp
+    crp = fr.lag_crp(data)
+    crp
 
 Use :py:func:`~psifr.fr.plot_lag_crp` to display the results:
 
-.. ipython::
+.. ipython:: python
 
    @savefig lag_crp.svg
-   In [1]: g = fr.plot_lag_crp(crp)
+   g = fr.plot_lag_crp(crp)
 
 Lag rank
 ~~~~~~~~
@@ -75,13 +72,11 @@ rank. Then the rank of the actual transition made is taken, scaled to vary
 between 0 (furthest item chosen) and 1 (nearest item chosen). Chance
 clustering will be 0.5.
 
-.. ipython::
+.. ipython:: python
 
-    In [1]: ranks = fr.lag_rank(data)
-
-    In [1]: ranks
-
-    In [1]: ranks.agg(['mean', 'sem'])
+    ranks = fr.lag_rank(data)
+    ranks
+    ranks.agg(['mean', 'sem'])
 
 Category CRP
 ~~~~~~~~~~~~
@@ -90,10 +85,8 @@ If there are multiple categories or conditions of trials in a list, we
 can test whether participants tend to successively recall items from the
 same category.
 
-.. ipython::
+.. ipython:: python
 
-    In [1]: cat_crp = fr.category_crp(data, category_key='category')
-
-    In [1]: cat_crp
-
-    In [1]: cat_crp[['prob']].agg(['mean', 'sem'])
+    cat_crp = fr.category_crp(data, category_key='category')
+    cat_crp
+    cat_crp[['prob']].agg(['mean', 'sem'])

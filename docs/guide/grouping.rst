@@ -28,17 +28,14 @@ Working with custom columns
 
 First, load some sample data and create a merged DataFrame:
 
-.. ipython::
+.. ipython:: python
 
-    In [1]: from psifr import fr
-
-    In [1]: df = fr.sample_data('Morton2013')
-
-    In [1]: data = fr.merge_free_recall(
-       ...:     df, study_keys=['category'], list_keys=['list_type']
-       ...: )
-
-    In [1]: data.head()
+    from psifr import fr
+    df = fr.sample_data('Morton2013')
+    data = fr.merge_free_recall(
+        df, study_keys=['category'], list_keys=['list_type']
+    )
+    data.head()
 
 The :py:func:`~psifr.fr.merge_free_recall` function only includes columns from the
 raw data if they are one of the standard columns or if they've explictly been
@@ -57,11 +54,10 @@ Analysis by condition
 Now we can run any analysis separately for the different conditions. We'll
 use the serial position curve analysis as an example.
 
-.. ipython::
+.. ipython:: python
 
-    In [1]: spc = data.groupby('list_type').apply(fr.spc)
-
-    In [1]: spc.head()
+    spc = data.groupby('list_type').apply(fr.spc)
+    spc.head()
 
 The :code:`spc` DataFrame has separate groups with the results for each
 :code:`list_type`.
@@ -85,37 +81,36 @@ for details. Most inputs to :py:func:`seaborn.relplot` are supported.
 
 For example, we can plot two curves for the different list types:
 
-.. ipython::
+.. ipython:: python
 
     @savefig spc_list_type.svg
-    In [1]: g = fr.plot_spc(spc, hue='list_type').add_legend()
+    g = fr.plot_spc(spc, hue='list_type').add_legend()
 
 We can also plot the curves in different axes using the :code:`col` option:
 
-.. ipython::
+.. ipython:: python
 
     @savefig spc_list_type_col.svg
-    In [1]: g = fr.plot_spc(spc, col='list_type')
+    g = fr.plot_spc(spc, col='list_type')
 
 We can also plot all combinations of two conditions:
 
-.. ipython::
+.. ipython:: python
 
-    In [1]: spc_split = data.groupby(['list_type', 'category']).apply(fr.spc)
-
+    spc_split = data.groupby(['list_type', 'category']).apply(fr.spc)
     @savefig spc_split.svg
-    In [1]: g = fr.plot_spc(spc_split, col='list_type', row='category')
+    g = fr.plot_spc(spc_split, col='list_type', row='category')
 
 Plotting by subject
 ~~~~~~~~~~~~~~~~~~~
 
 All analyses can be plotted separately by subject. A nice way to do this is
 using the :code:`col` and :code:`col_wrap` optional inputs, to make a grid
-of plots with 8 columns per row:
+of plots with 6 columns per row:
 
-.. ipython::
+.. ipython:: python
 
     @savefig spc_subject.svg
-    In [1]: g = fr.plot_spc(
-       ...:     spc, hue='list_type', col='subject', col_wrap=6, height=2
-       ...: ).add_legend()
+    g = fr.plot_spc(
+        spc, hue='list_type', col='subject', col_wrap=6, height=2
+    ).add_legend()
