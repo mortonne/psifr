@@ -3,6 +3,3 @@ scipy
 pandas
 matplotlib!=3.3.1
 seaborn
-pytest
-pytest-cov
-codecov
