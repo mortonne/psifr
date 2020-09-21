@@ -21,6 +21,10 @@ setuptools.setup(
     package_data={
         'psifr': ['data/*.csv']
     },
+    extras_require={
+        'docs': ['sphinx', 'pydata-sphinx-theme', 'ipython'],
+        'test': ['pytest', 'codecov', 'pytest-cov'],
+    },
     classifiers=[
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Programming Language :: Python :: 3.8',
