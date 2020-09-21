@@ -62,7 +62,7 @@ Use :py:func:`~psifr.fr.plot_lag_crp` to display the results:
 
 .. ipython::
 
-   @savefig lag_crp.png
+   @savefig lag_crp.svg
    In [1]: g = fr.plot_lag_crp(crp)
 
 Lag rank

@@ -41,7 +41,7 @@ list are shown in purple. Intrusions of items not on the list are shown in red.
 
     In [1]: subj = fr.filter_data(data, 1)
 
-    @savefig raster_subject.png
+    @savefig raster_subject.svg
     In [1]: g = fr.plot_raster(subj).add_legend()
 
 Serial position curve
@@ -54,7 +54,7 @@ using :py:func:`~psifr.fr.spc` and plot using :py:func:`~psifr.fr.plot_spc`.
 
     In [1]: recall = fr.spc(data)
 
-    @savefig spc.png
+    @savefig spc.svg
     In [1]: g = fr.plot_spc(recall)
 
 Using the same plotting function, we can plot the curve for each
@@ -62,7 +62,7 @@ individual subject:
 
 .. ipython::
 
-    @savefig spc_indiv.png
+    @savefig spc_indiv.svg
     In [1]: g = fr.plot_spc(recall, col='subject', col_wrap=5)
 
 Probability of Nth recall
@@ -88,5 +88,5 @@ into curves of different colors.
 
     In [1]: pfr = prob.query('output <= 3')
 
-    @savefig pnr.png
+    @savefig pnr.svg
     In [1]: g = fr.plot_spc(pfr, hue='output').add_legend()

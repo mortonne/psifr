@@ -87,14 +87,14 @@ For example, we can plot two curves for the different list types:
 
 .. ipython::
 
-    @savefig spc_list_type.png
+    @savefig spc_list_type.svg
     In [1]: g = fr.plot_spc(spc, hue='list_type').add_legend()
 
 We can also plot the curves in different axes using the :code:`col` option:
 
 .. ipython::
 
-    @savefig spc_list_type_col.png
+    @savefig spc_list_type_col.svg
     In [1]: g = fr.plot_spc(spc, col='list_type')
 
 We can also plot all combinations of two conditions:
@@ -103,7 +103,7 @@ We can also plot all combinations of two conditions:
 
     In [1]: spc_split = data.groupby(['list_type', 'category']).apply(fr.spc)
 
-    @savefig spc_split.png
+    @savefig spc_split.svg
     In [1]: g = fr.plot_spc(spc_split, col='list_type', row='category')
 
 Plotting by subject
@@ -115,7 +115,7 @@ of plots with 8 columns per row:
 
 .. ipython::
 
-    @savefig spc_subject.png
+    @savefig spc_subject.svg
     In [1]: g = fr.plot_spc(
-       ...:     spc, hue='list_type', col='subject', col_wrap=8, height=2
+       ...:     spc, hue='list_type', col='subject', col_wrap=6, height=2
        ...: ).add_legend()
