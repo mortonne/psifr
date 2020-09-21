@@ -24,6 +24,7 @@ setuptools.setup(
     install_requires=[
         'numpy',
         'pandas',
+        'matplotlib!=3.3.1',
         'seaborn',
     ],
     classifiers=[
