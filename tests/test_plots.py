@@ -79,7 +79,7 @@ def test_plot_lag_crp(data):
 def test_plot_distance_crp(data, distances):
     edges = [0.5, 1.5, 2.5, 3.5]
     stat = fr.distance_crp(data, 'item_index', distances, edges)
-    g = fr.plot_distance_crp(stat)
+    g = fr.plot_distance_crp(stat, min_samples=2)
     plt.close()
     assert isinstance(g, sns.FacetGrid)
 
