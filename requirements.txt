@@ -1,5 +1,5 @@
 numpy
 scipy
-pandas
+pandas>=1.0.0
 matplotlib!=3.3.1
-seaborn
+seaborn>=0.9.1
