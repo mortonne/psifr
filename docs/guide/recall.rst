@@ -84,3 +84,5 @@ into curves of different colors.
     pfr = prob.query('output <= 3')
     @savefig pnr.svg
     g = fr.plot_spc(pfr, hue='output').add_legend()
+
+This plot shows what items tend to be recalled early in the recall sequence.

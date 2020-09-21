@@ -39,6 +39,14 @@ this is referred to as a category-CRP analysis.
 Lag-CRP
 ~~~~~~~
 
+In all CRP analyses, transition probabilities are calculated conditional
+on a given transition being available. For example, in a six-item list,
+if the items 6, 1, and 4 have been recalled, then possible items that could
+have been recalled next are 2, 3, or 5; therefore, possible lags at
+that point in the recall sequence are -2, -1, or +1. The number of actual
+transitions observed for each lag is divided by the number of times that
+lag was possible, to obtain the CRP for each lag.
+
 First, load some sample data and create a merged DataFrame:
 
 .. ipython:: python
@@ -55,6 +63,12 @@ probability as a function of lag.
     crp = fr.lag_crp(data)
     crp
 
+The results show the count of times a given transition actually happened
+in the observed recall sequences (:code:`actual`) and the number of times a
+transition could have occurred (:code:`possible`). Finally, the :code:`prob` column
+gives the estimated probability of a given transition occurring, calculated
+by dividing the actual count by the possible count.
+
 Use :py:func:`~psifr.fr.plot_lag_crp` to display the results:
 
 .. ipython:: python
@@ -62,15 +76,21 @@ Use :py:func:`~psifr.fr.plot_lag_crp` to display the results:
    @savefig lag_crp.svg
    g = fr.plot_lag_crp(crp)
 
+The peaks at small lags (e.g., +1 and -1) indicate that the recall sequences
+show evidence of a temporal contiguity effect; that is, items presented near
+to one another in the list are more likely to be recalled successively than
+items that are distant from one another in the list.
+
 Lag rank
 ~~~~~~~~
 
 We can summarize the tendency to group together nearby items using a lag
 rank analysis. For each recall, this determines the absolute lag of all
-remaining items available for recall then calculates their percentile
+remaining items available for recall and then calculates their percentile
 rank. Then the rank of the actual transition made is taken, scaled to vary
 between 0 (furthest item chosen) and 1 (nearest item chosen). Chance
-clustering will be 0.5.
+clustering will be 0.5; clustering above that value is evidence of a
+temporal contiguity effect.
 
 .. ipython:: python
 
@@ -83,10 +103,16 @@ Category CRP
 
 If there are multiple categories or conditions of trials in a list, we
 can test whether participants tend to successively recall items from the
-same category.
+same category. The category-CRP estimates the probability of successively
+recalling two items from the same category.
 
 .. ipython:: python
 
     cat_crp = fr.category_crp(data, category_key='category')
     cat_crp
     cat_crp[['prob']].agg(['mean', 'sem'])
+
+The expected probability due to chance depends on the number of
+categories in the list. In this case, there are three categories, so
+a category CRP of 0.33 would be predicted if recalls were sampled
+randomly from the list.
