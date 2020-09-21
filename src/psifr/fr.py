@@ -16,10 +16,9 @@ def sample_data(study):
 
 def _match_values(series, values):
     """Get matches for a data column."""
-    if isinstance(values, int):
-        include = series == values
-    else:
-        include = series.isin(values)
+    if not hasattr(values, '__iter__') or isinstance(values, str):
+        values = [values]
+    include = series.isin(values)
     return include
 
 
