@@ -39,11 +39,7 @@ corresponding events:
 
     In [7]: from psifr import fr
 
-    In [8]: study = data.query('trial_type == "study"').copy()
-
-    In [9]: recall = data.query('trial_type == "recall"').copy()
-
-    In [10]: merged = fr.merge_lists(study, recall)
+    In [10]: merged = fr.merge_free_recall(data)
 
     In [11]: merged
 
