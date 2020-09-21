@@ -624,7 +624,7 @@ def category_crp(df, category_key, item_query=None, test_key=None, test=None):
     return crp
 
 
-def plot_spc(recall, **kwargs):
+def plot_spc(recall, **facet_kws):
     """
     Plot a serial position curve.
 
@@ -636,7 +636,7 @@ def plot_spc(recall, **kwargs):
         Results from calling `spc`.
     """
     y = 'recall' if 'recall' in recall else 'prob'
-    g = sns.FacetGrid(dropna=False, **kwargs, data=recall.reset_index())
+    g = sns.FacetGrid(dropna=False, **facet_kws, data=recall.reset_index())
     g.map_dataframe(sns.lineplot, x='input', y=y)
     g.set_xlabels('Serial position')
     g.set_ylabels('Recall probability')
