@@ -16,24 +16,24 @@ First, let's create a simple sample dataset with two lists:
     data = pd.DataFrame({
         'subject': [
             1, 1, 1, 1, 1, 1,
-            1, 1, 1, 1, 1, 1
-        ],
-       'list': [
             1, 1, 1, 1, 1, 1,
-            2, 2, 2, 2, 2, 2
         ],
-       'trial_type': [
+        'list': [
+            1, 1, 1, 1, 1, 1,
+            2, 2, 2, 2, 2, 2,
+        ],
+        'trial_type': [
             'study', 'study', 'study', 'recall', 'recall', 'recall',
-            'study', 'study', 'study', 'recall', 'recall', 'recall'
+            'study', 'study', 'study', 'recall', 'recall', 'recall',
         ],
-       'position': [
+        'position': [
             1, 2, 3, 1, 2, 3,
-            1, 2, 3, 1, 2, 3
+            1, 2, 3, 1, 2, 3,
         ],
-       'item': [
+        'item': [
             'absence', 'hollow', 'pupil', 'pupil', 'absence', 'empty',
-            'fountain', 'piano', 'pillow', 'pillow', 'fountain', 'pillow'
-        ]
+            'fountain', 'piano', 'pillow', 'pillow', 'fountain', 'pillow',
+        ],
     })
     data
 
