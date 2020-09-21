@@ -21,6 +21,13 @@ setuptools.setup(
     package_data={
         'psifr': ['data/*.csv']
     },
+    install_requires=[
+        'numpy',
+        'scipy',
+        'pandas>=1.0.0',
+        'matplotlib!=3.3.1',
+        'seaborn>=0.9.1',
+    ],
     extras_require={
         'docs': ['sphinx', 'pydata-sphinx-theme', 'ipython'],
         'test': ['pytest', 'codecov', 'pytest-cov'],
