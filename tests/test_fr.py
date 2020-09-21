@@ -58,6 +58,9 @@ def test_filter_merged_data(data):
     filt = fr.filter_data(data, 1, [1, 2], inputs=[1, 2])
     assert filt['item'].to_list() == ['absence', 'hollow', 'fountain', 'piano']
 
+    filt = fr.filter_data(data, 1, [1, 2], outputs=1.0)
+    assert filt['item'].to_list() == ['hollow', 'pillow']
+
 
 def test_split_lists(data):
     study = fr.split_lists(data, 'study', ['item', 'input', 'task'])
