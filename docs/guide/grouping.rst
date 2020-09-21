@@ -23,6 +23,8 @@ has powerful ways of splitting data and applying operations to it.
 This makes it possible to analyze and plot different conditions using
 very little code.
 
+.. _custom-columns:
+
 Working with custom columns
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

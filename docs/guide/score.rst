@@ -59,9 +59,9 @@ set to `NaN`. Finally, intrusions have an output position but no input position
 because they did not appear in the list. There is an `intrusion` field for
 convenience to label these recall attempts.
 
-:py:func:`~psifr.fr.merge_lists` can also handle additional attributes beyond
+:py:func:`~psifr.fr.merge_free_recall` can also handle additional attributes beyond
 the standard ones, such as codes indicating stimulus category or list condition.
-See the :py:func:`~psifr.fr.merge_lists` documentation for details.
+See :ref:`custom-columns` for details.
 
 Filtering and sorting
 ---------------------
