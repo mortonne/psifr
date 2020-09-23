@@ -16,14 +16,6 @@ Psifr leverages the Pandas data analysis package to make precise and flexible an
   </div>
 </div>
 
-## Quickstart
-
-See the Jupyter notebooks for demonstrations of reading and analyzing a sample free recall dataset:
-* [Recall performance](https://github.com/mortonne/psifr-notebooks/blob/master/demo_recall.ipynb)
-* [Temporal clustering](https://github.com/mortonne/psifr-notebooks/blob/master/demo_lag_crp.ipynb)
-
-See the [user guide](https://psifr.readthedocs.io/en/latest/guide/overview.html) for more details.
-
 ## Installation
 
 You can install the latest stable version of Psifr using pip:
@@ -38,6 +30,24 @@ repository on GitHub:
 ```bash
 pip install git+git://github.com/mortonne/psifr
 ```
+
+## Quickstart
+
+To plot a serial position curve for a sample dataset:
+
+```python
+from psifr import fr
+df = fr.sample_data('Morton2013')
+data = fr.merge_free_recall(df)
+recall = fr.spc(data)
+g = fr.plot_spc(recall)
+```
+
+See the [user guide](https://psifr.readthedocs.io/en/latest/guide/overview.html) for detailed documentation on importing and analyzing free recall datasets.
+
+Also see the Jupyter notebooks for more analysis examples:
+* [Recall performance](https://github.com/mortonne/psifr-notebooks/blob/master/demo_recall.ipynb)
+* [Temporal clustering](https://github.com/mortonne/psifr-notebooks/blob/master/demo_lag_crp.ipynb)
 
 ## Importing data
 
