@@ -101,7 +101,8 @@ for substantial customization to facilitate analysis of specific episodic
 memory experiments.
 Advanced visualization further helps to support better understanding of 
 complex datasets. 
-The source code for `Psifr` has  been archived to Zenodo with the linked DOI: TBD.
+The source code for `Psifr` has  been archived to Zenodo with the linked DOI: 
+[10.5281/zenodo.4086188](https://doi.org/10.5281/zenodo.4086187).
 
 # Acknowledgements
 
