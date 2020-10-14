@@ -8,7 +8,7 @@ def readme():
 
 setuptools.setup(
     name='psifr',
-    version='0.4.3',
+    version='0.4.4',
     description='Package for analysis of free recall data.',
     long_description=readme(),
     long_description_content_type="text/markdown",
