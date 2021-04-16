@@ -37,11 +37,9 @@ def test_lag_count_category(data):
     )
 
     np.testing.assert_array_equal(
-        actual.to_numpy(),
-        np.array([0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0])
+        actual.to_numpy(), np.array([0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0])
     )
 
     np.testing.assert_array_equal(
-        possible.to_numpy(),
-        np.array([0, 0, 0, 0, 1, 1, 3, 0, 2, 1, 1, 0, 0, 0, 0])
+        possible.to_numpy(), np.array([0, 0, 0, 0, 1, 1, 3, 0, 2, 1, 1, 0, 0, 0, 0])
     )
