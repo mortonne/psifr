@@ -19,11 +19,9 @@ def test_lag_count(data):
     actual, possible = transitions.count_lags(
         data['list_length'], [data['pool_position']], [data['output_position']]
     )
-
     np.testing.assert_array_equal(
         actual.to_numpy(), np.array([0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0])
     )
-
     np.testing.assert_array_equal(
         possible.to_numpy(), np.array([0, 1, 1, 0, 1, 2, 3, 0, 3, 3, 3, 3, 2, 1, 1])
     )
@@ -35,13 +33,9 @@ def test_lag_count_category(data):
         pool_test=[data['pool_category']], recall_test=[data['output_category']],
         test=lambda x, y: x == y
     )
-
     np.testing.assert_array_equal(
-        actual.to_numpy(),
-        np.array([0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0])
+        actual.to_numpy(), np.array([0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0])
     )
-
     np.testing.assert_array_equal(
-        possible.to_numpy(),
-        np.array([0, 0, 0, 0, 1, 1, 3, 0, 2, 1, 1, 0, 0, 0, 0])
+        possible.to_numpy(), np.array([0, 0, 0, 0, 1, 1, 3, 0, 2, 1, 1, 0, 0, 0, 0])
     )
