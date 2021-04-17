@@ -11,6 +11,38 @@ from psifr import outputs
 
 
 class TransitionMeasure(object):
+    """
+    Measure of free recall dataset with multiple subjects.
+
+    Parameters
+    ----------
+    items_key : str
+        Data column with item identifiers.
+
+    label_key : str
+        Data column with trial labels to use for the measure.
+
+    item_query : str
+        Query string to indicate trials to include in the measure.
+
+    test_key : str
+        Data column with labels to use when testing for trial inclusion.
+
+    test : callable
+        Test of trial inclusion. Takes the previous and current test
+        values and return True if the transition should be included.
+
+    Attributes
+    ----------
+    keys : dict of {str: str}
+        List of columns to use for the measure.
+
+    item_query : str
+        Query string to indicate trials to include in the measure.
+
+    test : callable
+        Test of trial inclusion.
+    """
     def __init__(self, items_key, label_key, item_query=None, test_key=None, test=None):
 
         self.keys = {'items': items_key, 'label': label_key, 'test': test_key}
@@ -18,7 +50,17 @@ class TransitionMeasure(object):
         self.test = test
 
     def split_lists(self, data, phase):
-        """Get relevant fields and split by list."""
+        """
+        Get relevant fields and split by list.
+
+        Parameters
+        ----------
+        data : pandas.DataFrame
+            Raw free recall data.
+
+        phase : str
+            Phase to split ('study' or 'recall').
+        """
         names = list(self.keys.keys())
         keys = list(self.keys.values())
         split = fr.split_lists(data, phase, keys, names, self.item_query, as_list=True)
@@ -26,9 +68,44 @@ class TransitionMeasure(object):
 
     @abc.abstractmethod
     def analyze_subject(self, subject, pool_lists, recall_lists):
+        """
+        Analyze a single subject.
+
+        Parameters
+        ----------
+        subject : int or str
+            Identifier of the subject to analyze.
+
+        pool_lists : dict of lists of numpy.ndarray
+            Information about the item pool for each list, with keys
+            for items, label, and test arrays.
+
+        recall_lists : dict of lists of numpy.ndarray
+            Information about the recall sequence for each list, with
+            keys for items, label, and test arrays.
+
+        Returns
+        -------
+        pandas.DataFrame
+            Results of the analysis for one subject. Should include a
+            'subject' column in the index.
+        """
         pass
 
     def analyze(self, data):
+        """
+        Analyze a free recall dataset with multiple subjects.
+
+        Parameters
+        ----------
+        data : pandas.DataFrame
+            Raw (not merged) free recall data.
+
+        Returns
+        -------
+        stat : pandas.DataFrame
+            Statistics calculated for each subject.
+        """
         subj_results = []
         for subject, subject_data in data.groupby('subject'):
             pool_lists = self.split_lists(subject_data, 'study')
