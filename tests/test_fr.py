@@ -156,6 +156,12 @@ def test_lists_input(data):
         np.testing.assert_array_equal(recall_lists[key], recall_expected[key])
 
 
+def test_spc(data):
+    recall = fr.spc(data)
+    expected = np.array([.5, .5, 1])
+    np.testing.assert_array_equal(recall['recall'].to_numpy(), expected)
+
+
 def test_pnr(data):
     stat = fr.pnr(data)
     expected = np.array([0, 0.5, 0.5, 0.5, 0, 1, np.nan, np.nan, np.nan])
