@@ -161,13 +161,14 @@ class TransitionLag(TransitionMeasure):
     def __init__(
         self,
         list_length,
+        lag_key='input',
         count_unique=False,
         item_query=None,
         test_key=None,
         test=None
     ):
         super().__init__(
-            'input', 'input', item_query=item_query, test_key=test_key, test=test
+            'input', lag_key, item_query=item_query, test_key=test_key, test=test
         )
         self.list_length = list_length
         self.count_unique = count_unique
