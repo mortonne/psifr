@@ -4,7 +4,8 @@ from pkg_resources import resource_filename
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from psifr import transitions
+
+from psifr import measures
 
 
 def sample_data(study):
@@ -357,7 +358,7 @@ def pnr(df, item_query=None, test_key=None, test=None):
         how many times it was possible given the recall sequence.
     """
     list_length = int(df['input'].max())
-    measure = transitions.TransitionOutputs(
+    measure = measures.TransitionOutputs(
         list_length, item_query=item_query, test_key=test_key, test=test
     )
     prob = measure.analyze(df)
@@ -412,8 +413,8 @@ def lag_crp(df, item_query=None, test_key=None, test=None):
             input position and the remaining items to be recalled.
     """
     list_length = df['input'].max()
-    measure = transitions.TransitionLag(list_length, item_query=item_query,
-                                        test_key=test_key, test=test)
+    measure = measures.TransitionLag(list_length, item_query=item_query,
+                                     test_key=test_key, test=test)
     crp = measure.analyze(df)
     return crp
 
@@ -449,8 +450,8 @@ def lag_rank(df, item_query=None, test_key=None, test=None):
     stat : pandas.DataFrame
         Has fields 'subject' and 'rank'.
     """
-    measure = transitions.TransitionLagRank(item_query=item_query,
-                                            test_key=test_key, test=test)
+    measure = measures.TransitionLagRank(item_query=item_query,
+                                         test_key=test_key, test=test)
     rank = measure.analyze(df)
     return rank
 
@@ -518,7 +519,7 @@ def distance_crp(df, index_key, distances, edges, centers=None,
             prior input position and the remaining items to be
             recalled.
     """
-    measure = transitions.TransitionDistance(
+    measure = measures.TransitionDistance(
         index_key, distances, edges, centers=centers, count_unique=count_unique,
         item_query=item_query, test_key=test_key, test=test)
     crp = measure.analyze(df)
@@ -564,7 +565,7 @@ def distance_rank(df, index_key, distances, item_query=None, test_key=None,
     stat : pandas.DataFrame
         Has fields 'subject' and 'rank'.
     """
-    measure = transitions.TransitionDistanceRank(
+    measure = measures.TransitionDistanceRank(
         index_key, distances, item_query=item_query,
         test_key=test_key, test=test
     )
@@ -617,7 +618,7 @@ def category_crp(df, category_key, item_query=None, test_key=None, test=None):
             Total of times each lag was possible, given the prior
             input position and the remaining items to be recalled.
     """
-    measure = transitions.TransitionCategory(
+    measure = measures.TransitionCategory(
         category_key, item_query=item_query, test_key=test_key, test=test)
     crp = measure.analyze(df)
     return crp

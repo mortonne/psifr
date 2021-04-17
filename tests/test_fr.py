@@ -3,8 +3,9 @@
 import numpy as np
 import pandas as pd
 import pytest
+
+from psifr import measures
 from psifr import fr
-from psifr import transitions
 
 
 @pytest.fixture()
@@ -151,7 +152,7 @@ def test_split_lists(data):
 
 def test_lists_input(data):
     """Test splitting lists through the transitions interface."""
-    m = transitions.TransitionMeasure('input', 'input')
+    m = measures.TransitionMeasure('input', 'input')
     pool_lists = m.split_lists(data, 'study')
     pool_expected = {
         'items': [[1.0, 2.0, 3.0], [1.0, 2.0, 3.0]],
