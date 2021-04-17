@@ -115,7 +115,39 @@ def reset_list(df):
 
 
 def split_lists(frame, phase, keys, names=None, item_query=None, as_list=False):
-    """Convert free recall data from one phase to split format."""
+    """
+    Convert free recall data from one phase to split format.
+
+    Parameters
+    ----------
+    frame : pandas.DataFrame
+        Free recall data with separate study and recall events.
+
+    phase : {'study', 'recall', 'raw'}
+        Phase of recall to split. If 'raw', all trials will be included.
+
+    keys : list of str
+        Data columns to include in the split data.
+
+    names : list of str, optional
+        Name for each column in the returned split data. Default is to
+        use the same names as the input columns.
+
+    item_query : str, optional
+        Query string to select study trials to include. See
+        `pandas.DataFrame.query` for allowed format.
+
+    as_list : bool, optional
+        If true, each column will be output as a list; otherwise,
+        outputs will be numpy.ndarray.
+
+    Returns
+    -------
+    split : dict of str: list
+        Data in split format. Each included column will be a key in the
+        dictionary, with a list of either numpy.ndarray (default) or
+        lists, containing the values for that column.
+    """
     split = {}
     if keys is None:
         return split
