@@ -41,6 +41,10 @@ def raw():
                 1, 2, 1, 2, 1, np.nan,
                 1, 2, 1, 1, 1, 1,
             ],
+            'block': [
+                1, 2, 2, 2, 2, np.nan,
+                1, 1, 2, 2, 1, 2,
+            ],
         }
     )
     return raw
@@ -49,7 +53,9 @@ def raw():
 @pytest.fixture()
 def data(raw):
     """Create merged free recall data."""
-    data = fr.merge_free_recall(raw, study_keys=['task'], list_keys=['item_index'])
+    data = fr.merge_free_recall(
+        raw, study_keys=['task', 'block'], list_keys=['item_index']
+    )
     return data
 
 
@@ -209,6 +215,16 @@ def test_lag_crp_query(data):
     np.testing.assert_array_equal(crp['actual'], actual)
     np.testing.assert_array_equal(crp['possible'], possible)
     np.testing.assert_array_equal(crp['prob'], prob)
+
+
+def test_lag_crp_block(data):
+    """Test block-CRP analysis."""
+    crp = fr.lag_crp(data, lag_key='block', count_unique=True)
+    # recalls: [[2, 3, NaN], [3, 1, 3]]
+    # blocks:  [[2, 2, NaN], [2, 1, 2]]
+    np.testing.assert_array_equal(crp['actual'], np.array([1, 1, 0]))
+    np.testing.assert_array_equal(crp['possible'], np.array([2, 1, 0]))
+    np.testing.assert_array_equal(crp['prob'], np.array([0.5, 1.0, np.nan]))
 
 
 def test_lag_crp_cat(data):
