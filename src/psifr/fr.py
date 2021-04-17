@@ -411,7 +411,9 @@ def pnr(df, item_query=None, test_key=None, test=None):
     return prob
 
 
-def lag_crp(df, item_query=None, test_key=None, test=None):
+def lag_crp(
+    df, lag_key='input', count_unique=False, item_query=None, test_key=None, test=None
+):
     """
     Lag-CRP for multiple subjects.
 
@@ -422,6 +424,14 @@ def lag_crp(df, item_query=None, test_key=None, test=None):
         assumed to be the same for all lists. Must have fields:
         subject, list, input, output, recalled. Input position must be
         defined such that the first serial position is 1, not 0.
+
+    lag_key : str, optional
+        Name of column to use when calculating lag between recalled
+        items. Default is to calculate lag based on input position.
+
+    count_unique : bool, optional
+        If true, possible transitions of the same lag will only be
+        incremented once per transition.
 
     item_query : str, optional
         Query string to select items to include in the pool of possible
@@ -457,9 +467,14 @@ def lag_crp(df, item_query=None, test_key=None, test=None):
             Total of times each lag was possible, given the prior
             input position and the remaining items to be recalled.
     """
-    list_length = df['input'].max()
+    list_length = df[lag_key].max()
     measure = measures.TransitionLag(
-        list_length, item_query=item_query, test_key=test_key, test=test
+        list_length,
+        lag_key=lag_key,
+        count_unique=count_unique,
+        item_query=item_query,
+        test_key=test_key,
+        test=test
     )
     crp = measure.analyze(df)
     return crp
