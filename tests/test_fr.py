@@ -205,8 +205,8 @@ def test_lag_crp(data):
     np.testing.assert_array_equal(crp['prob'], prob)
 
 
-def test_lag_crp_query(data):
-    """Test lag-CRP analysis with possible item filters."""
+def test_lag_crp_query_input(data):
+    """Test lag-CRP analysis with item input position filter."""
     crp = fr.lag_crp(data, item_query='input != 2')
     actual = np.array([1, 0, 0, 0, 0])
     possible = np.array([1, 0, 0, 0, 0])
@@ -215,6 +215,15 @@ def test_lag_crp_query(data):
     np.testing.assert_array_equal(crp['actual'], actual)
     np.testing.assert_array_equal(crp['possible'], possible)
     np.testing.assert_array_equal(crp['prob'], prob)
+
+
+def test_lag_crp_query_output(data):
+    """Test lag-CRP analysis with item output position filter."""
+    crp = fr.lag_crp(data, item_query='output > 1 or not recall')
+
+    np.testing.assert_array_equal(crp['actual'], np.zeros(5))
+    np.testing.assert_array_equal(crp['possible'], np.zeros(5))
+    np.testing.assert_array_equal(crp['prob'], np.nan(5))
 
 
 def test_lag_crp_block(data):
