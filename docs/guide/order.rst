@@ -142,3 +142,35 @@ include them explicitly using :code:`output > 3 or not recall`.
     crp_op3 = fr.lag_crp(data, item_query='output > 3 or not recall')
     @savefig lag_crp_op3.svg
     g = fr.plot_lag_crp(crp_op3)
+
+Restricting analysis to specific transitions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In other cases, you may want to focus an analysis on a subset of
+transitions based on some criteria. For example, if a list contains
+items from different categories, it is a good idea to take this into
+account when measuring temporal clustering using a lag-CRP analysis.
+One approach is to separately analyze within- and across-category
+transitions.
+
+Transitions can be selected for inclusion using the optional
+:code:`test_key` and :code:`test` inputs. The :code:`test_key`
+indicates a column of the data to use for testing transitions; for
+example, here we will use the :code:`category` column. The
+:code:`test` input should be a function that takes in the test value
+of the previous recall and the current recall and returns True or False
+to indicate whether that transition should be included. Here, we will
+use a lambda (anonymous) function to define the test.
+
+.. ipython:: python
+
+    crp_within = fr.lag_crp(data, test_key='category', test=lambda x, y: x == y)
+    crp_across = fr.lag_crp(data, test_key='category', test=lambda x, y: x != y)
+    crp_combined = pd.concat([crp_within, crp_across], keys=['within', 'across'], axis=0)
+    crp_combined.index.set_names('transition', level=0, inplace=True)
+    @savefig lag_crp_cat.svg
+    g = fr.plot_lag_crp(crp_combined, hue='transition').add_legend()
+
+The :code:`within` curve shows the lag-CRP for transitions between
+items of the same category, while the :code:`across` curve shows
+transitions between items of different categories.
