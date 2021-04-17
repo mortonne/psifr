@@ -14,6 +14,8 @@ analyses are often complicated and difficult to implement.
 Psifr leverages the Pandas data analysis package to make precise and flexible
 analysis of free recall data faster and easier.
 
+See the code repository for version `release notes`_.
+
 .. toctree::
    :maxdepth: 2
 
@@ -22,3 +24,5 @@ analysis of free recall data faster and easier.
    /tutorials/overview
    /api/overview
    /development/overview
+
+.. _release notes: https://github.com/mortonne/psifr/releases
