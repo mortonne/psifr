@@ -2,7 +2,8 @@
 
 import numpy as np
 import pytest
-from psifr import transitions
+
+from psifr import outputs
 
 
 @pytest.fixture()
@@ -20,7 +21,7 @@ def list_data():
 
 def test_count_output(list_data):
     """Test actual and possible serial positions by output position."""
-    actual, possible = transitions.count_outputs(
+    actual, possible = outputs.count_outputs(
         list_data['list_length'],
         list_data['pool_items'],
         list_data['recall_items'],

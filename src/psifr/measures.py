@@ -7,6 +7,7 @@ import pandas as pd
 
 from psifr import fr
 from psifr import transitions
+from psifr import outputs
 
 
 class TransitionMeasure(object):
@@ -49,17 +50,17 @@ class TransitionOutputs(TransitionMeasure):
         self.list_length = list_length
 
     def analyze_subject(self, subject, pool, recall):
-        actual, possible = transitions.count_outputs(
+        actual, possible = outputs.count_outputs(
             self.list_length, pool['items'], recall['items'],
             pool['label'], recall['label'],
             pool['test'], recall['test'], self.test
         )
-        inputs = np.tile(np.arange(1, actual.shape[1] + 1), actual.shape[0])
-        outputs = np.repeat(np.arange(1, actual.shape[0] + 1), actual.shape[1])
+        input_pos = np.tile(np.arange(1, actual.shape[1] + 1), actual.shape[0])
+        output_pos = np.repeat(np.arange(1, actual.shape[0] + 1), actual.shape[1])
         with np.errstate(divide='ignore', invalid='ignore'):
             prob = actual.flatten() / possible.flatten()
         pnr = pd.DataFrame(
-            {'subject': subject, 'input': inputs, 'output': outputs,
+            {'subject': subject, 'input': input_pos, 'output': output_pos,
              'prob': prob, 'actual': actual.flatten(),
              'possible': possible.flatten()}
         )
