@@ -11,39 +11,39 @@ from psifr import fr
 
 @pytest.fixture()
 def data():
-    raw = pd.DataFrame({
-        'subject': [
-            1, 1, 1, 1, 1, 1,
-            1, 1, 1, 1, 1, 1,
-        ],
-        'list': [
-            1, 1, 1, 1, 1, 1,
-            2, 2, 2, 2, 2, 2,
-        ],
-        'trial_type': [
-            'study', 'study', 'study', 'recall', 'recall', 'recall',
-            'study', 'study', 'study', 'recall', 'recall', 'recall',
-        ],
-        'position': [
-            1, 2, 3, 1, 2, 3,
-            1, 2, 3, 1, 2, 3,
-        ],
-        'item': [
-            'absence', 'hollow', 'pupil', 'pupil', 'absence', 'empty',
-            'fountain', 'piano', 'pillow', 'pillow', 'fountain', 'pillow',
-        ],
-        'item_index': [
-            0, 1, 2, 1, 2, np.nan,
-            3, 4, 5, 5, 3, 5,
-        ],
-        'task': [
-            1, 2, 1, 2, 1, np.nan,
-            1, 2, 1, 1, 1, 1,
-        ],
-    })
-    data = fr.merge_free_recall(
-        raw, study_keys=['task'], list_keys=['item_index']
+    raw = pd.DataFrame(
+        {
+            'subject': [
+                1, 1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1, 1,
+            ],
+            'list': [
+                1, 1, 1, 1, 1, 1,
+                2, 2, 2, 2, 2, 2,
+            ],
+            'trial_type': [
+                'study', 'study', 'study', 'recall', 'recall', 'recall',
+                'study', 'study', 'study', 'recall', 'recall', 'recall',
+            ],
+            'position': [
+                1, 2, 3, 1, 2, 3,
+                1, 2, 3, 1, 2, 3,
+            ],
+            'item': [
+                'absence', 'hollow', 'pupil', 'pupil', 'absence', 'empty',
+                'fountain', 'piano', 'pillow', 'pillow', 'fountain', 'pillow',
+            ],
+            'item_index': [
+                0, 1, 2, 1, 2, np.nan,
+                3, 4, 5, 5, 3, 5,
+            ],
+            'task': [
+                1, 2, 1, 2, 1, np.nan,
+                1, 2, 1, 1, 1, 1,
+            ],
+        }
     )
+    data = fr.merge_free_recall(raw, study_keys=['task'], list_keys=['item_index'])
     return data
 
 
@@ -87,12 +87,8 @@ def test_plot_distance_crp(data, distances):
 def test_plot_swarm_error():
     stat = pd.DataFrame(
         {
-            'category': [
-                1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2
-            ],
-            'value': [
-                1, 2, 3, 4, 5, 6, 4, 5, 6, 7, 8, 9
-            ]
+            'category': [1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2],
+            'value': [1, 2, 3, 4, 5, 6, 4, 5, 6, 7, 8, 9],
         }
     )
     g = fr.plot_swarm_error(stat, x='category', y='value')

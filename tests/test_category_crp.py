@@ -18,8 +18,10 @@ def test_category_count(data):
     # six transitions, but only five have a valid within-category
     # transition that is possible
     actual, possible = transitions.count_category(
-        [data['pool_position']], [data['output_position']],
-        [data['pool_category']], [data['output_category']]
+        [data['pool_position']],
+        [data['output_position']],
+        [data['pool_category']],
+        [data['output_category']],
     )
     assert actual == 4
     assert possible == 5

@@ -46,31 +46,37 @@ def raw():
 
 @pytest.fixture()
 def data(raw):
-    data = fr.merge_free_recall(
-        raw, study_keys=['task'], list_keys=['item_index']
-    )
+    data = fr.merge_free_recall(raw, study_keys=['task'], list_keys=['item_index'])
     return data
 
 
 @pytest.fixture()
 def distances():
-    mat = np.array([[0, 1, 2, 2, 2, 2],
-                    [1, 0, 1, 2, 2, 2],
-                    [2, 1, 0, 2, 2, 2],
-                    [2, 2, 2, 0, 2, 3],
-                    [2, 2, 2, 2, 0, 2],
-                    [2, 2, 2, 3, 2, 0]])
+    mat = np.array(
+        [
+            [0, 1, 2, 2, 2, 2],
+            [1, 0, 1, 2, 2, 2],
+            [2, 1, 0, 2, 2, 2],
+            [2, 2, 2, 0, 2, 3],
+            [2, 2, 2, 2, 0, 2],
+            [2, 2, 2, 3, 2, 0],
+        ]
+    )
     return mat
 
 
 @pytest.fixture()
 def distances2():
-    distances = np.array([[0, 1, 3, 3, 3, 3],
-                          [1, 0, 3, 3, 3, 3],
-                          [3, 3, 0, 2, 1, 2],
-                          [3, 3, 2, 0, 2, 2],
-                          [3, 3, 1, 2, 0, 2],
-                          [3, 3, 2, 2, 2, 0]])
+    distances = np.array(
+        [
+            [0, 1, 3, 3, 3, 3],
+            [1, 0, 3, 3, 3, 3],
+            [3, 3, 0, 2, 1, 2],
+            [3, 3, 2, 0, 2, 2],
+            [3, 3, 1, 2, 0, 2],
+            [3, 3, 2, 2, 2, 0],
+        ]
+    )
     return distances
 
 
@@ -130,9 +136,9 @@ def test_filter_merged_data(data):
 
 def test_split_lists(data):
     study = fr.split_lists(data, 'study', ['item', 'input', 'task'])
-    np.testing.assert_allclose(study['input'][1], np.array([1., 2., 3.]))
+    np.testing.assert_allclose(study['input'][1], np.array([1.0, 2.0, 3.0]))
     recall = fr.split_lists(data, 'recall', ['input'], ['recalls'])
-    np.testing.assert_allclose(recall['recalls'][0], np.array([2., 3., np.nan]))
+    np.testing.assert_allclose(recall['recalls'][0], np.array([2.0, 3.0, np.nan]))
 
 
 def test_lists_input(data):
@@ -141,7 +147,7 @@ def test_lists_input(data):
     pool_expected = {
         'items': [[1.0, 2.0, 3.0], [1.0, 2.0, 3.0]],
         'label': [[1.0, 2.0, 3.0], [1.0, 2.0, 3.0]],
-        'test': None
+        'test': None,
     }
     assert pool_lists == pool_expected
 
@@ -149,7 +155,7 @@ def test_lists_input(data):
     recall_expected = {
         'items': [[2.0, 3.0, np.nan], [3.0, 1.0, 3.0]],
         'label': [[2.0, 3.0, np.nan], [3.0, 1.0, 3.0]],
-        'test': None
+        'test': None,
     }
     for key in recall_expected.keys():
         assert key in recall_lists
@@ -158,7 +164,7 @@ def test_lists_input(data):
 
 def test_spc(data):
     recall = fr.spc(data)
-    expected = np.array([.5, .5, 1])
+    expected = np.array([0.5, 0.5, 1])
     np.testing.assert_array_equal(recall['recall'].to_numpy(), expected)
 
 
@@ -173,7 +179,7 @@ def test_lag_crp(data):
     crp = fr.lag_crp(data)
     actual = np.array([1, 0, 0, 1, 0])
     possible = np.array([1, 2, 0, 1, 0])
-    prob = np.array([1., 0., np.nan, 1., np.nan])
+    prob = np.array([1.0, 0.0, np.nan, 1.0, np.nan])
 
     np.testing.assert_array_equal(crp['actual'], actual)
     np.testing.assert_array_equal(crp['possible'], possible)
@@ -184,7 +190,7 @@ def test_lag_crp_query(data):
     crp = fr.lag_crp(data, item_query='input != 2')
     actual = np.array([1, 0, 0, 0, 0])
     possible = np.array([1, 0, 0, 0, 0])
-    prob = np.array([1., np.nan, np.nan, np.nan, np.nan])
+    prob = np.array([1.0, np.nan, np.nan, np.nan, np.nan])
 
     np.testing.assert_array_equal(crp['actual'], actual)
     np.testing.assert_array_equal(crp['possible'], possible)
@@ -195,7 +201,7 @@ def test_lag_crp_cat(data):
     crp = fr.lag_crp(data, test_key='task', test=lambda x, y: x == y)
     actual = np.array([1, 0, 0, 0, 0])
     possible = np.array([1, 0, 0, 0, 0])
-    prob = np.array([1., np.nan, np.nan, np.nan, np.nan])
+    prob = np.array([1.0, np.nan, np.nan, np.nan, np.nan])
 
     np.testing.assert_array_equal(crp['actual'], actual)
     np.testing.assert_array_equal(crp['possible'], possible)
@@ -203,12 +209,12 @@ def test_lag_crp_cat(data):
 
 
 def test_distance_crp(data, distances2):
-    edges = [.5, 1.5, 2.5, 3.5]
+    edges = [0.5, 1.5, 2.5, 3.5]
     crp = fr.distance_crp(data, 'item_index', distances2, edges, count_unique=False)
 
     actual = np.array([0, 1, 1])
     possible = np.array([1, 2, 1])
-    prob = np.array([0, .5, 1])
+    prob = np.array([0, 0.5, 1])
 
     np.testing.assert_array_equal(crp['actual'], actual)
     np.testing.assert_array_equal(crp['possible'], possible)
@@ -216,7 +222,7 @@ def test_distance_crp(data, distances2):
 
 
 def test_distance_crp_unique(data, distances2):
-    edges = [.5, 1.5, 2.5, 3.5]
+    edges = [0.5, 1.5, 2.5, 3.5]
     crp = fr.distance_crp(data, 'item_index', distances2, edges, count_unique=True)
 
     actual = np.array([0, 1, 1])

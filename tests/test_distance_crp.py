@@ -14,24 +14,31 @@ def data():
 
 @pytest.fixture()
 def distance():
-    mat = np.array([[0, 1, 1, 1, 2, 2, 2, 2],
-                    [1, 0, 1, 1, 2, 2, 2, 2],
-                    [1, 1, 0, 1, 2, 2, 2, 2],
-                    [1, 1, 1, 0, 2, 2, 2, 2],
-                    [2, 2, 2, 2, 0, 3, 3, 3],
-                    [2, 2, 2, 2, 3, 0, 3, 3],
-                    [2, 2, 2, 2, 3, 3, 0, 3],
-                    [2, 2, 2, 2, 3, 3, 3, 0]])
+    mat = np.array(
+        [
+            [0, 1, 1, 1, 2, 2, 2, 2],
+            [1, 0, 1, 1, 2, 2, 2, 2],
+            [1, 1, 0, 1, 2, 2, 2, 2],
+            [1, 1, 1, 0, 2, 2, 2, 2],
+            [2, 2, 2, 2, 0, 3, 3, 3],
+            [2, 2, 2, 2, 3, 0, 3, 3],
+            [2, 2, 2, 2, 3, 3, 0, 3],
+            [2, 2, 2, 2, 3, 3, 3, 0],
+        ]
+    )
     return mat
 
 
 def test_distance_crp(data, distance):
     edges = [0.5, 1.5, 2.5, 3.5]
     actual, possible = transitions.count_distance(
-        distance, edges,
-        [data['pool_position']], [data['recall_position']],
-        [data['pool_position']], [data['recall_position']],
-        count_unique=False
+        distance,
+        edges,
+        [data['pool_position']],
+        [data['recall_position']],
+        [data['pool_position']],
+        [data['recall_position']],
+        count_unique=False,
     )
     expected_actual = np.array([2, 3, 1])
     expected_possible = np.array([6, 16, 5])
@@ -42,10 +49,13 @@ def test_distance_crp(data, distance):
 def test_distance_crp_unique(data, distance):
     edges = [0.5, 1.5, 2.5, 3.5]
     actual, possible = transitions.count_distance(
-        distance, edges,
-        [data['pool_position']], [data['recall_position']],
-        [data['pool_position']], [data['recall_position']],
-        count_unique=True
+        distance,
+        edges,
+        [data['pool_position']],
+        [data['recall_position']],
+        [data['pool_position']],
+        [data['recall_position']],
+        count_unique=True,
     )
     expected_actual = np.array([2, 3, 1])
     expected_possible = np.array([3, 5, 2])
