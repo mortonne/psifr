@@ -10,10 +10,13 @@ def data():
     """Create list data with position and category."""
     test_list = {
         'list_length': 8,
+        'n_block': 4,
         'pool_position': [1, 2, 3, 4, 5, 6, 7, 8],
         'pool_category': [1, 1, 2, 2, 1, 1, 2, 2],
+        'pool_block': [1, 1, 2, 2, 3, 3, 4, 4],
         'output_position': [1, 3, 4, 8, 5, 4, 7, 6],
         'output_category': [1, 2, 2, 2, 1, 2, 2, 1],
+        'output_block': [1, 2, 2, 4, 3, 2, 4, 3]
     }
     return test_list
 
@@ -63,4 +66,30 @@ def test_lag_count_category(data):
     )
     np.testing.assert_array_equal(
         possible.to_numpy(), np.array([0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1])
+    )
+
+
+def test_lag_count_block(data):
+    """Test transition counts by block lag."""
+    actual, possible = transitions.count_lags(
+        data['n_block'], [data['pool_block']], [data['output_block']], count_unique=False
+    )
+    np.testing.assert_array_equal(
+        actual.to_numpy(), np.array([0, 0, 2, 1, 1, 1, 0])
+    )
+    np.testing.assert_array_equal(
+        possible.to_numpy(), np.array([2, 0, 5, 3, 6, 6, 2])
+    )
+
+
+def test_lag_count_block_unique(data):
+    """Test transition counts by unique block lag."""
+    actual, possible = transitions.count_lags(
+        data['n_block'], [data['pool_block']], [data['output_block']], count_unique=True
+    )
+    np.testing.assert_array_equal(
+        actual.to_numpy(), np.array([0, 0, 2, 1, 1, 1, 0])
+    )
+    np.testing.assert_array_equal(
+        possible.to_numpy(), np.array([2, 0, 4, 3, 3, 3, 1])
     )
