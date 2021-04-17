@@ -62,6 +62,47 @@ def distances():
     return mat
 
 
+def test_merge(raw):
+    study = raw.loc[raw['trial_type'] == 'study'].copy()
+    recall = raw.loc[raw['trial_type'] == 'recall'].copy()
+    merged = fr.merge_lists(study, recall)
+
+    # correct recall
+    correct = merged.query('item == "pupil"')
+    correct = correct.reset_index().loc[0]
+    assert correct['input'] == 3
+    assert correct['study']
+    assert correct['recall']
+    assert correct['repeat'] == 0
+    assert not correct['intrusion']
+
+    # item not recalled
+    forgot = merged.query('item == "piano"')
+    forgot = forgot.reset_index().loc[0]
+    assert forgot['input'] == 2
+    assert forgot['study']
+    assert not forgot['recall']
+    assert not forgot['intrusion']
+
+    # intrusion
+    intrusion = merged.query('item == "empty"')
+    intrusion = intrusion.reset_index().loc[0]
+    assert np.isnan(intrusion['input'])
+    assert not intrusion['study']
+    assert intrusion['recall']
+    assert intrusion['repeat'] == 0
+    assert intrusion['intrusion']
+
+    # repeat
+    repeat = merged.query('item == "pillow" and output == 3')
+    repeat = repeat.reset_index().loc[0]
+    assert repeat['input'] == 3
+    assert not repeat['study']
+    assert repeat['recall']
+    assert repeat['repeat'] == 1
+    assert not repeat['intrusion']
+
+
 def test_filter_raw_data(raw):
     filt = fr.filter_data(raw, 1, [1, 2], 'study', positions=[1, 2])
     assert filt['item'].to_list() == ['absence', 'hollow', 'fountain', 'piano']
