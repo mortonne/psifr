@@ -78,7 +78,6 @@ def check_data(df):
             item : str
                 Item that was either presented or recalled on this trial.
     """
-
     # check that all fields are accounted for
     columns = ['subject', 'list', 'trial_type', 'position', 'item']
     for col in columns:
@@ -92,7 +91,6 @@ def check_data(df):
 
 def block_index(list_labels):
     """Get index of each block in a list."""
-
     prev_label = ''
     curr_block = 0
     block = np.zeros(len(list_labels), dtype=int)
@@ -272,7 +270,6 @@ def merge_lists(
         intrusion : bool
             True for recalls that do not correspond to any study event.
     """
-
     if merge_keys is None:
         merge_keys = ['subject', 'list', 'item']
 
@@ -776,7 +773,6 @@ def plot_swarm_error(
     data, x=None, y=None, swarm_color=None, swarm_size=5, point_color='k', **facet_kws
 ):
     """Plot points as a swarm plus mean with error bars."""
-
     g = sns.FacetGrid(data=data.reset_index(), dropna=False, **facet_kws)
     g.map_dataframe(
         sns.swarmplot, x=x, y=y, color=swarm_color, size=swarm_size, zorder=1
@@ -800,7 +796,6 @@ def plot_raster(
     **facet_kws,
 ):
     """Plot recalls in a raster plot."""
-
     n_item = int(df['input'].max())
     n_list = int(df['list'].max())
     if palette is None and hue == 'input':
