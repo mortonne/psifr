@@ -135,6 +135,7 @@ def count_lags(
     pool_test=None,
     recall_test=None,
     test=None,
+    count_unique=False
 ):
     """Count actual and possible serial position lags.
 
@@ -170,6 +171,13 @@ def count_lags(
         Callable that evaluates each transition between items n and
         n+1. Must take test values for items n and n+1 and return True
         if a given transition should be included.
+
+    count_unique : bool, optional
+        If true, only unique values will be counted toward the possible
+        transitions. If multiple items are avilable for recall for a
+        given transition and a given bin, that bin will only be
+        incremented once. If false, all possible transitions will add
+        to the count.
     """
 
     if pool_label is None:
@@ -197,7 +205,10 @@ def count_lags(
         for prev, curr, poss in masker:
             # for this step, calculate actual lag and all possible lags
             list_actual.append(curr - prev)
-            list_possible.extend(poss - prev)
+            tran_poss = poss - prev
+            if count_unique:
+                tran_poss = np.unique(tran_poss)
+            list_possible.extend(tran_poss)
 
     # count the actual and possible transitions for each lag
     max_lag = list_length - 1
