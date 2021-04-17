@@ -510,7 +510,7 @@ def distance_crp(
 
     count_unique : bool, optional
         If true, possible transitions to a given distance bin will only
-         count once for a given transition.
+        count once for a given transition.
 
     item_query : str, optional
         Query string to select items to include in the pool of possible
