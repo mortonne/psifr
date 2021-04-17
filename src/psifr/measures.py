@@ -49,7 +49,7 @@ class TransitionMeasure(object):
         self.item_query = item_query
         self.test = test
 
-    def split_lists(self, data, phase):
+    def split_lists(self, data, phase, item_query=None):
         """
         Get relevant fields and split by list.
 
@@ -60,10 +60,13 @@ class TransitionMeasure(object):
 
         phase : str
             Phase to split ('study' or 'recall').
+
+        item_query : str, optional
+            Query string to determine included trials.
         """
         names = list(self.keys.keys())
         keys = list(self.keys.values())
-        split = fr.split_lists(data, phase, keys, names, self.item_query, as_list=True)
+        split = fr.split_lists(data, phase, keys, names, item_query, as_list=True)
         return split
 
     @abc.abstractmethod
@@ -108,7 +111,7 @@ class TransitionMeasure(object):
         """
         subj_results = []
         for subject, subject_data in data.groupby('subject'):
-            pool_lists = self.split_lists(subject_data, 'study')
+            pool_lists = self.split_lists(subject_data, 'study', self.item_query)
             recall_lists = self.split_lists(subject_data, 'recall')
             results = self.analyze_subject(subject, pool_lists, recall_lists)
             subj_results.append(results)
