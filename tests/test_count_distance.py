@@ -33,8 +33,8 @@ def distance():
     return mat
 
 
-def test_distance_crp(data, distance):
-    """Test distance CRP analysis."""
+def test_distance_count(data, distance):
+    """Test distance bin count."""
     edges = [0.5, 1.5, 2.5, 3.5]
     actual, possible = transitions.count_distance(
         distance,
@@ -51,8 +51,8 @@ def test_distance_crp(data, distance):
     np.testing.assert_array_equal(possible.to_numpy(), expected_possible)
 
 
-def test_distance_crp_unique(data, distance):
-    """Test distance CRP analysis with unique counts."""
+def test_distance_count_unique(data, distance):
+    """Test distance bin count by transition."""
     edges = [0.5, 1.5, 2.5, 3.5]
     actual, possible = transitions.count_distance(
         distance,

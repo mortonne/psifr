@@ -18,7 +18,7 @@ def list_data():
     return data
 
 
-def test_count_outputs(list_data):
+def test_count_output(list_data):
     """Test actual and possible serial positions by output position."""
     actual, possible = transitions.count_outputs(
         list_data['list_length'],

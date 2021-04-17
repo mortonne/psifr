@@ -26,7 +26,7 @@ def list_data():
     return data
 
 
-def test_rank_lags(list_data):
+def test_rank_lag(list_data):
     """Test temporal lag rank."""
     ranks = transitions.rank_lags(
         list_data['pool_items'],
@@ -38,7 +38,7 @@ def test_rank_lags(list_data):
     np.testing.assert_allclose(ranks, expected)
 
 
-def test_rank_lags_short(list_data):
+def test_rank_lag_short(list_data):
     """Test temporal lag rank without label inputs."""
     ranks = transitions.rank_lags(
         list_data['pool_items'],
@@ -48,7 +48,7 @@ def test_rank_lags_short(list_data):
     np.testing.assert_allclose(ranks, expected)
 
 
-def test_rank_lags_within(list_data):
+def test_rank_lag_within(list_data):
     """Test temporal lag rank for within-category transitions."""
     ranks = transitions.rank_lags(
         list_data['pool_items'],
@@ -61,7 +61,7 @@ def test_rank_lags_within(list_data):
     np.testing.assert_array_equal(ranks, expected)
 
 
-def test_rank_lags_across(list_data):
+def test_rank_lag_across(list_data):
     """Test temporal lag rank for across-category transitions."""
     ranks = transitions.rank_lags(
         list_data['pool_items'],
