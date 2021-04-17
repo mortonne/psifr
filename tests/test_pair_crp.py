@@ -1,3 +1,5 @@
+"""Test counting transition item pairs."""
+
 import pytest
 import numpy as np
 from psifr import transitions
@@ -5,6 +7,7 @@ from psifr import transitions
 
 @pytest.fixture()
 def data():
+    """Create list data with item numbers."""
     list_data = {
         'n_item': 8,
         'pool_items': [list(range(0, 4)), list(range(4, 8))],
@@ -14,6 +17,7 @@ def data():
 
 
 def test_pair_count(data):
+    """Test transition counts by item pairs."""
     actual, possible = transitions.count_pairs(
         data['n_item'], data['pool_items'], data['recall_items']
     )

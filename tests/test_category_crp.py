@@ -1,9 +1,12 @@
+"""Test counting category transitions."""
+
 import pytest
 from psifr import transitions
 
 
 @pytest.fixture()
 def data():
+    """Create list data with position and category."""
     test_list = {
         'list_length': 8,
         'pool_position': [1, 2, 3, 4, 5, 6, 7, 8],
@@ -15,6 +18,7 @@ def data():
 
 
 def test_category_count(data):
+    """Test within category actual and possible counts."""
     # six transitions, but only five have a valid within-category
     # transition that is possible
     actual, possible = transitions.count_category(

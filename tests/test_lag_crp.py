@@ -1,3 +1,5 @@
+"""Test counting serial position transition lag."""
+
 import pytest
 import numpy as np
 from psifr import transitions
@@ -5,6 +7,7 @@ from psifr import transitions
 
 @pytest.fixture()
 def data():
+    """Create list data with position and category."""
     test_list = {
         'list_length': 8,
         'pool_position': [1, 2, 3, 4, 5, 6, 7, 8],
@@ -16,6 +19,7 @@ def data():
 
 
 def test_lag_count(data):
+    """Test transition counts by serial position lag."""
     actual, possible = transitions.count_lags(
         data['list_length'], [data['pool_position']], [data['output_position']]
     )
@@ -28,6 +32,7 @@ def test_lag_count(data):
 
 
 def test_lag_count_category(data):
+    """Test transition counts by lag for within-category transitions."""
     # within category
     actual, possible = transitions.count_lags(
         data['list_length'],

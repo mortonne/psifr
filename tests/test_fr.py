@@ -9,6 +9,7 @@ from psifr import transitions
 
 @pytest.fixture()
 def raw():
+    """Create raw free recall data."""
     raw = pd.DataFrame(
         {
             'subject': [
@@ -46,12 +47,14 @@ def raw():
 
 @pytest.fixture()
 def data(raw):
+    """Create merged free recall data."""
     data = fr.merge_free_recall(raw, study_keys=['task'], list_keys=['item_index'])
     return data
 
 
 @pytest.fixture()
 def distances():
+    """Create item distance matrix."""
     mat = np.array(
         [
             [0, 1, 2, 2, 2, 2],
@@ -67,6 +70,7 @@ def distances():
 
 @pytest.fixture()
 def distances2():
+    """Create another item distance matrix."""
     distances = np.array(
         [
             [0, 1, 3, 3, 3, 3],
@@ -81,6 +85,7 @@ def distances2():
 
 
 def test_merge(raw):
+    """Test merging of study and recall trials."""
     study = raw.loc[raw['trial_type'] == 'study'].copy()
     recall = raw.loc[raw['trial_type'] == 'recall'].copy()
     merged = fr.merge_lists(study, recall)
@@ -122,11 +127,13 @@ def test_merge(raw):
 
 
 def test_filter_raw_data(raw):
+    """Test filtering raw data."""
     filt = fr.filter_data(raw, 1, [1, 2], 'study', positions=[1, 2])
     assert filt['item'].to_list() == ['absence', 'hollow', 'fountain', 'piano']
 
 
 def test_filter_merged_data(data):
+    """Test filtering merged data."""
     filt = fr.filter_data(data, 1, [1, 2], inputs=[1, 2])
     assert filt['item'].to_list() == ['absence', 'hollow', 'fountain', 'piano']
 
@@ -135,6 +142,7 @@ def test_filter_merged_data(data):
 
 
 def test_split_lists(data):
+    """Test splitting lists for study and recall data."""
     study = fr.split_lists(data, 'study', ['item', 'input', 'task'])
     np.testing.assert_allclose(study['input'][1], np.array([1.0, 2.0, 3.0]))
     recall = fr.split_lists(data, 'recall', ['input'], ['recalls'])
@@ -142,6 +150,7 @@ def test_split_lists(data):
 
 
 def test_lists_input(data):
+    """Test splitting lists through the transitions interface."""
     m = transitions.TransitionMeasure('input', 'input')
     pool_lists = m.split_lists(data, 'study')
     pool_expected = {
@@ -163,12 +172,14 @@ def test_lists_input(data):
 
 
 def test_spc(data):
+    """Test serial position curve analysis."""
     recall = fr.spc(data)
     expected = np.array([0.5, 0.5, 1])
     np.testing.assert_array_equal(recall['recall'].to_numpy(), expected)
 
 
 def test_pnr(data):
+    """Test probability of nth recall analysis."""
     stat = fr.pnr(data)
     expected = np.array([0, 0.5, 0.5, 0.5, 0, 1, np.nan, np.nan, np.nan])
     observed = stat['prob'].to_numpy()
@@ -176,6 +187,7 @@ def test_pnr(data):
 
 
 def test_lag_crp(data):
+    """Test basic lag-CRP analysis."""
     crp = fr.lag_crp(data)
     actual = np.array([1, 0, 0, 1, 0])
     possible = np.array([1, 2, 0, 1, 0])
@@ -187,6 +199,7 @@ def test_lag_crp(data):
 
 
 def test_lag_crp_query(data):
+    """Test lag-CRP analysis with possible item filters."""
     crp = fr.lag_crp(data, item_query='input != 2')
     actual = np.array([1, 0, 0, 0, 0])
     possible = np.array([1, 0, 0, 0, 0])
@@ -198,6 +211,7 @@ def test_lag_crp_query(data):
 
 
 def test_lag_crp_cat(data):
+    """Test lag-CRP conditional on within-category transitions."""
     crp = fr.lag_crp(data, test_key='task', test=lambda x, y: x == y)
     actual = np.array([1, 0, 0, 0, 0])
     possible = np.array([1, 0, 0, 0, 0])
@@ -209,6 +223,7 @@ def test_lag_crp_cat(data):
 
 
 def test_distance_crp(data, distances2):
+    """Test distance CRP analysis."""
     edges = [0.5, 1.5, 2.5, 3.5]
     crp = fr.distance_crp(data, 'item_index', distances2, edges, count_unique=False)
 
@@ -222,6 +237,7 @@ def test_distance_crp(data, distances2):
 
 
 def test_distance_crp_unique(data, distances2):
+    """Test distance CRP analysis with unique counts only."""
     edges = [0.5, 1.5, 2.5, 3.5]
     crp = fr.distance_crp(data, 'item_index', distances2, edges, count_unique=True)
 
@@ -235,6 +251,7 @@ def test_distance_crp_unique(data, distances2):
 
 
 def test_category_crp(data):
+    """Test category CRP analysis."""
     # TODO: replace with more diagnostic test
     crp = fr.category_crp(data, 'task')
 
@@ -244,6 +261,7 @@ def test_category_crp(data):
 
 
 def test_lag_rank(data):
+    """Test lag rank analysis."""
     stat = fr.lag_rank(data)
     expected = np.array([0.25])
     observed = stat['rank'].to_numpy()
@@ -251,6 +269,7 @@ def test_lag_rank(data):
 
 
 def test_distance_rank(data, distances):
+    """Test distance rank analysis."""
     stat = fr.distance_rank(data, 'item_index', distances)
     expected = np.array([0.25])
     observed = stat['rank'].to_numpy()

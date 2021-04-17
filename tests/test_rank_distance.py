@@ -7,6 +7,7 @@ from psifr import transitions
 
 @pytest.fixture()
 def list_data():
+    """Create list data with item and category information."""
     data = {
         'pool_items': [[0, 1, 2, 3, 4, 5, 6, 7]],
         'recall_items': [[3, 2, 1, 7, 0, 6, 5]],
@@ -18,6 +19,7 @@ def list_data():
 
 @pytest.fixture()
 def distances():
+    """Create distance matrix."""
     mat = np.array(
         [
             [0, 1, 1, 1, 2, 2, 2, 2],
@@ -34,6 +36,7 @@ def distances():
 
 
 def test_rank_distance(list_data, distances):
+    """Test rank distance measure."""
     ranks = transitions.rank_distance(
         distances,
         list_data['pool_items'],
@@ -55,6 +58,7 @@ def test_rank_distance(list_data, distances):
 
 
 def test_rank_distance_within(list_data, distances):
+    """Test rank distance for within-category transitions."""
     ranks = transitions.rank_distance(
         distances,
         list_data['pool_items'],
@@ -70,6 +74,7 @@ def test_rank_distance_within(list_data, distances):
 
 
 def test_rank_distance_across(list_data, distances):
+    """Test rank distance for across-category transitions."""
     ranks = transitions.rank_distance(
         distances,
         list_data['pool_items'],

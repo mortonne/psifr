@@ -11,6 +11,7 @@ from psifr import fr
 
 @pytest.fixture()
 def data():
+    """Create merged free recall data."""
     raw = pd.DataFrame(
         {
             'subject': [
@@ -49,6 +50,7 @@ def data():
 
 @pytest.fixture()
 def distances():
+    """Create a pairwise distance matrix."""
     mat = np.array(
         [
             [0, 1, 2, 2, 2, 2],
@@ -63,6 +65,7 @@ def distances():
 
 
 def test_plot_spc(data):
+    """Test plotting a serial position curve."""
     recall = fr.spc(data)
     g = fr.plot_spc(recall)
     plt.close()
@@ -70,6 +73,7 @@ def test_plot_spc(data):
 
 
 def test_plot_lag_crp(data):
+    """Test plotting a lag-CRP curve."""
     stat = fr.lag_crp(data)
     g = fr.plot_lag_crp(stat)
     plt.close()
@@ -77,6 +81,7 @@ def test_plot_lag_crp(data):
 
 
 def test_plot_distance_crp(data, distances):
+    """Test plotting a distance CRP curve."""
     edges = [0.5, 1.5, 2.5, 3.5]
     stat = fr.distance_crp(data, 'item_index', distances, edges)
     g = fr.plot_distance_crp(stat, min_samples=2)
@@ -85,6 +90,7 @@ def test_plot_distance_crp(data, distances):
 
 
 def test_plot_swarm_error():
+    """Test creating swarm plot with error bars."""
     stat = pd.DataFrame(
         {
             'category': [1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2],
@@ -97,6 +103,7 @@ def test_plot_swarm_error():
 
 
 def test_plot_raster(data):
+    """Test creating a raster plot."""
     g = fr.plot_raster(data)
     plt.close()
     assert isinstance(g, sns.FacetGrid)

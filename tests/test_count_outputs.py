@@ -7,6 +7,7 @@ from psifr import transitions
 
 @pytest.fixture()
 def list_data():
+    """Create lists with position and category."""
     data = {
         'list_length': 4,
         'pool_items': [[1, 2, 3, 4], [1, 2, 3, 4]],
@@ -18,6 +19,7 @@ def list_data():
 
 
 def test_count_outputs(list_data):
+    """Test actual and possible serial positions by output position."""
     actual, possible = transitions.count_outputs(
         list_data['list_length'],
         list_data['pool_items'],

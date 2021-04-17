@@ -1,4 +1,4 @@
-"""Test rank-based measures of clustering."""
+"""Test rank measures of temporal clustering."""
 
 import numpy as np
 import pytest
@@ -6,6 +6,7 @@ from psifr import transitions
 
 
 def test_percentile_rank():
+    """Test calculation of percentile rank."""
     possible = [1, 2, 3, 4]
     rank = []
     for actual in possible:
@@ -15,6 +16,7 @@ def test_percentile_rank():
 
 @pytest.fixture()
 def list_data():
+    """Create list data with item and category information."""
     data = {
         'pool_items': [[1, 2, 3, 4, 5, 6]],
         'recall_items': [[6, 2, 1, 5, 4]],
@@ -25,6 +27,7 @@ def list_data():
 
 
 def test_rank_lags(list_data):
+    """Test temporal lag rank."""
     ranks = transitions.rank_lags(
         list_data['pool_items'],
         list_data['recall_items'],
@@ -36,6 +39,7 @@ def test_rank_lags(list_data):
 
 
 def test_rank_lags_short(list_data):
+    """Test temporal lag rank without label inputs."""
     ranks = transitions.rank_lags(
         list_data['pool_items'],
         list_data['recall_items'],
@@ -45,6 +49,7 @@ def test_rank_lags_short(list_data):
 
 
 def test_rank_lags_within(list_data):
+    """Test temporal lag rank for within-category transitions."""
     ranks = transitions.rank_lags(
         list_data['pool_items'],
         list_data['recall_items'],
@@ -57,6 +62,7 @@ def test_rank_lags_within(list_data):
 
 
 def test_rank_lags_across(list_data):
+    """Test temporal lag rank for across-category transitions."""
     ranks = transitions.rank_lags(
         list_data['pool_items'],
         list_data['recall_items'],

@@ -1,3 +1,5 @@
+"""Test counting transition distance bins."""
+
 import pytest
 import numpy as np
 from psifr import transitions
@@ -5,6 +7,7 @@ from psifr import transitions
 
 @pytest.fixture()
 def data():
+    """Create position data for a list."""
     list_data = {
         'pool_position': [0, 1, 2, 3, 4, 5, 6, 7],
         'recall_position': [3, 2, 1, 7, 0, 6, 5],
@@ -14,6 +17,7 @@ def data():
 
 @pytest.fixture()
 def distance():
+    """Create a distance matrix."""
     mat = np.array(
         [
             [0, 1, 1, 1, 2, 2, 2, 2],
@@ -30,6 +34,7 @@ def distance():
 
 
 def test_distance_crp(data, distance):
+    """Test distance CRP analysis."""
     edges = [0.5, 1.5, 2.5, 3.5]
     actual, possible = transitions.count_distance(
         distance,
@@ -47,6 +52,7 @@ def test_distance_crp(data, distance):
 
 
 def test_distance_crp_unique(data, distance):
+    """Test distance CRP analysis with unique counts."""
     edges = [0.5, 1.5, 2.5, 3.5]
     actual, possible = transitions.count_distance(
         distance,

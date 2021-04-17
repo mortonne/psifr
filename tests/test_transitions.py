@@ -1,3 +1,5 @@
+"""Test transition masker output."""
+
 import pytest
 import numpy as np
 from psifr import transitions
@@ -5,6 +7,7 @@ from psifr import transitions
 
 @pytest.fixture()
 def list_data():
+    """Create list data with item and category information."""
     list_data = {
         'pool_position': [1, 2, 3, 4, 5, 6, 7, 8],
         'pool_category': [1, 1, 1, 1, 2, 2, 2, 2],
