@@ -2,7 +2,9 @@ API reference
 =============
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
-   /api/fr
-   /api/transitions
+    /api/fr
+    /api/measures
+    /api/transitions
+    /api/outputs

@@ -24,34 +24,10 @@ Ranking transitions
     rank_lags
     rank_distance
 
-Iterating over recalls
-~~~~~~~~~~~~~~~~~~~~~~
-
-.. autosummary::
-   :toctree: api/
-
-    outputs_masker
-    transitions_masker
-
-Transition measure base class
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Iterating over transitions
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autosummary::
     :toctree: api/
 
-    TransitionMeasure
-    TransitionMeasure.split_lists
-    TransitionMeasure.analyze
-    TransitionMeasure.analyze_subject
-
-Transition measures
-~~~~~~~~~~~~~~~~~~~
-
-.. autosummary::
-
-    TransitionOutputs
-    TransitionLag
-    TransitionLagRank
-    TransitionCategory
-    TransitionDistance
-    TransitionDistanceRank
+    transitions_masker
