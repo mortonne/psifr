@@ -1,0 +1,20 @@
+{
+    "language": "eng",
+    "license": "GPL-3.0+",
+    "title": "Psifr: Analysis and visualization of free recall data",
+    "upload_type": "software",
+    "creators": [
+        {
+            "orcid": "0000-0002-2631-2710",
+            "affiliation": "The University of Texas at Austin",
+            "name": "Neal W Morton"
+        }
+    ],
+    "keywords": [
+        "psychology",
+        "Python",
+        "memory",
+        "cognitive science"
+    ],
+    "access_right": "open"
+}
