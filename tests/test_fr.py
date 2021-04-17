@@ -15,11 +15,11 @@ def raw():
         {
             'subject': [
                 1, 1, 1, 1, 1, 1,
-                1, 1, 1, 1, 1, 1
+                1, 1, 1, 1, 1, 1,
             ],
             'list': [
                 1, 1, 1, 1, 1, 1,
-                2, 2, 2, 2, 2, 2
+                2, 2, 2, 2, 2, 2,
             ],
             'trial_type': [
                 'study', 'study', 'study', 'recall', 'recall', 'recall',
@@ -27,7 +27,7 @@ def raw():
             ],
             'position': [
                 1, 2, 3, 1, 2, 3,
-                1, 2, 3, 1, 2, 3
+                1, 2, 3, 1, 2, 3,
             ],
             'item': [
                 'absence', 'hollow', 'pupil', 'hollow', 'pupil', 'empty',
@@ -40,7 +40,7 @@ def raw():
             'task': [
                 1, 2, 1, 2, 1, np.nan,
                 1, 2, 1, 1, 1, 1,
-            ]
+            ],
         }
     )
     return raw
