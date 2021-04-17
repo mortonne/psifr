@@ -162,7 +162,7 @@ def split_lists(frame, phase, keys, names=None, item_query=None, as_list=False):
     else:
         raise ValueError(f'Invalid phase: {phase}')
 
-    if phase == 'study' and item_query is not None:
+    if item_query is not None:
         # get the subset of the pool that is of interest
         mask = phase_data.eval(item_query).to_numpy()
     else:
