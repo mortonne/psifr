@@ -12,25 +12,30 @@ def list_data():
         'recall_items': [[3, 2, 1, 7, 0, 6, 5]],
         'pool_test': [[1, 1, 2, 2, 2, 2, 1, 1]],
         'recall_test': [[2, 2, 1, 1, 1, 1, 2]],
-        'distance': np.array(
-            [
-                [0, 1, 1, 1, 2, 2, 2, 2],
-                [1, 0, 1, 1, 2, 2, 2, 2],
-                [1, 1, 0, 1, 2, 2, 2, 2],
-                [1, 1, 1, 0, 2, 2, 2, 2],
-                [2, 2, 2, 2, 0, 3, 3, 3],
-                [2, 2, 2, 2, 3, 0, 3, 3],
-                [2, 2, 2, 2, 3, 3, 0, 3],
-                [2, 2, 2, 2, 3, 3, 3, 0],
-            ]
-        ),
     }
     return data
 
 
-def test_rank_distance(list_data):
+@pytest.fixture()
+def distances():
+    mat = np.array(
+        [
+            [0, 1, 1, 1, 2, 2, 2, 2],
+            [1, 0, 1, 1, 2, 2, 2, 2],
+            [1, 1, 0, 1, 2, 2, 2, 2],
+            [1, 1, 1, 0, 2, 2, 2, 2],
+            [2, 2, 2, 2, 0, 3, 3, 3],
+            [2, 2, 2, 2, 3, 0, 3, 3],
+            [2, 2, 2, 2, 3, 3, 0, 3],
+            [2, 2, 2, 2, 3, 3, 3, 0],
+        ]
+    )
+    return mat
+
+
+def test_rank_distance(list_data, distances):
     ranks = transitions.rank_distance(
-        list_data['distance'],
+        distances,
         list_data['pool_items'],
         list_data['recall_items'],
         list_data['pool_items'],
@@ -49,9 +54,9 @@ def test_rank_distance(list_data):
     np.testing.assert_allclose(ranks, expected)
 
 
-def test_rank_distance_within(list_data):
+def test_rank_distance_within(list_data, distances):
     ranks = transitions.rank_distance(
-        list_data['distance'],
+        distances,
         list_data['pool_items'],
         list_data['recall_items'],
         list_data['pool_items'],
@@ -64,9 +69,9 @@ def test_rank_distance_within(list_data):
     np.testing.assert_allclose(ranks, expected)
 
 
-def test_rank_distance_across(list_data):
+def test_rank_distance_across(list_data, distances):
     ranks = transitions.rank_distance(
-        list_data['distance'],
+        distances,
         list_data['pool_items'],
         list_data['recall_items'],
         list_data['pool_items'],
