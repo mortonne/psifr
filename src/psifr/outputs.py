@@ -3,8 +3,15 @@
 import numpy as np
 
 
-def outputs_masker(pool_items, recall_items, pool_output, recall_output,
-                   pool_test=None, recall_test=None, test=None):
+def outputs_masker(
+    pool_items,
+    recall_items,
+    pool_output,
+    recall_output,
+    pool_test=None,
+    recall_test=None,
+    test=None,
+):
     """
     Iterate over valid outputs.
 
@@ -82,9 +89,17 @@ def outputs_masker(pool_items, recall_items, pool_output, recall_output,
         yield curr, poss, output
 
 
-def count_outputs(list_length, pool_items, recall_items, pool_label,
-                  recall_label, pool_test=None, recall_test=None,
-                  test=None, count_unique=False):
+def count_outputs(
+    list_length,
+    pool_items,
+    recall_items,
+    pool_label,
+    recall_label,
+    pool_test=None,
+    recall_test=None,
+    test=None,
+    count_unique=False,
+):
     """
     Count actual and possible recalls for each output position.
 
@@ -137,9 +152,15 @@ def count_outputs(list_length, pool_items, recall_items, pool_label,
         # set up masker to filter outputs
         pool_test_list = None if pool_test is None else pool_test[i]
         recall_test_list = None if recall_test is None else recall_test[i]
-        masker = outputs_masker(pool_items[i], recall_items_list,
-                                pool_label[i], recall_label[i],
-                                pool_test_list, recall_test_list, test)
+        masker = outputs_masker(
+            pool_items[i],
+            recall_items_list,
+            pool_label[i],
+            recall_label[i],
+            pool_test_list,
+            recall_test_list,
+            test,
+        )
 
         for curr, poss, op in masker:
             curr = int(curr)

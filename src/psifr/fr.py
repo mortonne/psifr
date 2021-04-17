@@ -23,8 +23,15 @@ def _match_values(series, values):
     return include
 
 
-def filter_data(data, subjects=None, lists=None, trial_type=None, positions=None,
-                inputs=None, outputs=None):
+def filter_data(
+    data,
+    subjects=None,
+    lists=None,
+    trial_type=None,
+    positions=None,
+    inputs=None,
+    outputs=None,
+):
     """Filter data to get a subset of trials."""
     include = data['subject'].notna()
     if subjects is not None:
@@ -34,7 +41,7 @@ def filter_data(data, subjects=None, lists=None, trial_type=None, positions=None
         include &= _match_values(data['list'], lists)
 
     if trial_type is not None:
-        include &= (data['trial_type'] == trial_type)
+        include &= data['trial_type'] == trial_type
 
     if positions is not None:
         include &= _match_values(data['position'], positions)
@@ -78,8 +85,9 @@ def check_data(df):
         assert col in df.columns, f'Required column {col} is missing.'
 
     # only one column has a hard constraint on its exact content
-    assert df['trial_type'].isin(['study', 'recall']).all(), (
-        'trial_type for all trials must be "study" or "recall".')
+    assert (
+        df['trial_type'].isin(['study', 'recall']).all()
+    ), 'trial_type for all trials must be "study" or "recall".'
 
 
 def block_index(list_labels):
@@ -102,8 +110,7 @@ def reset_list(df):
     for subject in df['subject'].unique():
         subject_lists = df.loc[df['subject'] == subject, 'list'].unique()
         for i, listno in enumerate(subject_lists):
-            df.loc[(df['subject'] == subject) &
-                   (df['list'] == listno), 'list'] = i + 1
+            df.loc[(df['subject'] == subject) & (df['list'] == listno), 'list'] = i + 1
     return df
 
 
@@ -119,8 +126,7 @@ def split_lists(frame, phase, keys, names=None, item_query=None, as_list=False):
     if phase == 'study':
         phase_data = frame.loc[frame['study']]
     elif phase == 'recall':
-        phase_data = frame.loc[frame['recall']].sort_values(
-            ['list', 'output'])
+        phase_data = frame.loc[frame['recall']].sort_values(['list', 'output'])
     elif phase == 'raw':
         phase_data = frame
     else:
@@ -166,8 +172,15 @@ def merge_free_recall(data, **kwargs):
     return merged
 
 
-def merge_lists(study, recall, merge_keys=None, list_keys=None, study_keys=None,
-                recall_keys=None, position_key='position'):
+def merge_lists(
+    study,
+    recall,
+    merge_keys=None,
+    list_keys=None,
+    study_keys=None,
+    recall_keys=None,
+    position_key='position',
+):
     """
     Merge study and recall events together for each list.
 
@@ -247,17 +260,22 @@ def merge_lists(study, recall, merge_keys=None, list_keys=None, study_keys=None,
     # get just the fields to use in the merge
     study = study.copy()
     study = study[merge_keys + ['position'] + list_keys + study_keys]
-    recall = recall[merge_keys + ['repeat', 'position'] + list_keys +
-                    recall_keys]
+    recall = recall[merge_keys + ['repeat', 'position'] + list_keys + recall_keys]
 
     # merge information from study and recall trials
-    merged = pd.merge(study, recall, left_on=merge_keys + list_keys,
-                      right_on=merge_keys + list_keys, how='outer')
+    merged = pd.merge(
+        study,
+        recall,
+        left_on=merge_keys + list_keys,
+        right_on=merge_keys + list_keys,
+        how='outer',
+    )
 
     # position from study events indicates input position;
     # position from recall events indicates output position
-    merged = merged.rename(columns={position_key + '_x': 'input',
-                                    position_key + '_y': 'output'})
+    merged = merged.rename(
+        columns={position_key + '_x': 'input', position_key + '_y': 'output'}
+    )
 
     # fix repeats field to define for non-recalled items
     merged.loc[merged['repeat'].isna(), 'repeat'] = 0
@@ -274,9 +292,8 @@ def merge_lists(study, recall, merge_keys=None, list_keys=None, study_keys=None,
     merged.loc[:, 'intrusion'] = merged['input'].isna()
 
     # reorder columns
-    columns = (merge_keys + ['input', 'output'] +
-               ['study', 'recall', 'repeat', 'intrusion'] +
-               list_keys + study_keys + recall_keys)
+    core_keys = ['input', 'output', 'study', 'recall', 'repeat', 'intrusion']
+    columns = merge_keys + core_keys + list_keys + study_keys + recall_keys
     merged = merged.reindex(columns=columns)
 
     # sort rows in standard order
@@ -413,8 +430,9 @@ def lag_crp(df, item_query=None, test_key=None, test=None):
             input position and the remaining items to be recalled.
     """
     list_length = df['input'].max()
-    measure = measures.TransitionLag(list_length, item_query=item_query,
-                                     test_key=test_key, test=test)
+    measure = measures.TransitionLag(
+        list_length, item_query=item_query, test_key=test_key, test=test
+    )
     crp = measure.analyze(df)
     return crp
 
@@ -450,14 +468,24 @@ def lag_rank(df, item_query=None, test_key=None, test=None):
     stat : pandas.DataFrame
         Has fields 'subject' and 'rank'.
     """
-    measure = measures.TransitionLagRank(item_query=item_query,
-                                         test_key=test_key, test=test)
+    measure = measures.TransitionLagRank(
+        item_query=item_query, test_key=test_key, test=test
+    )
     rank = measure.analyze(df)
     return rank
 
 
-def distance_crp(df, index_key, distances, edges, centers=None,
-                 count_unique=False, item_query=None, test_key=None, test=None):
+def distance_crp(
+    df,
+    index_key,
+    distances,
+    edges,
+    centers=None,
+    count_unique=False,
+    item_query=None,
+    test_key=None,
+    test=None,
+):
     """
     Conditional response probability by distance bin.
 
@@ -520,14 +548,20 @@ def distance_crp(df, index_key, distances, edges, centers=None,
             recalled.
     """
     measure = measures.TransitionDistance(
-        index_key, distances, edges, centers=centers, count_unique=count_unique,
-        item_query=item_query, test_key=test_key, test=test)
+        index_key,
+        distances,
+        edges,
+        centers=centers,
+        count_unique=count_unique,
+        item_query=item_query,
+        test_key=test_key,
+        test=test,
+    )
     crp = measure.analyze(df)
     return crp
 
 
-def distance_rank(df, index_key, distances, item_query=None, test_key=None,
-                  test=None):
+def distance_rank(df, index_key, distances, item_query=None, test_key=None, test=None):
     """
     Calculate rank of transition distances in free recall lists.
 
@@ -566,8 +600,7 @@ def distance_rank(df, index_key, distances, item_query=None, test_key=None,
         Has fields 'subject' and 'rank'.
     """
     measure = measures.TransitionDistanceRank(
-        index_key, distances, item_query=item_query,
-        test_key=test_key, test=test
+        index_key, distances, item_query=item_query, test_key=test_key, test=test
     )
     rank = measure.analyze(df)
     return rank
@@ -619,7 +652,8 @@ def category_crp(df, category_key, item_query=None, test_key=None, test=None):
             input position and the remaining items to be recalled.
     """
     measure = measures.TransitionCategory(
-        category_key, item_query=item_query, test_key=test_key, test=test)
+        category_key, item_query=item_query, test_key=test_key, test=test
+    )
     crp = measure.analyze(df)
     return crp
 
@@ -662,11 +696,15 @@ def plot_lag_crp(recall, max_lag=5, **facet_kws):
     filt_pos = f'0 < lag <= {max_lag}'
     g = sns.FacetGrid(dropna=False, **facet_kws, data=recall.reset_index())
     g.map_dataframe(
-        lambda data, **kws: sns.lineplot(data=data.query(filt_neg),
-                                         x='lag', y='prob', **kws))
+        lambda data, **kws: sns.lineplot(
+            data=data.query(filt_neg), x='lag', y='prob', **kws
+        )
+    )
     g.map_dataframe(
-        lambda data, **kws: sns.lineplot(data=data.query(filt_pos),
-                                         x='lag', y='prob', **kws))
+        lambda data, **kws: sns.lineplot(
+            data=data.query(filt_pos), x='lag', y='prob', **kws
+        )
+    )
     g.set_xlabels('Lag')
     g.set_ylabels('CRP')
     g.set(ylim=(0, 1))
@@ -702,21 +740,33 @@ def plot_distance_crp(crp, min_samples=None, **facet_kws):
     return g
 
 
-def plot_swarm_error(data, x=None, y=None, swarm_color=None, swarm_size=5,
-                     point_color='k', **facet_kws):
+def plot_swarm_error(
+    data, x=None, y=None, swarm_color=None, swarm_size=5, point_color='k', **facet_kws
+):
     """Plot points as a swarm plus mean with error bars."""
 
     g = sns.FacetGrid(data=data.reset_index(), dropna=False, **facet_kws)
-    g.map_dataframe(sns.swarmplot, x=x, y=y, color=swarm_color,
-                    size=swarm_size, zorder=1)
-    g.map_dataframe(sns.pointplot, x=x, y=y, color=point_color,
-                    join=False, capsize=.5, linewidth=1)
+    g.map_dataframe(
+        sns.swarmplot, x=x, y=y, color=swarm_color, size=swarm_size, zorder=1
+    )
+    g.map_dataframe(
+        sns.pointplot, x=x, y=y, color=point_color, join=False, capsize=0.5, linewidth=1
+    )
     return g
 
 
-def plot_raster(df, hue='input', palette=None, marker='s',
-                intrusion_color=None, orientation='horizontal', length=6,
-                aspect=None, legend='auto', **facet_kws):
+def plot_raster(
+    df,
+    hue='input',
+    palette=None,
+    marker='s',
+    intrusion_color=None,
+    orientation='horizontal',
+    length=6,
+    aspect=None,
+    legend='auto',
+    **facet_kws,
+):
     """Plot recalls in a raster plot."""
 
     n_item = int(df['input'].max())
@@ -725,7 +775,7 @@ def plot_raster(df, hue='input', palette=None, marker='s',
         palette = 'viridis'
 
     if intrusion_color is None:
-        intrusion_color = (.8, .1, .3)
+        intrusion_color = (0.8, 0.1, 0.3)
 
     list_lim = (0, n_list + 1)
     item_lim = (0, n_item + 1)
@@ -748,14 +798,27 @@ def plot_raster(df, hue='input', palette=None, marker='s',
     else:
         height = length
 
-    g = sns.FacetGrid(data=df.reset_index(), dropna=False, aspect=aspect,
-                      height=height, **facet_kws)
-    g.map_dataframe(sns.scatterplot, x=x_var, y=y_var, marker=marker,
-                    hue=hue, palette=palette, legend=legend)
+    g = sns.FacetGrid(
+        data=df.reset_index(), dropna=False, aspect=aspect, height=height, **facet_kws
+    )
+    g.map_dataframe(
+        sns.scatterplot,
+        x=x_var,
+        y=y_var,
+        marker=marker,
+        hue=hue,
+        palette=palette,
+        legend=legend,
+    )
     g.map_dataframe(
         lambda data, color=None, label=None: sns.scatterplot(
-            data=data.query('intrusion'), x=x_var, y=y_var,
-            color=intrusion_color, marker=marker))
+            data=data.query('intrusion'),
+            x=x_var,
+            y=y_var,
+            color=intrusion_color,
+            marker=marker,
+        )
+    )
     g.set_xlabels(x_label)
     g.set_ylabels(y_label)
     g.set(xlim=x_lim, ylim=y_lim)
