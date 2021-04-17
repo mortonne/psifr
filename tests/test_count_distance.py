@@ -63,17 +63,22 @@ def test_distance_count(data, distance):
 
 def test_distance_count_unique(data, distance):
     """Test distance bin count by transition."""
-    edges = [0.5, 1.5, 2.5, 3.5]
-    actual, possible = transitions.count_distance(
+    edges = [0.5, 2.5, 3.5]
+    inputs = [
         distance,
         edges,
         [data['pool_position']],
         [data['recall_position']],
         [data['pool_position']],
-        [data['recall_position']],
-        count_unique=True,
-    )
-    expected_actual = np.array([2, 3, 1])
-    expected_possible = np.array([3, 5, 2])
-    np.testing.assert_array_equal(actual.to_numpy(), expected_actual)
-    np.testing.assert_array_equal(possible.to_numpy(), expected_possible)
+        [data['recall_position']]
+    ]
+
+    # first check these bins with count_unique=False
+    actual, possible = transitions.count_distance(*inputs, count_unique=False)
+    np.testing.assert_array_equal(actual.to_numpy(), np.array([5, 1]))
+    np.testing.assert_array_equal(possible.to_numpy(), np.array([22, 5]))
+
+    # now test with only one bin increment per transition
+    actual, possible = transitions.count_distance(*inputs, count_unique=True)
+    np.testing.assert_array_equal(actual.to_numpy(), np.array([5, 1]))
+    np.testing.assert_array_equal(possible.to_numpy(), np.array([5, 2]))
