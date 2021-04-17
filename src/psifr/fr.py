@@ -419,10 +419,9 @@ def lag_crp(df, item_query=None, test_key=None, test=None):
     ----------
     df : pandas.DataFrame
         Merged study and recall data. See merge_lists. List length is
-        assumed to be the same for all lists within each subject.
-        Must have fields: subject, list, input, output, recalled.
-        Input position must be defined such that the first serial
-        position is 1, not 0.
+        assumed to be the same for all lists. Must have fields:
+        subject, list, input, output, recalled. Input position must be
+        defined such that the first serial position is 1, not 0.
 
     item_query : str, optional
         Query string to select items to include in the pool of possible
