@@ -158,11 +158,19 @@ class TransitionOutputs(TransitionMeasure):
 
 class TransitionLag(TransitionMeasure):
     """Measure conditional response probability by lag."""
-    def __init__(self, list_length, item_query=None, test_key=None, test=None):
+    def __init__(
+        self,
+        list_length,
+        count_unique=False,
+        item_query=None,
+        test_key=None,
+        test=None
+    ):
         super().__init__(
             'input', 'input', item_query=item_query, test_key=test_key, test=test
         )
         self.list_length = list_length
+        self.count_unique = count_unique
 
     def analyze_subject(self, subject, pool, recall):
 
@@ -175,6 +183,7 @@ class TransitionLag(TransitionMeasure):
             pool['test'],
             recall['test'],
             self.test,
+            self.count_unique,
         )
         crp = pd.DataFrame(
             {
