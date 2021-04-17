@@ -116,3 +116,29 @@ The expected probability due to chance depends on the number of
 categories in the list. In this case, there are three categories, so
 a category CRP of 0.33 would be predicted if recalls were sampled
 randomly from the list.
+
+Restricting analysis to specific items
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Sometimes you may want to focus an analysis on a subset of recalls. For
+example, in order to exclude the period of high clustering commonly
+observed at the start of recall, lag-CRP analyses are sometimes
+restricted to transitions after the first three output positions.
+
+You can restrict the recalls included in a transition analysis using
+the optional :code:`item_query` argument. This is built on the Pandas
+query/eval system, which makes it possible to select rows of a
+:code:`DataFrame` using a query string. This string can refer to any
+column in the data. Any items for which the expression evaluates to
+:code:`True` will be included in the analysis.
+
+For example, we can use the :code:`item_query` argument to exclude any
+items recalled in the first three output positions from analysis. Note
+that, because non-recalled items have no output position, we need to
+include them explicitly using :code:`output > 3 or not recall`.
+
+.. ipython:: python
+
+    crp_op3 = fr.lag_crp(data, item_query='output > 3 or not recall')
+    @savefig lag_crp_op3.svg
+    g = fr.plot_lag_crp(crp_op3)
