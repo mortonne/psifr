@@ -45,6 +45,16 @@ def test_distance_count(data, distance):
         [data['recall_position']],
         count_unique=False,
     )
+    # recalls: [3, 2, 1, 7, 0, 6, 5]
+    # actual: [1, 1, 2, 2, 2, 3]
+    # possible: [
+    #     [1, 1, 1, 2, 2, 2, 2],
+    #     [1, 1, 2, 2, 2, 2],
+    #     [1, 2, 2, 2, 2],
+    #     [2, 3, 3, 3],
+    #     [2, 2, 2],
+    #     [3, 3]
+    # ]
     expected_actual = np.array([2, 3, 1])
     expected_possible = np.array([6, 16, 5])
     np.testing.assert_array_equal(actual.to_numpy(), expected_actual)
