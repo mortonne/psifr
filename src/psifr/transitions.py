@@ -359,6 +359,7 @@ def count_distance(
 
     list_actual = []
     list_possible = []
+    centers = edges[:-1] + np.diff(edges) / 2
     for i in range(len(recall_items)):
         pool_test_list = None if pool_test is None else pool_test[i]
         recall_test_list = None if recall_test is None else recall_test[i]
@@ -377,10 +378,15 @@ def count_distance(
             poss = poss.astype(int)
 
             list_actual.append(distances[prev, curr])
+            tran_poss = distances[prev, poss]
             if count_unique:
-                list_possible.extend(np.unique(distances[prev, poss]).tolist())
-            else:
-                list_possible.extend(distances[prev, poss])
+                # get count of each possible bin
+                bin_count_poss = np.histogram(tran_poss, edges)[0]
+
+                # for each bin that was possible, add the center as a
+                # possible transition
+                tran_poss = centers[np.nonzero(bin_count_poss)[0]]
+            list_possible.extend(tran_poss)
 
     actual = pd.cut(list_actual, edges).value_counts()
     possible = pd.cut(list_possible, edges).value_counts()
