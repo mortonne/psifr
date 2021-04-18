@@ -223,7 +223,9 @@ def test_lag_crp_query_output(data):
 
     np.testing.assert_array_equal(crp['actual'], np.zeros(5))
     np.testing.assert_array_equal(crp['possible'], np.zeros(5))
-    np.testing.assert_array_equal(crp['prob'], np.nan(5))
+    expected = np.empty(5)
+    expected.fill(np.nan)
+    np.testing.assert_array_equal(crp['prob'], expected)
 
 
 def test_lag_crp_block(data):
