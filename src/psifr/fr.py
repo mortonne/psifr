@@ -474,7 +474,7 @@ def lag_crp(
         count_unique=count_unique,
         item_query=item_query,
         test_key=test_key,
-        test=test
+        test=test,
     )
     crp = measure.analyze(df)
     return crp

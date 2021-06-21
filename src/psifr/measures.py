@@ -43,6 +43,7 @@ class TransitionMeasure(object):
     test : callable
         Test of trial inclusion.
     """
+
     def __init__(self, items_key, label_key, item_query=None, test_key=None, test=None):
 
         self.keys = {'items': items_key, 'label': label_key, 'test': test_key}
@@ -121,6 +122,7 @@ class TransitionMeasure(object):
 
 class TransitionOutputs(TransitionMeasure):
     """Measure recall probability by input and output position."""
+
     def __init__(self, list_length, item_query=None, test_key=None, test=None):
         super().__init__(
             'input', 'input', item_query=item_query, test_key=test_key, test=test
@@ -158,6 +160,7 @@ class TransitionOutputs(TransitionMeasure):
 
 class TransitionLag(TransitionMeasure):
     """Measure conditional response probability by lag."""
+
     def __init__(
         self,
         list_length,
@@ -165,7 +168,7 @@ class TransitionLag(TransitionMeasure):
         count_unique=False,
         item_query=None,
         test_key=None,
-        test=None
+        test=None,
     ):
         super().__init__(
             'input', lag_key, item_query=item_query, test_key=test_key, test=test
@@ -201,6 +204,7 @@ class TransitionLag(TransitionMeasure):
 
 class TransitionLagRank(TransitionMeasure):
     """Measure lag rank of transitions."""
+
     def __init__(self, item_query=None, test_key=None, test=None):
         super().__init__(
             'input', 'input', item_query=item_query, test_key=test_key, test=test
@@ -225,6 +229,7 @@ class TransitionLagRank(TransitionMeasure):
 
 class TransitionDistance(TransitionMeasure):
     """Measure conditional response probability by distance."""
+
     def __init__(
         self,
         index_key,
@@ -277,6 +282,7 @@ class TransitionDistance(TransitionMeasure):
 
 class TransitionDistanceRank(TransitionMeasure):
     """Measure transition rank by distance."""
+
     def __init__(self, index_key, distances, item_query=None, test_key=None, test=None):
         super().__init__(
             index_key, index_key, item_query=item_query, test_key=test_key, test=test
@@ -303,6 +309,7 @@ class TransitionDistanceRank(TransitionMeasure):
 
 class TransitionCategory(TransitionMeasure):
     """Measure conditional response probability by category transition."""
+
     def __init__(self, category_key, item_query=None, test_key=None, test=None):
         super().__init__(
             'input', category_key, item_query=item_query, test_key=test_key, test=test

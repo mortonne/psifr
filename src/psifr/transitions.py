@@ -135,7 +135,7 @@ def count_lags(
     pool_test=None,
     recall_test=None,
     test=None,
-    count_unique=False
+    count_unique=False,
 ):
     """Count actual and possible serial position lags.
 
