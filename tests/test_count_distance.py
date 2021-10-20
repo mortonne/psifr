@@ -70,7 +70,7 @@ def test_distance_count_unique(data, distance):
         [data['pool_position']],
         [data['recall_position']],
         [data['pool_position']],
-        [data['recall_position']]
+        [data['recall_position']],
     ]
 
     # first check these bins with count_unique=False
