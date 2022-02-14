@@ -133,6 +133,27 @@ def test_merge(raw):
     assert not repeat['intrusion']
 
 
+def test_pli(raw):
+    """Test labeling of prior-list intrusions."""
+    data = raw.copy()
+    data.loc[3:5, 'item'] = ['hollow', 'pupil', 'fountain']
+    data.loc[9:11, 'item'] = ['pillow', 'fountain', 'pupil']
+    merged = fr.merge_free_recall(data)
+    assert 'prior_list' in merged.columns
+    assert 'prior_input' in merged.columns
+
+    # check the PLI (prior-list intrusion) in the second list
+    pli = merged.query('item == "pupil" and output == 3')
+    pli = pli.reset_index().loc[0]
+    assert pli['prior_list'] == 1
+    assert pli['prior_input'] == 3
+
+    # check the FLI (future-list intrusion) in the first list
+    fli = merged.query('item == "fountain" and output == 3')
+    assert np.isnan(fli['prior_list'].to_numpy()[0])
+    assert np.isnan(fli['prior_input'].to_numpy()[0])
+
+
 def test_filter_raw_data(raw):
     """Test filtering raw data."""
     filt = fr.filter_data(raw, 1, [1, 2], 'study', positions=[1, 2])
