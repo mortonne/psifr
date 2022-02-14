@@ -199,6 +199,24 @@ def merge_free_recall(data, **kwargs):
     study = data.loc[data['trial_type'] == 'study'].copy()
     recall = data.loc[data['trial_type'] == 'recall'].copy()
     merged = merge_lists(study, recall, **kwargs)
+
+    # to identify prior-list intrusions, merge study events and intrusions
+    intrusions = merged.query('intrusion')
+    plis = pd.merge(intrusions, study, on=['subject', 'item'], how='inner')
+
+    # add prior list and prior input information
+    plis['list'] = plis['list_x']
+    plis['prior_list'] = plis['list_y']
+    plis['prior_input'] = plis['position']
+    include = ['subject', 'list', 'item', 'output', 'prior_list', 'prior_input']
+    merged = pd.merge(
+        merged, plis[include], on=['subject', 'list', 'item', 'output'], how='outer'
+    )
+
+    # reset concidental "future list intrusions"
+    isfli = merged['list'] < merged['prior_list']
+    merged.loc[isfli, 'prior_list'] = np.nan
+    merged.loc[isfli, 'prior_input'] = np.nan
     return merged
 
 
