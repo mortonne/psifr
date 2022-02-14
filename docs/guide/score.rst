@@ -32,7 +32,7 @@ First, let's create a simple sample dataset with two lists:
         ],
         'item': [
             'absence', 'hollow', 'pupil', 'pupil', 'absence', 'empty',
-            'fountain', 'piano', 'pillow', 'pillow', 'fountain', 'pillow',
+            'fountain', 'piano', 'pillow', 'pillow', 'pupil', 'pillow',
         ],
     })
     data
@@ -57,7 +57,10 @@ Items that were not recalled have the `recall` column set to `False`. Because
 they were not recalled, they have no defined output position, so `output` is
 set to `NaN`. Finally, intrusions have an output position but no input position
 because they did not appear in the list. There is an `intrusion` field for
-convenience to label these recall attempts.
+convenience to label these recall attempts. The `prior_list` and `prior_input`
+fields give information about prior-list intrusions (PLIs) of items from prior
+lists. The `prior_list` field gives the list where the item appeared and
+`prior_input` indicates the position in which is was presented on that list.
 
 :py:func:`~psifr.fr.merge_free_recall` can also handle additional attributes beyond
 the standard ones, such as codes indicating stimulus category or list condition.
