@@ -214,6 +214,50 @@ def test_pnr(data):
     np.testing.assert_array_equal(expected, observed)
 
 
+def test_pli_list_lag():
+    """Test proportion of list lags for prior-list intrusions."""
+    raw = pd.DataFrame(
+        {
+            'subject': [
+                1, 1, 1, 1,
+                1, 1, 1, 1,
+                1, 1, 1, 1,
+            ],
+            'list': [
+                1, 1, 1, 1,
+                2, 2, 2, 2,
+                3, 3, 3, 3,
+            ],
+            'trial_type': [
+                'study', 'study', 'recall', 'recall',
+                'study', 'study', 'recall', 'recall',
+                'study', 'study', 'recall', 'recall',
+            ],
+            'position': [
+                1, 2, 1, 2,
+                1, 2, 1, 2,
+                1, 2, 1, 2,
+            ],
+            'item': [
+                'absence', 'hollow', 'hollow', 'absence',
+                'fountain', 'piano', 'fountain', 'hollow',
+                'pillow', 'pupil', 'absence', 'piano',
+            ]
+        }
+    )
+    data = fr.merge_free_recall(raw)
+
+    # max lag 2 (exclude first two lists)
+    stat = fr.pli_list_lag(data, max_lag=2)
+    expected = np.array([0.5, 0.5])
+    np.testing.assert_array_equal(stat['prob'], expected)
+
+    # max lag 1 (exclude just the first list)
+    stat = fr.pli_list_lag(data, max_lag=1)
+    expected = np.array([2 / 3])
+    np.testing.assert_array_equal(stat['prob'], expected)
+
+
 def test_lag_crp(data):
     """Test basic lag-CRP analysis."""
     crp = fr.lag_crp(data)
