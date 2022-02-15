@@ -429,6 +429,39 @@ def pnr(df, item_query=None, test_key=None, test=None):
     return prob
 
 
+def pli_list_lag(df, max_lag):
+    """
+    List lag of prior-list intrusions.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Merged study and recall data. See merge_free_recall. Must have
+        fields: subject, list, intrusion, prior_list.
+
+    max_lag : int
+        Maximum list lag to consider. The intial :code:`max_lag` lists
+        for each subject will be excluded so that all considered lags
+        are possible for all included lists.
+
+    Returns
+    -------
+    results : pandas.DataFrame
+        For each subject and list lag, the proportion of intrusions at
+        that lag, in the :code:`results['prob']` column.
+    """
+    intrusions = df[df['intrusion'] & (df['list'] > max_lag)].copy()
+    intrusions['list_lag'] = intrusions['list'] - intrusions['prior_list']
+    stat = intrusions.groupby('subject').apply(
+        lambda d: d['list_lag'].value_counts(normalize=True).sort_index()
+    )
+    sdf = stat.stack()
+    sdf.name = 'prob'
+    result = sdf.reset_index().set_index(['subject', 'list_lag'])
+    result = result.query(f'list_lag <= {max_lag}')
+    return result
+
+
 def lag_crp(
     df, lag_key='input', count_unique=False, item_query=None, test_key=None, test=None
 ):
