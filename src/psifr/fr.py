@@ -39,11 +39,14 @@ def table_from_lists(subjects, study, recall, lists=None):
     data : pandas.DataFrame
         Data in table format.
     """
+    assert len(subjects) == len(study) == len(recall), 'Input lengths must match.'
     d = {'subject': [], 'list': [], 'trial_type': [], 'position': [], 'item': []}
     prev_subject = None
     current_list = 1
     if lists is None:
         lists = [None] * len(subjects)
+    else:
+        assert len(subjects) == len(lists), 'Length of lists must match subjects.'
     for subject, study_list, recall_list, n in zip(subjects, study, recall, lists):
         # set list number
         if n is not None:
