@@ -553,7 +553,7 @@ def _subject_pli_list_lag(df, max_lag):
     if len(intrusions) > 0:
         list_lag = intrusions['list'] - intrusions['prior_list']
         results['count'] = list_lag.value_counts()
-    results['count'] = results['count'].fillna(0)
+    results['count'] = results['count'].fillna(0).astype(int)
     results['per_list'] = results['count'] / included['list'].nunique()
     results['prob'] = results['count'] / results['count'].sum()
     return results
