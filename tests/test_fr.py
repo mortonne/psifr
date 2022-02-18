@@ -257,19 +257,23 @@ def test_pnr(data):
 
 def test_pli_list_lag():
     """Test proportion of list lags for prior-list intrusions."""
-    subjects = [1, 1, 1, 2, 2, 2]
+    subjects = [1, 1, 1, 1, 2, 2, 2, 2]
     study = [
+        ['tree', 'cat'],
         ['absence', 'hollow'],
         ['fountain', 'piano'],
         ['pillow', 'pupil'],
+        ['tree', 'cat'],
         ['absence', 'hollow'],
         ['fountain', 'piano'],
         ['pillow', 'pupil'],
     ]
     recall = [
+        ['tree', 'cat'],
         ['hollow', 'absence'],
         ['fountain', 'hollow'],
         ['absence', 'piano'],
+        ['tree', 'cat'],
         ['absence', 'hollow'],
         ['fountain', 'piano'],
         ['pillow', 'pupil'],
@@ -277,15 +281,33 @@ def test_pli_list_lag():
     raw = fr.table_from_lists(subjects, study, recall)
     data = fr.merge_free_recall(raw)
 
-    # max lag 2 (exclude first two lists)
-    stat = fr.pli_list_lag(data, max_lag=2)
-    expected = np.array([0.5, 0.5, np.nan, np.nan])
-    np.testing.assert_array_equal(stat['prob'].to_numpy(), expected)
-
     # max lag 1 (exclude just the first list)
     stat = fr.pli_list_lag(data, max_lag=1)
-    expected = np.array([2 / 3, np.nan])
-    np.testing.assert_array_equal(stat['prob'].to_numpy(), expected)
+    np.testing.assert_array_equal(stat['count'].to_numpy(), np.array([2, 0]))
+    np.testing.assert_array_equal(stat['per_list'].to_numpy(), np.array([2 / 3, 0]))
+    np.testing.assert_array_equal(stat['prob'].to_numpy(), np.array([1, np.nan]))
+
+    # max lag 2 (exclude first two lists)
+    stat = fr.pli_list_lag(data, max_lag=2)
+    np.testing.assert_array_equal(stat['count'].to_numpy(), np.array([2, 1, 0, 0]))
+    np.testing.assert_array_equal(
+        stat['per_list'].to_numpy(), np.array([1, 0.5, 0, 0])
+    )
+    np.testing.assert_array_equal(
+        stat['prob'].to_numpy(), np.array([2/3, 1/3, np.nan, np.nan])
+    )
+
+    # max lag 3 (exclude first three lists)
+    stat = fr.pli_list_lag(data, max_lag=3)
+    np.testing.assert_array_equal(
+        stat['count'].to_numpy(), np.array([1, 1, 0, 0, 0, 0])
+    )
+    np.testing.assert_array_equal(
+        stat['per_list'].to_numpy(), np.array([1, 1, 0, 0, 0, 0])
+    )
+    np.testing.assert_array_equal(
+        stat['prob'].to_numpy(), np.array([0.5, 0.5, 0, np.nan, np.nan, np.nan])
+    )
 
 
 def test_lag_crp(data):
