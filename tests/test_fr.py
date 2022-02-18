@@ -92,7 +92,7 @@ def distances2():
 
 
 def test_table_from_lists():
-    """Test creating data from lists."""
+    """Test creating a data table from lists."""
     subjects = [1, 1, 2, 2]
     lists = [1, 2, 3, 4]
     study = [
@@ -112,10 +112,13 @@ def test_table_from_lists():
         [[1, 2, 1], [2, 2, 2], [2, 2], [2]],
     )
     task = ([[1, 2, 1], [2, 1, 2], [2, 1, 2], [1, 2, 1]], None)
+
     # explicit labeling of list number
     data = fr.table_from_lists(
         subjects, study, recall, lists=lists, category=category, task=task
     )
+
+    # subject, list, and trial_type labels
     np.testing.assert_array_equal(
         data['subject'].to_numpy(), np.repeat([1, 2], [12, 9])
     )
@@ -126,13 +129,21 @@ def test_table_from_lists():
         data['trial_type'].to_numpy(),
         np.repeat(np.tile(['study', 'recall'], 4), [3, 3, 3, 3, 3, 2, 3, 1]),
     )
+
+    # position
     n = [len(items) for seqs in zip(study, recall) for items in seqs]
     position = np.array([i for j in n for i in range(1, j + 1)])
     np.testing.assert_array_equal(data['position'].to_numpy(), position)
+
+    # items
     items = [item for phase in zip(study, recall) for items in phase for item in items]
     np.testing.assert_array_equal(data['item'].to_numpy(), np.array(items))
+
+    # category
     category = [cat for phase in zip(*category) for cats in phase for cat in cats]
     np.testing.assert_array_equal(data['category'].to_numpy(), category)
+
+    # task
     task_recall = [np.tile(np.nan, n) for n in [3, 3, 2, 1]]
     task = np.hstack([t for t_list in zip(task[0], task_recall) for t in t_list])
     np.testing.assert_array_equal(data['task'].to_numpy(), task)
