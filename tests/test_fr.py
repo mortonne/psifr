@@ -91,7 +91,7 @@ def distances2():
     return distances
 
 
-def test_data_from_lists():
+def test_table_from_lists():
     """Test creating data from lists."""
     subjects = [1, 1, 2, 2]
     lists = [1, 2, 3, 4]
@@ -108,7 +108,7 @@ def test_data_from_lists():
         ['pupil'],
     ]
     # explicit labeling of list number
-    data = fr.data_from_lists(subjects, study, recall, lists=lists)
+    data = fr.table_from_lists(subjects, study, recall, lists=lists)
     np.testing.assert_array_equal(
         data['subject'].to_numpy(), np.repeat([1, 2], [12, 9])
     )
@@ -126,7 +126,7 @@ def test_data_from_lists():
     np.testing.assert_array_equal(data['item'].to_numpy(), np.array(items))
 
     # implicit labeling of list number
-    data = fr.data_from_lists(subjects, study, recall)
+    data = fr.table_from_lists(subjects, study, recall)
     np.testing.assert_array_equal(
         data['list'].to_numpy(), np.repeat([1, 2, 1, 2], [6, 6, 5, 4])
     )
