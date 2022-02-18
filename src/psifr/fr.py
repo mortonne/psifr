@@ -567,7 +567,8 @@ def pli_list_lag(df, max_lag):
     ----------
     df : pandas.DataFrame
         Merged study and recall data. See merge_free_recall. Must have
-        fields: subject, list, intrusion, prior_list.
+        fields: subject, list, intrusion, prior_list. Lists must be
+        numbered starting from 1 and all lists must be included.
 
     max_lag : int
         Maximum list lag to consider. The intial :code:`max_lag` lists
