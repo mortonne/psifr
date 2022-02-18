@@ -489,6 +489,21 @@ def pnr(df, item_query=None, test_key=None, test=None):
     return prob
 
 
+def _subject_pli_list_lag(df, max_lag):
+    """List lag of prior-list intrusions for one subject."""
+    results = pd.DataFrame(
+        index=pd.Index(np.arange(1, max_lag + 1), name='list_lag'),
+        columns=['prob'],
+        dtype=float,
+    )
+    intrusions = df[df['intrusion'] & (df['list'] > max_lag)].copy()
+    if len(intrusions) == 0:
+        return results
+    list_lag = intrusions['list'] - intrusions['prior_list']
+    results['prob'] = list_lag.value_counts(normalize=True)
+    return results
+
+
 def pli_list_lag(df, max_lag):
     """
     List lag of prior-list intrusions.
@@ -510,15 +525,7 @@ def pli_list_lag(df, max_lag):
         For each subject and list lag, the proportion of intrusions at
         that lag, in the :code:`results['prob']` column.
     """
-    intrusions = df[df['intrusion'] & (df['list'] > max_lag)].copy()
-    intrusions['list_lag'] = intrusions['list'] - intrusions['prior_list']
-    stat = intrusions.groupby('subject').apply(
-        lambda d: d['list_lag'].value_counts(normalize=True).sort_index()
-    )
-    sdf = stat.stack()
-    sdf.name = 'prob'
-    result = sdf.reset_index().set_index(['subject', 'list_lag'])
-    result = result.query(f'list_lag <= {max_lag}')
+    result = df.groupby('subject').apply(_subject_pli_list_lag, max_lag)
     return result
 
 
