@@ -15,6 +15,63 @@ def sample_data(study):
     return df
 
 
+def table_from_lists(subjects, study, recall, lists=None):
+    """
+    Create table format data from list format data.
+
+    Parameters
+    ----------
+    subjects : list of hashable
+        Subject identifier for each list.
+
+    study : list of list of hashable
+        List of items for each study list.
+
+    recall : list of list of hashable
+        List of recalled items for each study list.
+
+    lists : list of hashable, optional
+        List of list numbers. If not specified, lists for each subject
+        will be numbered sequentially starting from one.
+
+    Returns
+    -------
+    data : pandas.DataFrame
+        Data in table format.
+    """
+    d = {'subject': [], 'list': [], 'trial_type': [], 'position': [], 'item': []}
+    prev_subject = None
+    current_list = 1
+    if lists is None:
+        lists = [None] * len(subjects)
+    for subject, study_list, recall_list, n in zip(subjects, study, recall, lists):
+        # set list number
+        if n is not None:
+            current_list = n
+        elif subject != prev_subject:
+            current_list = 1
+
+        # add study events
+        for i, study_item in enumerate(study_list):
+            d['subject'].append(subject)
+            d['list'].append(current_list)
+            d['trial_type'].append('study')
+            d['position'].append(i + 1)
+            d['item'].append(study_item)
+
+        # add recall events
+        for i, recall_item in enumerate(recall_list):
+            d['subject'].append(subject)
+            d['list'].append(current_list)
+            d['trial_type'].append('recall')
+            d['position'].append(i + 1)
+            d['item'].append(recall_item)
+        current_list += 1
+        prev_subject = subject
+    data = pd.DataFrame(d)
+    return data
+
+
 def _match_values(series, values):
     """Get matches for a data column."""
     if not hasattr(values, '__iter__') or isinstance(values, str):
