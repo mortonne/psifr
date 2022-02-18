@@ -493,14 +493,17 @@ def _subject_pli_list_lag(df, max_lag):
     """List lag of prior-list intrusions for one subject."""
     results = pd.DataFrame(
         index=pd.Index(np.arange(1, max_lag + 1), name='list_lag'),
-        columns=['prob'],
+        columns=['count', 'per_list', 'prob'],
         dtype=float,
     )
-    intrusions = df[df['intrusion'] & (df['list'] > max_lag)].copy()
-    if len(intrusions) == 0:
-        return results
-    list_lag = intrusions['list'] - intrusions['prior_list']
-    results['prob'] = list_lag.value_counts(normalize=True)
+    included = df[df['list'] > max_lag]
+    intrusions = included.query('intrusion')
+    if len(intrusions) > 0:
+        list_lag = intrusions['list'] - intrusions['prior_list']
+        results['count'] = list_lag.value_counts()
+    results['count'] = results['count'].fillna(0)
+    results['per_list'] = results['count'] / included['list'].nunique()
+    results['prob'] = results['count'] / results['count'].sum()
     return results
 
 
