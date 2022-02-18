@@ -91,6 +91,47 @@ def distances2():
     return distances
 
 
+def test_data_from_lists():
+    """Test creating data from lists."""
+    subjects = [1, 1, 2, 2]
+    lists = [1, 2, 3, 4]
+    study = [
+        ['absence', 'hollow', 'pupil'],
+        ['fountain', 'piano', 'pillow'],
+        ['fountain', 'piano', 'pillow'],
+        ['absence', 'hollow', 'pupil'],
+    ]
+    recall = [
+        ['hollow', 'pupil', 'empty'],
+        ['fountain', 'piano', 'fountain'],
+        ['pillow', 'piano'],
+        ['pupil'],
+    ]
+    # explicit labeling of list number
+    data = fr.data_from_lists(subjects, study, recall, lists=lists)
+    np.testing.assert_array_equal(
+        data['subject'].to_numpy(), np.repeat([1, 2], [12, 9])
+    )
+    np.testing.assert_array_equal(
+        data['list'].to_numpy(), np.repeat([1, 2, 3, 4], [6, 6, 5, 4])
+    )
+    np.testing.assert_array_equal(
+        data['trial_type'].to_numpy(),
+        np.repeat(np.tile(['study', 'recall'], 4), [3, 3, 3, 3, 3, 2, 3, 1]),
+    )
+    n = [len(items) for seqs in zip(study, recall) for items in seqs]
+    position = np.array([i for j in n for i in range(1, j + 1)])
+    np.testing.assert_array_equal(data['position'].to_numpy(), position)
+    items = [item for phase in zip(study, recall) for items in phase for item in items]
+    np.testing.assert_array_equal(data['item'].to_numpy(), np.array(items))
+
+    # implicit labeling of list number
+    data = fr.data_from_lists(subjects, study, recall)
+    np.testing.assert_array_equal(
+        data['list'].to_numpy(), np.repeat([1, 2, 1, 2], [6, 6, 5, 4])
+    )
+
+
 def test_merge(raw):
     """Test merging of study and recall trials."""
     study = raw.loc[raw['trial_type'] == 'study'].copy()
