@@ -1,6 +1,7 @@
 """Utilities for working with free recall data."""
 
 from pkg_resources import resource_filename
+import warnings
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -540,6 +541,8 @@ def pnr(df, item_query=None, test_key=None, test=None):
 
 def _subject_pli_list_lag(df, max_lag):
     """List lag of prior-list intrusions for one subject."""
+    if max_lag >= df['list'].nunique():
+        warnings.warn('All lists are excluded based on max_lag.')
     results = pd.DataFrame(
         index=pd.Index(np.arange(1, max_lag + 1), name='list_lag'),
         columns=['count', 'per_list', 'prob'],
