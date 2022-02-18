@@ -15,7 +15,7 @@ def sample_data(study):
     return df
 
 
-def table_from_lists(subjects, study, recall, lists=None):
+def table_from_lists(subjects, study, recall, lists=None, **kwargs):
     """
     Create table format data from list format data.
 
@@ -41,13 +41,16 @@ def table_from_lists(subjects, study, recall, lists=None):
     """
     assert len(subjects) == len(study) == len(recall), 'Input lengths must match.'
     d = {'subject': [], 'list': [], 'trial_type': [], 'position': [], 'item': []}
+    for key in kwargs.keys():
+        d[key] = []
     prev_subject = None
     current_list = 1
     if lists is None:
         lists = [None] * len(subjects)
     else:
         assert len(subjects) == len(lists), 'Length of lists must match subjects.'
-    for subject, study_list, recall_list, n in zip(subjects, study, recall, lists):
+    labels = zip(subjects, study, recall, lists)
+    for i, (subject, study_list, recall_list, n) in enumerate(labels):
         # set list number
         if n is not None:
             current_list = n
@@ -55,20 +58,24 @@ def table_from_lists(subjects, study, recall, lists=None):
             current_list = 1
 
         # add study events
-        for i, study_item in enumerate(study_list):
+        for j, study_item in enumerate(study_list):
             d['subject'].append(subject)
             d['list'].append(current_list)
             d['trial_type'].append('study')
-            d['position'].append(i + 1)
+            d['position'].append(j + 1)
             d['item'].append(study_item)
+            for key, val in kwargs.items():
+                d[key].append(val[0][i][j])
 
         # add recall events
-        for i, recall_item in enumerate(recall_list):
+        for j, recall_item in enumerate(recall_list):
             d['subject'].append(subject)
             d['list'].append(current_list)
             d['trial_type'].append('recall')
-            d['position'].append(i + 1)
+            d['position'].append(j + 1)
             d['item'].append(recall_item)
+            for key, val in kwargs.items():
+                d[key].append(val[1][i][j])
         current_list += 1
         prev_subject = subject
     data = pd.DataFrame(d)
