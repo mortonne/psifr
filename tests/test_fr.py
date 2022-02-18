@@ -111,8 +111,11 @@ def test_table_from_lists():
         [[1, 1, 2], [2, 2, 2], [1, 1, 2], [2, 2, 2]],
         [[1, 2, 1], [2, 2, 2], [2, 2], [2]],
     )
+    task = ([[1, 2, 1], [2, 1, 2], [2, 1, 2], [1, 2, 1]], None)
     # explicit labeling of list number
-    data = fr.table_from_lists(subjects, study, recall, lists=lists, category=category)
+    data = fr.table_from_lists(
+        subjects, study, recall, lists=lists, category=category, task=task
+    )
     np.testing.assert_array_equal(
         data['subject'].to_numpy(), np.repeat([1, 2], [12, 9])
     )
@@ -130,6 +133,9 @@ def test_table_from_lists():
     np.testing.assert_array_equal(data['item'].to_numpy(), np.array(items))
     category = [cat for phase in zip(*category) for cats in phase for cat in cats]
     np.testing.assert_array_equal(data['category'].to_numpy(), category)
+    task_recall = [np.tile(np.nan, n) for n in [3, 3, 2, 1]]
+    task = np.hstack([t for t_list in zip(task[0], task_recall) for t in t_list])
+    np.testing.assert_array_equal(data['task'].to_numpy(), task)
 
     # implicit labeling of list number
     data = fr.table_from_lists(subjects, study, recall)
