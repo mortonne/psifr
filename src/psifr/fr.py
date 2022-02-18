@@ -65,7 +65,10 @@ def table_from_lists(subjects, study, recall, lists=None, **kwargs):
             d['position'].append(j + 1)
             d['item'].append(study_item)
             for key, val in kwargs.items():
-                d[key].append(val[0][i][j])
+                if val[0] is not None:
+                    d[key].append(val[0][i][j])
+                else:
+                    d[key].append(np.nan)
 
         # add recall events
         for j, recall_item in enumerate(recall_list):
@@ -75,7 +78,10 @@ def table_from_lists(subjects, study, recall, lists=None, **kwargs):
             d['position'].append(j + 1)
             d['item'].append(recall_item)
             for key, val in kwargs.items():
-                d[key].append(val[1][i][j])
+                if val[1] is not None:
+                    d[key].append(val[1][i][j])
+                else:
+                    d[key].append(np.nan)
         current_list += 1
         prev_subject = subject
     data = pd.DataFrame(d)
