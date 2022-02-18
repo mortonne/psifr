@@ -257,35 +257,18 @@ def test_pnr(data):
 
 def test_pli_list_lag():
     """Test proportion of list lags for prior-list intrusions."""
-    raw = pd.DataFrame(
-        {
-            'subject': [
-                1, 1, 1, 1,
-                1, 1, 1, 1,
-                1, 1, 1, 1,
-            ],
-            'list': [
-                1, 1, 1, 1,
-                2, 2, 2, 2,
-                3, 3, 3, 3,
-            ],
-            'trial_type': [
-                'study', 'study', 'recall', 'recall',
-                'study', 'study', 'recall', 'recall',
-                'study', 'study', 'recall', 'recall',
-            ],
-            'position': [
-                1, 2, 1, 2,
-                1, 2, 1, 2,
-                1, 2, 1, 2,
-            ],
-            'item': [
-                'absence', 'hollow', 'hollow', 'absence',
-                'fountain', 'piano', 'fountain', 'hollow',
-                'pillow', 'pupil', 'absence', 'piano',
-            ]
-        }
-    )
+    subjects = [1, 1, 1]
+    study = [
+        ['absence', 'hollow'],
+        ['fountain', 'piano'],
+        ['pillow', 'pupil'],
+    ]
+    recall = [
+        ['hollow', 'absence'],
+        ['fountain', 'hollow'],
+        ['absence', 'piano'],
+    ]
+    raw = fr.table_from_lists(subjects, study, recall)
     data = fr.merge_free_recall(raw)
 
     # max lag 2 (exclude first two lists)
