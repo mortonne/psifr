@@ -257,8 +257,11 @@ def test_pnr(data):
 
 def test_pli_list_lag():
     """Test proportion of list lags for prior-list intrusions."""
-    subjects = [1, 1, 1]
+    subjects = [1, 1, 1, 2, 2, 2]
     study = [
+        ['absence', 'hollow'],
+        ['fountain', 'piano'],
+        ['pillow', 'pupil'],
         ['absence', 'hollow'],
         ['fountain', 'piano'],
         ['pillow', 'pupil'],
@@ -267,19 +270,22 @@ def test_pli_list_lag():
         ['hollow', 'absence'],
         ['fountain', 'hollow'],
         ['absence', 'piano'],
+        ['absence', 'hollow'],
+        ['fountain', 'piano'],
+        ['pillow', 'pupil'],
     ]
     raw = fr.table_from_lists(subjects, study, recall)
     data = fr.merge_free_recall(raw)
 
     # max lag 2 (exclude first two lists)
     stat = fr.pli_list_lag(data, max_lag=2)
-    expected = np.array([0.5, 0.5])
-    np.testing.assert_array_equal(stat['prob'], expected)
+    expected = np.array([0.5, 0.5, np.nan, np.nan])
+    np.testing.assert_array_equal(stat['prob'].to_numpy(), expected)
 
     # max lag 1 (exclude just the first list)
     stat = fr.pli_list_lag(data, max_lag=1)
-    expected = np.array([2 / 3])
-    np.testing.assert_array_equal(stat['prob'], expected)
+    expected = np.array([2 / 3, np.nan])
+    np.testing.assert_array_equal(stat['prob'].to_numpy(), expected)
 
 
 def test_lag_crp(data):
