@@ -308,7 +308,7 @@ def test_pli_list_lag():
     stat = fr.pli_list_lag(data, max_lag=1)
     np.testing.assert_array_equal(stat['count'].to_numpy(), np.array([2, 0]))
     np.testing.assert_array_equal(stat['per_list'].to_numpy(), np.array([2 / 3, 0]))
-    np.testing.assert_array_equal(stat['prob'].to_numpy(), np.array([1, np.nan]))
+    np.testing.assert_array_equal(stat['prob'].to_numpy(), np.array([0.5, np.nan]))
 
     # max lag 2 (exclude first two lists)
     stat = fr.pli_list_lag(data, max_lag=2)
@@ -317,7 +317,7 @@ def test_pli_list_lag():
         stat['per_list'].to_numpy(), np.array([1, 0.5, 0, 0])
     )
     np.testing.assert_array_equal(
-        stat['prob'].to_numpy(), np.array([2/3, 1/3, np.nan, np.nan])
+        stat['prob'].to_numpy(), np.array([0.5, 0.25, np.nan, np.nan])
     )
 
     # max lag 3 (exclude first three lists)
