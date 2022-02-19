@@ -8,33 +8,17 @@ score the data by matching study events with recall events.
 Scoring list recall
 -------------------
 
-First, let's create a simple sample dataset with two lists:
+First, let's create a simple sample dataset with two lists. We can use
+the :py:func:`~psifr.fr.table_from_lists` convenience function to create
+a sample dataset with a given set of study lists and recalls:
 
 .. ipython:: python
 
-    import pandas as pd
-    data = pd.DataFrame({
-        'subject': [
-            1, 1, 1, 1, 1, 1,
-            1, 1, 1, 1, 1, 1,
-        ],
-        'list': [
-            1, 1, 1, 1, 1, 1,
-            2, 2, 2, 2, 2, 2,
-        ],
-        'trial_type': [
-            'study', 'study', 'study', 'recall', 'recall', 'recall',
-            'study', 'study', 'study', 'recall', 'recall', 'recall',
-        ],
-        'position': [
-            1, 2, 3, 1, 2, 3,
-            1, 2, 3, 1, 2, 3,
-        ],
-        'item': [
-            'absence', 'hollow', 'pupil', 'pupil', 'absence', 'empty',
-            'fountain', 'piano', 'pillow', 'pillow', 'pupil', 'pillow',
-        ],
-    })
+    from psifr import fr
+    list_subject = [1, 1]
+    study_lists = [['absence', 'hollow', 'pupil'], ['fountain', 'piano', 'pillow']]
+    recall_lists = [['pupil', 'absence', 'empty'], ['pillow', 'pupil', 'pillow']]
+    data = fr.table_from_lists(list_subject, study_lists, recall_lists)
     data
 
 Next, we'll merge together the study and recall events by matching up
@@ -42,7 +26,6 @@ corresponding events:
 
 .. ipython:: python
 
-    from psifr import fr
     merged = fr.merge_free_recall(data)
     merged
 
