@@ -295,7 +295,7 @@ def test_pli_list_lag():
         ['tree', 'cat'],
         ['hollow', 'absence'],
         ['fountain', 'hollow'],
-        ['absence', 'piano'],
+        ['absence', 'piano', 'cat'],
         ['tree', 'cat'],
         ['absence', 'hollow'],
         ['fountain', 'piano'],
@@ -323,13 +323,13 @@ def test_pli_list_lag():
     # max lag 3 (exclude first three lists)
     stat = fr.pli_list_lag(data, max_lag=3)
     np.testing.assert_array_equal(
-        stat['count'].to_numpy(), np.array([1, 1, 0, 0, 0, 0])
+        stat['count'].to_numpy(), np.array([1, 1, 1, 0, 0, 0])
     )
     np.testing.assert_array_equal(
-        stat['per_list'].to_numpy(), np.array([1, 1, 0, 0, 0, 0])
+        stat['per_list'].to_numpy(), np.array([1, 1, 1, 0, 0, 0])
     )
     np.testing.assert_array_equal(
-        stat['prob'].to_numpy(), np.array([0.5, 0.5, 0, np.nan, np.nan, np.nan])
+        stat['prob'].to_numpy(), np.array([1/3, 1/3, 1/3, np.nan, np.nan, np.nan])
     )
 
 
