@@ -1,6 +1,7 @@
 """Utilities for working with free recall data."""
 
 from pkg_resources import resource_filename
+import warnings
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -13,6 +14,115 @@ def sample_data(study):
     data_file = resource_filename('psifr', f'data/{study}.csv')
     df = pd.read_csv(data_file)
     return df
+
+
+def table_from_lists(subjects, study, recall, lists=None, **kwargs):
+    """
+    Create table format data from list format data.
+
+    Parameters
+    ----------
+    subjects : list of hashable
+        Subject identifier for each list.
+
+    study : list of list of hashable
+        List of items for each study list.
+
+    recall : list of list of hashable
+        List of recalled items for each study list.
+
+    lists : list of hashable, optional
+        List of list numbers. If not specified, lists for each subject
+        will be numbered sequentially starting from one.
+
+    Returns
+    -------
+    data : pandas.DataFrame
+        Data in table format.
+
+    Examples
+    --------
+    >>> from psifr import fr
+    >>> subjects_list = [1, 1, 2, 2]
+    >>> study_lists = [['a', 'b'], ['c', 'd'], ['e', 'f'], ['g', 'h']]
+    >>> recall_lists = [['b'], ['d', 'c'], ['f', 'e'], []]
+    >>> fr.table_from_lists(subjects_list, study_lists, recall_lists)
+        subject  list trial_type  position item  category
+    0         1     1      study         1    a         1
+    1         1     1      study         2    b         2
+    2         1     1     recall         1    b         2
+    3         1     2      study         1    c         1
+    4         1     2      study         2    d         2
+    5         1     2     recall         1    d         2
+    6         1     2     recall         2    c         1
+    7         2     1      study         1    e         2
+    8         2     1      study         2    f         1
+    9         2     1     recall         1    f         1
+    10        2     1     recall         2    e         2
+    11        2     2      study         1    g         2
+    12        2     2      study         2    h         1
+    >>> subjects_list = [1, 1]
+    >>> study_lists = [['a', 'b'], ['c', 'd']]
+    >>> recall_lists = [['b'], ['d', 'c']]
+    >>> col1 = ([[1, 2], [1, 2]], [[2], [2, 1]])
+    >>> col2 = ([[1, 1], [2, 2]], None)
+    >>> fr.table_from_lists(subjects_list, study_lists, recall_lists, col1=col1, col2=col2)
+       subject  list trial_type  position item  col1  col2
+    0        1     1      study         1    a     1   1.0
+    1        1     1      study         2    b     2   1.0
+    2        1     1     recall         1    b     2   NaN
+    3        1     2      study         1    c     1   2.0
+    4        1     2      study         2    d     2   2.0
+    5        1     2     recall         1    d     2   NaN
+    6        1     2     recall         2    c     1   NaN
+    """
+    assert len(subjects) == len(study) == len(recall), 'Input lengths must match.'
+    d = {'subject': [], 'list': [], 'trial_type': [], 'position': [], 'item': []}
+    for key in kwargs.keys():
+        d[key] = []
+    prev_subject = None
+    current_list = 1
+    if lists is None:
+        lists = [None] * len(subjects)
+    else:
+        assert len(subjects) == len(lists), 'Length of lists must match subjects.'
+    labels = zip(subjects, study, recall, lists)
+    for i, (subject, study_list, recall_list, n) in enumerate(labels):
+        # set list number
+        if n is not None:
+            current_list = n
+        elif subject != prev_subject:
+            current_list = 1
+
+        # add study events
+        for j, study_item in enumerate(study_list):
+            d['subject'].append(subject)
+            d['list'].append(current_list)
+            d['trial_type'].append('study')
+            d['position'].append(j + 1)
+            d['item'].append(study_item)
+            for key, val in kwargs.items():
+                if val[0] is not None:
+                    d[key].append(val[0][i][j])
+                else:
+                    d[key].append(np.nan)
+
+        # add recall events
+        for j, recall_item in enumerate(recall_list):
+            d['subject'].append(subject)
+            d['list'].append(current_list)
+            d['trial_type'].append('recall')
+            d['position'].append(j + 1)
+            d['item'].append(recall_item)
+            for key, val in kwargs.items():
+                if val[1] is not None:
+                    d[key].append(val[1][i][j])
+                else:
+                    d[key].append(np.nan)
+        current_list += 1
+        prev_subject = subject
+    data = pd.DataFrame(d)
+    return data
 
 
 def _match_values(series, values):
@@ -199,6 +309,24 @@ def merge_free_recall(data, **kwargs):
     study = data.loc[data['trial_type'] == 'study'].copy()
     recall = data.loc[data['trial_type'] == 'recall'].copy()
     merged = merge_lists(study, recall, **kwargs)
+
+    # to identify prior-list intrusions, merge study events and intrusions
+    intrusions = merged.query('intrusion')
+    plis = pd.merge(intrusions, study, on=['subject', 'item'], how='inner')
+
+    # add prior list and prior input information
+    plis['list'] = plis['list_x']
+    plis['prior_list'] = plis['list_y']
+    plis['prior_input'] = plis['position']
+    include = ['subject', 'list', 'item', 'output', 'prior_list', 'prior_input']
+    merged = pd.merge(
+        merged, plis[include], on=['subject', 'list', 'item', 'output'], how='outer'
+    )
+
+    # reset concidental "future list intrusions"
+    isfli = merged['list'] < merged['prior_list']
+    merged.loc[isfli, 'prior_list'] = np.nan
+    merged.loc[isfli, 'prior_input'] = np.nan
     return merged
 
 
@@ -409,6 +537,52 @@ def pnr(df, item_query=None, test_key=None, test=None):
     )
     prob = measure.analyze(df)
     return prob
+
+
+def _subject_pli_list_lag(df, max_lag):
+    """List lag of prior-list intrusions for one subject."""
+    if max_lag >= df['list'].nunique():
+        warnings.warn('All lists are excluded based on max_lag.')
+    results = pd.DataFrame(
+        index=pd.Index(np.arange(1, max_lag + 1), name='list_lag'),
+        columns=['count', 'per_list', 'prob'],
+        dtype=float,
+    )
+    included = df[df['list'] > max_lag]
+    intrusions = included.query('intrusion')
+    if len(intrusions) > 0:
+        list_lag = intrusions['list'] - intrusions['prior_list']
+        results['count'] = list_lag.value_counts()
+    results['count'] = results['count'].fillna(0).astype(int)
+    results['per_list'] = results['count'] / included['list'].nunique()
+    results['prob'] = results['count'] / intrusions.shape[0]
+    return results
+
+
+def pli_list_lag(df, max_lag):
+    """
+    List lag of prior-list intrusions.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Merged study and recall data. See merge_free_recall. Must have
+        fields: subject, list, intrusion, prior_list. Lists must be
+        numbered starting from 1 and all lists must be included.
+
+    max_lag : int
+        Maximum list lag to consider. The intial :code:`max_lag` lists
+        for each subject will be excluded so that all considered lags
+        are possible for all included lists.
+
+    Returns
+    -------
+    results : pandas.DataFrame
+        For each subject and list lag, the proportion of intrusions at
+        that lag, in the :code:`results['prob']` column.
+    """
+    result = df.groupby('subject').apply(_subject_pli_list_lag, max_lag)
+    return result
 
 
 def lag_crp(

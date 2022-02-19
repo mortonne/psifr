@@ -10,6 +10,7 @@ Managing data
 .. autosummary::
     :toctree: api/
 
+    table_from_lists
     merge_free_recall
     merge_lists
     filter_data

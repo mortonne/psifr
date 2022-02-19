@@ -86,3 +86,29 @@ into curves of different colors.
     g = fr.plot_spc(pfr, hue='output').add_legend()
 
 This plot shows what items tend to be recalled early in the recall sequence.
+
+Prior-list intrusions
+~~~~~~~~~~~~~~~~~~~~~
+
+Participants will sometimes accidentally recall items from prior lists;
+these recalls are known as prior-list intrusions (PLIs). To better understand
+how prior-list intrusions are happening, you can look at how many lists back
+those items were originally presented.
+
+First, you need to choose a maximum list lag that you will consider.
+This determines which lists will be included in the analysis. For example, if
+you have a maximum lag of 3, then the first 3 lists will be excluded from the
+analysis. This ensures that each included list can potentially have intrusions
+of each possible list lag.
+
+.. ipython:: python
+
+    pli = fr.pli_list_lag(data, max_lag=3)
+    pli
+    pli.groupby('list_lag').agg(['mean', 'sem'])
+
+The analysis returns a raw count of intrusions at each lag (:code:`count`),
+the count divided by the number of included lists (:code:`per_list`), and the
+probability of a given intrusion coming from a given lag (:code:`prob`). In
+the sample dataset, recently presented items (i.e., with lower list lag) are
+more likely to be intruded.
