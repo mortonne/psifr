@@ -40,6 +40,10 @@ def table_from_lists(subjects, study, recall, lists=None, **kwargs):
     data : pandas.DataFrame
         Data in table format.
 
+    See Also
+    --------
+    split_lists : Split a table into list format.
+
     Examples
     --------
     >>> from psifr import fr
@@ -143,7 +147,59 @@ def filter_data(
     inputs=None,
     outputs=None,
 ):
-    """Filter data to get a subset of trials."""
+    """
+    Filter data to get a subset of trials.
+
+    Parameters
+    ----------
+    data : pandas.DataFrame
+        Raw or merged data to filter.
+
+    subjects : hashable or list of hashable
+        Subject or subjects to include.
+
+    lists : hashable or list of hashable
+        List or lists to include.
+
+    trial_type : {'study', 'recall'}
+        Trial type to include.
+
+    positions : int or list of int
+        Position or positions to include.
+
+    inputs : int or list of int
+        Input position or positions to include.
+
+    outputs : int or list of int
+        Output position or positions to include.
+
+    Returns
+    -------
+    filtered : pandas.DataFrame
+        The filtered subset of data.
+
+    Examples
+    --------
+    >>> from psifr import fr
+    >>> subjects_list = [1, 1, 2, 2]
+    >>> study_lists = [['a', 'b'], ['c', 'd'], ['e', 'f'], ['g', 'h']]
+    >>> recall_lists = [['b'], ['d', 'c'], ['f', 'e'], []]
+    >>> raw = fr.table_from_lists(subjects_list, study_lists, recall_lists)
+    >>> fr.filter_data(raw, subjects=1, trial_type='study')
+       subject  list trial_type  position item
+    0        1     1      study         1    a
+    1        1     1      study         2    b
+    3        1     2      study         1    c
+    4        1     2      study         2    d
+
+    >>> data = fr.merge_free_recall(raw)
+    >>> fr.filter_data(data, subjects=2)
+       subject  list item  input  output  study  recall  repeat  intrusion  prior_list  prior_input
+    4        2     1    e      1     2.0   True    True       0      False         NaN          NaN
+    5        2     1    f      2     1.0   True    True       0      False         NaN          NaN
+    6        2     2    g      1     NaN   True   False       0      False         NaN          NaN
+    7        2     2    h      2     NaN   True   False       0      False         NaN          NaN
+    """
     include = data['subject'].notna()
     if subjects is not None:
         include &= _match_values(data['subject'], subjects)
@@ -188,6 +244,19 @@ def check_data(df):
 
             item : str
                 Item that was either presented or recalled on this trial.
+
+    Examples
+    --------
+    >>> from psifr import fr
+    >>> import pandas as pd
+    >>> raw = pd.DataFrame(
+    ...     {'subject': [1, 1], 'list': [1, 1], 'position': [1, 2], 'item': ['a', 'b']}
+    ... )
+    >>> fr.check_data(raw)
+    Traceback (most recent call last):
+      File "psifr/fr.py", line 253, in check_data
+        assert col in df.columns, f'Required column {col} is missing.'
+    AssertionError: Required column trial_type is missing.
     """
     # check that all fields are accounted for
     columns = ['subject', 'list', 'trial_type', 'position', 'item']
@@ -201,7 +270,27 @@ def check_data(df):
 
 
 def block_index(list_labels):
-    """Get index of each block in a list."""
+    """
+    Get index of each block in a list.
+
+    Parameters
+    ----------
+    list_labels : list or numpy.ndarray
+        Position labels that define the blocks.
+
+    Returns
+    -------
+    block : numpy.ndarray
+        Block index of each position.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from psifr import fr
+    >>> list_labels = [2, 2, 3, 3, 3, 1, 1]
+    >>> fr.block_index(list_labels)
+    array([1, 1, 2, 2, 2, 3, 3])
+    """
     prev_label = ''
     curr_block = 0
     block = np.zeros(len(list_labels), dtype=int)
@@ -214,7 +303,47 @@ def block_index(list_labels):
 
 
 def reset_list(df):
-    """Reset list index in a DataFrame."""
+    """
+    Reset list index in a DataFrame.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Raw or merged data. Must have subject and list fields.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Data with a renumbered list field, starting from 1.
+
+    Examples
+    --------
+    >>> from psifr import fr
+    >>> subjects_list = [1, 1]
+    >>> study_lists = [['a', 'b'], ['c', 'd']]
+    >>> recall_lists = [['b'], ['c', 'd']]
+    >>> list_nos = [3, 4]
+    >>> raw = fr.table_from_lists(subjects_list, study_lists, recall_lists, lists=list_nos)
+    >>> raw
+       subject  list trial_type  position item
+    0        1     3      study         1    a
+    1        1     3      study         2    b
+    2        1     3     recall         1    b
+    3        1     4      study         1    c
+    4        1     4      study         2    d
+    5        1     4     recall         1    c
+    6        1     4     recall         2    d
+
+    >>> fr.reset_list(raw)
+       subject  list trial_type  position item
+    0        1     1      study         1    a
+    1        1     1      study         2    b
+    2        1     1     recall         1    b
+    3        1     2      study         1    c
+    4        1     2      study         2    d
+    5        1     2     recall         1    c
+    6        1     2     recall         2    d
+    """
     df = df.copy()
     for subject in df['subject'].unique():
         subject_lists = df.loc[df['subject'] == subject, 'list'].unique()
@@ -258,6 +387,10 @@ def split_lists(frame, phase, keys=None, names=None, item_query=None, as_list=Fa
         dictionary, with a list of either numpy.ndarray (default) or
         lists, containing the values for that column.
 
+    See Also
+    --------
+    table_from_lists : Convert list-format data to a table.
+
     Examples
     --------
     >>> from psifr import fr
@@ -265,11 +398,25 @@ def split_lists(frame, phase, keys=None, names=None, item_query=None, as_list=Fa
     >>> recall = [['absence'], ['piano', 'fountain']]
     >>> raw = fr.table_from_lists([1, 1], study, recall)
     >>> data = fr.merge_free_recall(raw)
+    >>> data
+       subject  list      item  input  output  study  recall  repeat  intrusion  prior_list  prior_input
+    0        1     1   absence      1     1.0   True    True       0      False         NaN          NaN
+    1        1     1    hollow      2     NaN   True   False       0      False         NaN          NaN
+    2        1     2  fountain      1     2.0   True    True       0      False         NaN          NaN
+    3        1     2     piano      2     1.0   True    True       0      False         NaN          NaN
+
+    Get study events split by list, just including the list and item fields.
+
     >>> fr.split_lists(data, 'study', keys=['list', 'item'], as_list=True)
     {'list': [[1, 1], [2, 2]], 'item': [['absence', 'hollow'], ['fountain', 'piano']]}
 
+    Export recall events, split by list.
+
     >>> fr.split_lists(data, 'recall', keys=['item'], as_list=True)
     {'item': [['absence'], ['piano', 'fountain']]}
+
+    Raw events (i.e., events that haven't been scored) can also be
+    exported to list format.
 
     >>> fr.split_lists(raw, 'raw', keys=['position'])
     {'position': [array([1, 2, 1]), array([1, 2, 1, 2])]}
@@ -321,10 +468,137 @@ def split_lists(frame, phase, keys=None, names=None, item_query=None, as_list=Fa
 
 def merge_free_recall(data, **kwargs):
     """
-    Merge standard free recall events.
+    Score free recall data by matching up study and recall events.
 
-    Split study and recall events and then merge them.
-    See `merge_lists` for details.
+    Parameters
+    ----------
+    data : pandas.DataFrame
+        Free recall data in Psifr format. Must have subject, list,
+        trial_type, position, and item columns.
+
+    merge_keys : list, optional
+        Columns to use to designate events to merge. Default is
+        ['subject', 'list', 'item'], which will merge events related to
+        the same item, but only within list.
+
+    list_keys : list, optional
+        Columns that apply to both study and recall events.
+
+    study_keys : list, optional
+        Columns that only apply to study events.
+
+    recall_keys : list, optional
+        Columns that only apply to recall events.
+
+    position_key : str, optional
+        Column indicating the position of each item in either the study
+        list or the recall sequence.
+
+    Returns
+    -------
+    merged : pandas.DataFrame
+        Merged information about study and recall events. Each row
+        corresponds to one unique input/output pair.
+
+        The following columns will be added:
+
+        input : int
+            Position of each item in the input list (i.e., serial
+            position).
+
+        output : int
+            Position of each item in the recall sequence.
+
+        study : bool
+            True for rows corresponding to a unique study event.
+
+        recall : bool
+            True for rows corresponding to a unique recall event.
+
+        repeat : int
+            Number of times this recall event has been repeated (0 for
+            the first recall of an item).
+
+        intrusion : bool
+            True for recalls that do not correspond to any study event.
+
+        prior_list : int
+            For prior-list intrusions, the list the item was presented.
+
+        prior_position : int
+            For prior-list intrusions, the position the item was presented.
+
+    See Also
+    --------
+    merge_lists : Flexibly merge study events with recall events.
+        Useful for recall phases that don't match the typical free
+        recall setup, like final free recall of all lists.
+
+    Examples
+    --------
+    >>> from psifr import fr
+    >>> study = [['absence', 'hollow'], ['fountain', 'piano']]
+    >>> recall = [['absence'], ['piano', 'hollow']]
+    >>> raw = fr.table_from_lists([1, 1], study, recall)
+    >>> raw
+       subject  list trial_type  position      item
+    0        1     1      study         1   absence
+    1        1     1      study         2    hollow
+    2        1     1     recall         1   absence
+    3        1     2      study         1  fountain
+    4        1     2      study         2     piano
+    5        1     2     recall         1     piano
+    6        1     2     recall         2    hollow
+
+    Score the data to create a table with matched study and recall events.
+
+    >>> data = fr.merge_free_recall(raw)
+    >>> data
+       subject  list      item  input  output  study  recall  repeat  intrusion  prior_list  prior_input
+    0        1     1   absence    1.0     1.0   True    True       0      False         NaN          NaN
+    1        1     1    hollow    2.0     NaN   True   False       0      False         NaN          NaN
+    2        1     2  fountain    1.0     NaN   True   False       0      False         NaN          NaN
+    3        1     2     piano    2.0     1.0   True    True       0      False         NaN          NaN
+    4        1     2    hollow    NaN     2.0  False    True       0       True         1.0          2.0
+
+    You can also include non-standard columns. Information that only
+    applies to study events (here, the encoding task used) can be
+    indicated using the :code:`study_keys` input.
+
+    >>> raw['task'] = np.array([1, 2, np.nan, 2, 1, np.nan, np.nan])
+    >>> fr.merge_free_recall(raw, study_keys=['task'])
+       subject  list      item  input  output  study  recall  repeat  intrusion  task  prior_list  prior_input
+    0        1     1   absence    1.0     1.0   True    True       0      False   1.0         NaN          NaN
+    1        1     1    hollow    2.0     NaN   True   False       0      False   2.0         NaN          NaN
+    2        1     2  fountain    1.0     NaN   True   False       0      False   2.0         NaN          NaN
+    3        1     2     piano    2.0     1.0   True    True       0      False   1.0         NaN          NaN
+    4        1     2    hollow    NaN     2.0  False    True       0       True   NaN         1.0          2.0
+
+    Information that only applies to recall onsets (here, the time in
+    seconds after the start of the recall phase that a recall attempt
+    was made), can be indicated using the :code:`recall_keys` input.
+
+    >>> raw['onset'] = np.array([np.nan, np.nan, 1.1, np.nan, np.nan, 1.4, 3.8])
+    >>> fr.merge_free_recall(raw, recall_keys=['onset'])
+       subject  list      item  input  output  study  recall  repeat  intrusion  onset  prior_list  prior_input
+    0        1     1   absence    1.0     1.0   True    True       0      False    1.1         NaN          NaN
+    1        1     1    hollow    2.0     NaN   True   False       0      False    NaN         NaN          NaN
+    2        1     2  fountain    1.0     NaN   True   False       0      False    NaN         NaN          NaN
+    3        1     2     piano    2.0     1.0   True    True       0      False    1.4         NaN          NaN
+    4        1     2    hollow    NaN     2.0  False    True       0       True    3.8         1.0          2.0
+
+    Use :code:`list_keys` to indicate columns that apply to both study
+    and recall events. If :code:`list_keys` do not match for a pair of
+    study and recall events, they will not be matched in the output.
+
+    >>> raw['condition'] = np.array([1, 1, 1, 2, 2, 2, 2])
+    >>> fr.merge_free_recall(raw, list_keys=['condition'])
+       subject  list      item  input  output  study  recall  repeat  intrusion  condition  prior_list  prior_input
+    0        1     1   absence    1.0     1.0   True    True       0      False          1         NaN          NaN
+    1        1     1    hollow    2.0     NaN   True   False       0      False          1         NaN          NaN
+    2        1     2  fountain    1.0     NaN   True   False       0      False          2         NaN          NaN
+    3        1     2     piano    2.0     1.0   True    True       0      False          2         NaN          NaN
+    4        1     2    hollow    NaN     2.0  False    True       0       True          2         1.0          2.0
     """
     study = data.loc[data['trial_type'] == 'study'].copy()
     recall = data.loc[data['trial_type'] == 'recall'].copy()
@@ -417,6 +691,25 @@ def merge_lists(
 
         intrusion : bool
             True for recalls that do not correspond to any study event.
+
+    See Also
+    --------
+    merge_free_recall : Score standard free recall data.
+
+    Examples
+    --------
+    >>> import pandas as pd
+    >>> from psifr import fr
+    >>> study = pd.DataFrame(
+    ...    {'subject': [1, 1], 'list': [1, 1], 'position': [1, 2], 'item': ['a', 'b']}
+    ... )
+    >>> recall = pd.DataFrame(
+    ...    {'subject': [1], 'list': [1], 'position': [1], 'item': ['b']}
+    ... )
+    >>> fr.merge_lists(study, recall)
+       subject  list item  input  output  study  recall  repeat  intrusion
+    0        1     1    a      1     NaN   True   False       0      False
+    1        1     1    b      2     1.0   True    True       0      False
     """
     if merge_keys is None:
         merge_keys = ['subject', 'list', 'item']
@@ -986,7 +1279,33 @@ def plot_distance_crp(crp, min_samples=None, **facet_kws):
 def plot_swarm_error(
     data, x=None, y=None, swarm_color=None, swarm_size=5, point_color='k', **facet_kws
 ):
-    """Plot points as a swarm plus mean with error bars."""
+    """
+    Plot points as a swarm plus mean with error bars.
+
+    Parameters
+    ----------
+    data : pandas.DataFrame
+        DataFrame with statistics to plot.
+
+    x : str
+        Name of variable to plot on x-axis.
+
+    y : str
+        Name of variable to plot on y-axis.
+
+    swarm_color
+        Color for swarm plot points. May use any specification
+        supported by seaborn.
+
+    swarm_size : float
+        Size of swarm plot points.
+
+    point_color
+        Color for the point plot (error bars).
+
+    facet_kws
+        Additional keywords for the FacetGrid.
+    """
     g = sns.FacetGrid(data=data.reset_index(), dropna=False, **facet_kws)
     g.map_dataframe(
         sns.swarmplot, x=x, y=y, color=swarm_color, size=swarm_size, zorder=1
@@ -1009,7 +1328,42 @@ def plot_raster(
     legend='auto',
     **facet_kws,
 ):
-    """Plot recalls in a raster plot."""
+    """
+    Plot recalls in a raster plot.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Scored free recall data.
+
+    hue : str or None, optional
+        Column to use to set marker color.
+
+    palette : optional
+        Palette specification supported by Seaborn.
+
+    marker : str, optional
+         Marker code supported by Seaborn.
+
+    intrusion_color : optional
+        Color of intrusions.
+
+    orientation : {'horizontal', 'vertical'}, optional
+        Whether lists should be stacked horizontally or vertically in
+        the plot.
+
+    length : float, optional
+        Size of the plot dimension along which list varies.
+
+    aspect : float, optional
+        Aspect ratio of plot for lists over items.
+
+    legend : str, optional
+        Legend setting. See seaborn.scatterplot for details.
+
+    facet_kws : optional
+        Additional key words to pass to seaborn.FacetGrid.
+    """
     n_item = int(df['input'].max())
     n_list = int(df['list'].max())
     if palette is None and hue == 'input':
