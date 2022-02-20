@@ -284,7 +284,7 @@ def split_lists(frame, phase, keys=None, names=None, item_query=None, as_list=Fa
     """
     split = {}
     if keys is None:
-        keys = frame.columns
+        keys = frame.columns.tolist()
     if not keys:
         return split
     if names is None:
