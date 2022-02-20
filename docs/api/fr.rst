@@ -28,6 +28,14 @@ Recall probability
     spc
     pnr
 
+Intrusions
+~~~~~~~~~~
+
+.. autosummary::
+    :toctree: api/
+
+    pli_list_lag
+
 Transition probability
 ~~~~~~~~~~~~~~~~~~~~~~
 
