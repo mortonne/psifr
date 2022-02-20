@@ -11,11 +11,13 @@ Managing data
     :toctree: api/
 
     table_from_lists
+    check_data
     merge_free_recall
     merge_lists
     filter_data
     reset_list
     split_lists
+    block_index
 
 Recall probability
 ~~~~~~~~~~~~~~~~~~
