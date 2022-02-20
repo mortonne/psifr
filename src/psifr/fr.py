@@ -265,22 +265,14 @@ def split_lists(frame, phase, keys=None, names=None, item_query=None, as_list=Fa
     >>> recall = [['absence'], ['piano', 'fountain']]
     >>> raw = fr.table_from_lists([1, 1], study, recall)
     >>> data = fr.merge_free_recall(raw)
-    >>> fr.split_lists(data, 'study', keys=['subject', 'list', 'item'], as_list=True)
-    {'subject': [[1, 1], [1, 1]],
-     'list': [[1, 1], [2, 2]],
-     'item': [['absence', 'hollow'], ['fountain', 'piano']]}
+    >>> fr.split_lists(data, 'study', keys=['list', 'item'], as_list=True)
+    {'list': [[1, 1], [2, 2]], 'item': [['absence', 'hollow'], ['fountain', 'piano']]}
 
     >>> fr.split_lists(data, 'recall', keys=['item'], as_list=True)
     {'item': [['absence'], ['piano', 'fountain']]}
 
-    >>> fr.split_lists(raw, 'raw')
-    {'subject': [array([1, 1, 1]), array([1, 1, 1, 1])],
-     'list': [array([1, 1, 1]), array([2, 2, 2, 2])],
-     'trial_type': [array(['study', 'study', 'recall'], dtype=object),
-      array(['study', 'study', 'recall', 'recall'], dtype=object)],
-     'position': [array([1, 2, 1]), array([1, 2, 1, 2])],
-     'item': [array(['absence', 'hollow', 'absence'], dtype=object),
-      array(['fountain', 'piano', 'piano', 'fountain'], dtype=object)]}
+    >>> fr.split_lists(raw, 'raw', keys=['position'])
+    {'position': [array([1, 2, 1]), array([1, 2, 1, 2])]}
     """
     split = {}
     if keys is None:
