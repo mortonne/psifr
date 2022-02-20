@@ -1,7 +1,7 @@
 # Psifr
 [![PyPI version](https://badge.fury.io/py/psifr.svg)](https://badge.fury.io/py/psifr)
 [![Documentation Status](https://readthedocs.org/projects/psifr/badge/?version=latest)](https://psifr.readthedocs.io/en/latest/?badge=latest)
-[![Pytest](https://github.com/mortonne/psifr/actions/workflows/pytest.yml)](https://github.com/mortonne/psifr/actions/workflows/pytest.yml/badge.svg)
+[![Pytest](https://github.com/mortonne/psifr/actions/workflows/pytest.yml/badge.svg)](https://github.com/mortonne/psifr/actions/workflows/pytest.yml)
 [![codecov](https://codecov.io/gh/mortonne/psifr/branch/master/graph/badge.svg)](https://codecov.io/gh/mortonne/psifr)
 [![status](https://joss.theoj.org/papers/712d4452e465229d61d0e281d3d6f299/status.svg)](https://joss.theoj.org/papers/712d4452e465229d61d0e281d3d6f299)
 [![DOI](https://zenodo.org/badge/248593723.svg)](https://zenodo.org/badge/latestdoi/248593723)
