@@ -8,9 +8,9 @@
 
 Advanced analysis and visualization of free recall data in Python.
 
-In free recall, participants study a list of items and then name all of the items they can remember in any order they choose. Many sophisticated analyses have been developed to analyze data from free recall experiments, but these analyses are often complicated and difficult to implement. 
+Psifr has tools to visualize recall sequences, to make it easier to see general trends in the data. Psifr also provides targeted analyses to examine factors that may affect recall, such as recency, primacy, temporal contiguity, stimulus category, and semantic relatedness. Analyses are customizable, allowing flexible filtering of included data to help answer precise questions. Extensive automated testing is used to ensure the consistency and correctness of analysis results. 
 
-Psifr leverages the Pandas data analysis package to make precise and flexible analysis of free recall data faster and easier. The name Psifr is pronounced "cipher". It's taken from Psi, in reference to the field of psychology, and FR for free recall.
+The name Psifr is pronounced "cipher". It's taken from Psi, in reference to the field of psychology, and FR for free recall.
 
 <div align="center">
   <div style="max-width:500px; margin:0 20px;">
