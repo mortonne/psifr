@@ -3,7 +3,7 @@ name: Pytest
 on: [push]
 
 jobs:
-  test:
+  build-and-test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -34,3 +34,27 @@ jobs:
         env_vars: OS,PYTHON
         flags: unittests
         files: ./coverage.xml
+    - name: Upload unit test results
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: Unit test results (Python ${{ matrix.python-version }})
+        path: pytest.xml
+        
+  publish-test-results:
+    name: "Publish unit test results"
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: always()
+    permissions:
+      checks: write
+      pull-requests: write
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+      - name: Publish unit test results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        with:
+          files: artifacts/**/*.xml
