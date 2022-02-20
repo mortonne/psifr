@@ -47,20 +47,21 @@ def table_from_lists(subjects, study, recall, lists=None, **kwargs):
     >>> study_lists = [['a', 'b'], ['c', 'd'], ['e', 'f'], ['g', 'h']]
     >>> recall_lists = [['b'], ['d', 'c'], ['f', 'e'], []]
     >>> fr.table_from_lists(subjects_list, study_lists, recall_lists)
-        subject  list trial_type  position item  category
-    0         1     1      study         1    a         1
-    1         1     1      study         2    b         2
-    2         1     1     recall         1    b         2
-    3         1     2      study         1    c         1
-    4         1     2      study         2    d         2
-    5         1     2     recall         1    d         2
-    6         1     2     recall         2    c         1
-    7         2     1      study         1    e         2
-    8         2     1      study         2    f         1
-    9         2     1     recall         1    f         1
-    10        2     1     recall         2    e         2
-    11        2     2      study         1    g         2
-    12        2     2      study         2    h         1
+        subject  list trial_type  position item
+    0         1     1      study         1    a
+    1         1     1      study         2    b
+    2         1     1     recall         1    b
+    3         1     2      study         1    c
+    4         1     2      study         2    d
+    5         1     2     recall         1    d
+    6         1     2     recall         2    c
+    7         2     1      study         1    e
+    8         2     1      study         2    f
+    9         2     1     recall         1    f
+    10        2     1     recall         2    e
+    11        2     2      study         1    g
+    12        2     2      study         2    h
+
     >>> subjects_list = [1, 1]
     >>> study_lists = [['a', 'b'], ['c', 'd']]
     >>> recall_lists = [['b'], ['d', 'c']]
