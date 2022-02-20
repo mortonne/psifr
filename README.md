@@ -60,6 +60,12 @@ Generally the best way to get your data into shape for analysis in Psifr is to c
 
 If you have data in the standard [EMBAM](https://github.com/vucml/EMBAM) format, use `scripts/frdata2table.m` to convert your data struct to a table with standard format. Then use the Matlab function `writetable` to write a CSV file which can then be read into Python for analysis.
 
+## Citation
+
+If you use Psifr, please cite the paper:
+
+Morton, N. W., (2020). Psifr: Analysis and visualization of free recall data. Journal of Open Source Software, 5(54), 2669, https://doi.org/10.21105/joss.02669
+
 ## Related projects
 
 ### EMBAM
