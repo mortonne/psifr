@@ -222,7 +222,7 @@ def reset_list(df):
     return df
 
 
-def split_lists(frame, phase, keys, names=None, item_query=None, as_list=False):
+def split_lists(frame, phase, keys=None, names=None, item_query=None, as_list=False):
     """
     Convert free recall data from one phase to split format.
 
@@ -234,8 +234,9 @@ def split_lists(frame, phase, keys, names=None, item_query=None, as_list=False):
     phase : {'study', 'recall', 'raw'}
         Phase of recall to split. If 'raw', all trials will be included.
 
-    keys : list of str
-        Data columns to include in the split data.
+    keys : list of str, optional
+        Data columns to include in the split data. If not specified,
+        all columns will be included.
 
     names : list of str, optional
         Name for each column in the returned split data. Default is to
@@ -258,6 +259,8 @@ def split_lists(frame, phase, keys, names=None, item_query=None, as_list=False):
     """
     split = {}
     if keys is None:
+        keys = frame.columns
+    if not keys:
         return split
     if names is None:
         names = keys
