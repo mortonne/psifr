@@ -17,6 +17,7 @@ Managing data
     filter_data
     reset_list
     split_lists
+    pool_index
     block_index
 
 Recall probability
