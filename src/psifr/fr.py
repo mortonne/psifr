@@ -798,6 +798,33 @@ def spc(df):
 
         recall : float
             Recall probability for each serial position.
+
+    See Also
+    --------
+    plot_spc : Plot serial position curve results.
+    pnr : Probability of nth recall.
+
+    Examples
+    --------
+    >>> from psifr import fr
+    >>> raw = fr.sample_data('Morton2013')
+    >>> data = fr.merge_free_recall(raw)
+    >>> fr.spc(data)
+                     recall
+    subject input          
+    1       1.0    0.541667
+            2.0    0.458333
+            3.0    0.625000
+            4.0    0.333333
+            5.0    0.437500
+    ...                 ...
+    47      20.0   0.500000
+            21.0   0.770833
+            22.0   0.729167
+            23.0   0.895833
+            24.0   0.958333
+    <BLANKLINE>
+    [960 rows x 1 columns]
     """
     clean = df.query('study')
     recall = clean.groupby(['subject', 'input'])['recall'].mean()
@@ -843,6 +870,34 @@ def pnr(df, item_query=None, test_key=None, test=None):
         output position x. The actual and possible columns give the
         raw tallies for how many times an event actually occurred and
         how many times it was possible given the recall sequence.
+
+    See Also
+    --------
+    plot_spc : Plot recall probability as a function of serial
+        position.
+    spc : Overall recall probability by serial position.
+
+    Examples
+    --------
+    >>> from psifr import fr
+    >>> raw = fr.sample_data('Morton2013')
+    >>> data = fr.merge_free_recall(raw)
+    >>> fr.pnr(data)
+                              prob  actual  possible
+    subject output input                            
+    1       1      1      0.000000       0        48
+                   2      0.020833       1        48
+                   3      0.000000       0        48
+                   4      0.000000       0        48
+                   5      0.000000       0        48
+    ...                        ...     ...       ...
+    47      24     20          NaN       0         0
+                   21          NaN       0         0
+                   22          NaN       0         0
+                   23          NaN       0         0
+                   24          NaN       0         0
+    <BLANKLINE>
+    [23040 rows x 3 columns]
     """
     list_length = int(df['input'].max())
     measure = measures.TransitionOutputs(
@@ -893,6 +948,28 @@ def pli_list_lag(df, max_lag):
     results : pandas.DataFrame
         For each subject and list lag, the proportion of intrusions at
         that lag, in the :code:`results['prob']` column.
+
+    Examples
+    --------
+    >>> from psifr import fr
+    >>> raw = fr.sample_data('Morton2013')
+    >>> data = fr.merge_free_recall(raw)
+    >>> fr.pli_list_lag(data, 3)
+                      count  per_list      prob
+    subject list_lag                           
+    1       1             7  0.155556  0.259259
+            2             5  0.111111  0.185185
+            3             0  0.000000  0.000000
+    2       1             9  0.200000  0.191489
+            2             2  0.044444  0.042553
+    ...                 ...       ...       ...
+    46      2             1  0.022222  0.100000
+            3             0  0.000000  0.000000
+    47      1             5  0.111111  0.277778
+            2             1  0.022222  0.055556
+            3             0  0.000000  0.000000
+    <BLANKLINE>
+    [120 rows x 3 columns]
     """
     result = df.groupby('subject').apply(_subject_pli_list_lag, max_lag)
     return result
@@ -953,6 +1030,32 @@ def lag_crp(
         possible : int
             Total of times each lag was possible, given the prior
             input position and the remaining items to be recalled.
+
+    See Also
+    --------
+    lag_rank : Rank of the absolute lags in recall sequences.
+
+    Examples
+    --------
+    >>> from psifr import fr
+    >>> raw = fr.sample_data('Morton2013')
+    >>> data = fr.merge_free_recall(raw)
+    >>> fr.lag_crp(data)
+                       prob  actual  possible
+    subject lag                              
+    1       -23.0  0.020833       1        48
+            -22.0  0.035714       3        84
+            -21.0  0.026316       3       114
+            -20.0  0.024000       3       125
+            -19.0  0.014388       2       139
+    ...                 ...     ...       ...
+    47       19.0  0.061224       3        49
+             20.0  0.055556       2        36
+             21.0  0.045455       1        22
+             22.0  0.071429       1        14
+             23.0  0.000000       0         6
+    <BLANKLINE>
+    [1880 rows x 3 columns]
     """
     list_length = df[lag_key].max()
     measure = measures.TransitionLag(
@@ -997,6 +1100,25 @@ def lag_rank(df, item_query=None, test_key=None, test=None):
     -------
     stat : pandas.DataFrame
         Has fields 'subject' and 'rank'.
+
+    See Also
+    --------
+    lag_crp : Conditional response probability by input lag.
+
+    Examples
+    --------
+    >>> from psifr import fr
+    >>> raw = fr.sample_data('Morton2013')
+    >>> data = fr.merge_free_recall(raw)
+    >>> lag_rank = fr.lag_rank(data)
+    >>> lag_rank.head()
+                 rank
+    subject          
+    1        0.610953
+    2        0.635676
+    3        0.612607
+    4        0.667090
+    5        0.643923
     """
     measure = measures.TransitionLagRank(
         item_query=item_query, test_key=test_key, test=test
