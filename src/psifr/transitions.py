@@ -92,7 +92,7 @@ def transitions_masker(
 
     while n < len(recall_items) - 1:
         # test if the previous item is in the pool
-        if recall_items[n] not in pool_items:
+        if pd.isnull(recall_items[n]) or (recall_items[n] not in pool_items):
             n += 1
             continue
 
@@ -104,7 +104,7 @@ def transitions_masker(
             del pool_test[ind]
 
         # test if the current item is in the pool
-        if recall_items[n + 1] not in pool_items:
+        if pd.isnull(recall_items[n + 1]) or (recall_items[n + 1] not in pool_items):
             n += 1
             continue
 
