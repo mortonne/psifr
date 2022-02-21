@@ -1242,6 +1242,38 @@ def distance_crp(
             Total of times each distance bin was possible, given the
             prior input position and the remaining items to be
             recalled.
+
+    See Also
+    --------
+    pool_index : Given a list of presented items and an item pool, look
+        up the pool index of each item.
+    distance_rank : Calculate rank of transition distances.
+
+    Examples
+    --------
+    >>> from scipy.spatial.distance import squareform
+    >>> from psifr import fr
+    >>> raw = fr.sample_data('Morton2013')
+    >>> data = fr.merge_free_recall(raw)
+    >>> items, distances = fr.sample_distances('Morton2013')
+    >>> data['item_index'] = fr.pool_index(data['item'], items)
+    >>> edges = np.percentile(squareform(distances), np.linspace(1, 99, 10))
+    >>> fr.distance_crp(data, 'item_index', distances, edges)
+                                 bin      prob  actual  possible
+    subject center                                              
+    1       0.467532  (0.352, 0.583]  0.085456     151      1767
+            0.617748  (0.583, 0.653]  0.067916      87      1281
+            0.673656  (0.653, 0.695]  0.062500      65      1040
+            0.711075  (0.695, 0.727]  0.051836      48       926
+            0.742069  (0.727, 0.757]  0.050633      44       869
+    ...                          ...       ...     ...       ...
+    47      0.742069  (0.727, 0.757]  0.062822      61       971
+            0.770867  (0.757, 0.785]  0.030682      27       880
+            0.800404  (0.785, 0.816]  0.040749      37       908
+            0.834473  (0.816, 0.853]  0.046651      39       836
+            0.897275  (0.853, 0.941]  0.028868      25       866
+    <BLANKLINE>
+    [360 rows x 4 columns]
     """
     measure = measures.TransitionDistance(
         index_key,
@@ -1294,6 +1326,30 @@ def distance_rank(df, index_key, distances, item_query=None, test_key=None, test
     -------
     stat : pandas.DataFrame
         Has fields 'subject' and 'rank'.
+
+    See Also
+    --------
+    pool_index : Given a list of presented items and an item pool, look
+        up the pool index of each item.
+    distance_crp : Conditional response probability by distance bin.
+
+    Examples
+    --------
+    >>> from scipy.spatial.distance import squareform
+    >>> from psifr import fr
+    >>> raw = fr.sample_data('Morton2013')
+    >>> data = fr.merge_free_recall(raw)
+    >>> items, distances = fr.sample_distances('Morton2013')
+    >>> data['item_index'] = fr.pool_index(data['item'], items)
+    >>> dist_rank = fr.distance_rank(data, 'item_index', distances)
+    >>> dist_rank.head()
+                 rank
+    subject          
+    1        0.635571
+    2        0.571457
+    3        0.627282
+    4        0.637596
+    5        0.646181
     """
     measure = measures.TransitionDistanceRank(
         index_key, distances, item_query=item_query, test_key=test_key, test=test
@@ -1346,6 +1402,21 @@ def category_crp(df, category_key, item_query=None, test_key=None, test=None):
         possible : int
             Total of times each lag was possible, given the prior
             input position and the remaining items to be recalled.
+
+    Examples
+    --------
+    >>> from psifr import fr
+    >>> raw = fr.sample_data('Morton2013')
+    >>> data = fr.merge_free_recall(raw, study_keys=['category'])
+    >>> cat_crp = fr.category_crp(data, 'category')
+    >>> cat_crp.head()
+                 prob  actual  possible
+    subject                            
+    1        0.801147     419       523
+    2        0.733456     399       544
+    3        0.763158     377       494
+    4        0.814882     449       551
+    5        0.877273     579       660
     """
     measure = measures.TransitionCategory(
         category_key, item_query=item_query, test_key=test_key, test=test
