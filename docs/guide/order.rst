@@ -162,6 +162,20 @@ Use :py:func:`~psifr.fr.plot_distance_crp` to display the results:
     @savefig distance_crp.svg
     g = fr.plot_distance_crp(dist_crp).set(ylim=(0, 0.1))
 
+Distance rank
+~~~~~~~~~~~~~
+
+Similarly to the lag rank analysis of temporal clustering, we can
+summarize distance-based clustering (such as semantic clustering) with
+a single rank measure. The distance rank varies from 0 (the
+most-distant item is always recalled) to 1 (the closest item is always
+recalled), with chance clustering corresponding to 0.5.
+
+.. ipython:: python
+
+    dist_rank = fr.distance_rank(data, 'item_index', distances)
+    dist_rank.agg(['mean', 'sem'])
+
 Restricting analysis to specific items
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
