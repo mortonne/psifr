@@ -16,6 +16,13 @@ def sample_data(study):
     return df
 
 
+def sample_distances(study):
+    """Read sample distances."""
+    distance_file = resource_filename('psifr', f'distances/{study}.npz')
+    f = np.load(distance_file)
+    return f['items'], f['distances']
+
+
 def table_from_lists(subjects, study, recall, lists=None, **kwargs):
     """
     Create table format data from list format data.
