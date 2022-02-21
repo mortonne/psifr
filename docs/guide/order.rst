@@ -120,6 +120,15 @@ randomly from the list.
 Distance CRP
 ~~~~~~~~~~~~
 
+While the category CRP examines clustering based on semantic similarity
+at a coarse level (i.e., whether two items are in the same category or
+not), recall may also depend on more nuanced semantic relationships.
+
+Models of semantic knowledge allow the semantic distance between
+pairs of items to be quantified. If you have such a model defined for
+your stimulus pool, you can use the distance CRP analysis to examine
+how semantic distance affects recall transitions.
+
 You must first define distances between pairs of items. Here, we
 use correlation distances based on the wiki2USE model.
 
