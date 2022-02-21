@@ -117,6 +117,51 @@ categories in the list. In this case, there are three categories, so
 a category CRP of 0.33 would be predicted if recalls were sampled
 randomly from the list.
 
+Distance CRP
+~~~~~~~~~~~~
+
+You must first define distances between pairs of items. Here, we
+use correlation distances based on the wiki2USE model.
+
+.. ipython:: python
+
+    items, distances = fr.sample_distances('Morton2013')
+
+We also need a column indicating the index of each item in the
+distances matrix. We use :py:func:`~psifr.fr.pool_index` to create
+a new column called :code:`item_index` with the index of each item in
+the pool corresponding to the distances matrix.
+
+.. ipython:: python
+
+    data['item_index'] = fr.pool_index(data['item'], items)
+
+Finally, we must define distance bins. Here, we use 10 bins with
+equally spaced distance percentiles. Note that, when calculating
+distance percentiles, we use the :py:func:`squareform` function to
+get only the non-diagonal entries.
+
+.. ipython:: python
+
+    from scipy.spatial.distance import squareform
+    edges = np.percentile(squareform(distances), np.linspace(1, 99, 10))
+
+We can now calculate conditional response probability as a function of
+distance bin, to examine how response probability varies with semantic
+distance.
+
+.. ipython:: python
+
+    dist_crp = fr.distance_crp(data, 'item_index', distances, edges)
+    dist_crp
+
+Use :py:func:`~psifr.fr.plot_distance_crp` to display the results:
+
+.. ipython:: python
+
+    @savefig distance_crp.svg
+    g = fr.plot_distance_crp(dist_crp).set(ylim=(0, 0.1))
+
 Restricting analysis to specific items
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
