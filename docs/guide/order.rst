@@ -171,6 +171,13 @@ Use :py:func:`~psifr.fr.plot_distance_crp` to display the results:
     @savefig distance_crp.svg
     g = fr.plot_distance_crp(dist_crp).set(ylim=(0, 0.1))
 
+Conditional response probability decreases with increasing semantic
+distance, suggesting that recall order was influenced by the semantic
+similarity between items. Of course, a complete analysis should address
+potential confounds such as the category structure of the list. See
+the :ref:`Restricting analysis to specific items <restricting>` section
+for an example of restricting analysis based on category.
+
 Distance rank
 ~~~~~~~~~~~~~
 
@@ -210,6 +217,8 @@ include them explicitly using :code:`output > 3 or not recall`.
     crp_op3 = fr.lag_crp(data, item_query='output > 3 or not recall')
     @savefig lag_crp_op3.svg
     g = fr.plot_lag_crp(crp_op3)
+
+.. _restricting:
 
 Restricting analysis to specific transitions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
