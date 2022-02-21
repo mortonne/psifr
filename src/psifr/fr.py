@@ -309,6 +309,43 @@ def block_index(list_labels):
     return block
 
 
+def pool_index(trial_items, pool_items_list):
+    """
+    Get the index of each item in the full pool.
+
+    Parameters
+    ----------
+    trial_items : pandas.Series
+        The item presented on each trial.
+
+    pool_items_list : list or numpy.ndarray
+        List of items in the full pool.
+
+    Returns
+    -------
+    item_index : pandas.Series
+        Index of each item in the pool. Trials with items not in the
+        pool will be <NA>.
+
+    Examples
+    --------
+    >>> import pandas as pd
+    >>> from psifr import fr
+    >>> trial_items = pd.Series(['b', 'a', 'z', 'c', 'd'])
+    >>> pool_items_list = ['a', 'b', 'c', 'd', 'e', 'f']
+    >>> fr.pool_index(trial_items, pool_items_list)
+    0       1
+    1       0
+    2    <NA>
+    3       2
+    4       3
+    dtype: Int64
+    """
+    pool_map = dict(zip(pool_items_list, np.arange(len(pool_items_list))))
+    item_index = trial_items.map(pool_map).astype('Int64')
+    return item_index
+
+
 def reset_list(df):
     """
     Reset list index in a DataFrame.
