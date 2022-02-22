@@ -116,11 +116,11 @@ def count_outputs(
         List indicating the serial position of each recall in output
         order (NaN for intrusions).
 
-    pool_label : list, optional
+    pool_label : list
         List of the positions to use for calculating lag. Default is to
         use `pool_items`.
 
-    recall_label : list, optional
+    recall_label : list
         List of position labels in recall order. Default is to use
         `recall_items`.
 
