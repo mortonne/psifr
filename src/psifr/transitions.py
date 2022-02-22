@@ -6,7 +6,30 @@ import pandas as pd
 
 
 def percentile_rank(actual, possible):
-    """Get percentile rank of a score compared to possible scores."""
+    """
+    Get percentile rank of a score compared to possible scores.
+
+    Parameters
+    ----------
+    actual : float
+        Score to be ranked. Generally a distance score.
+
+    possible : numpy.ndarray or list
+        Possible scores to be compared to.
+
+    Returns
+    -------
+    rank : float
+        Rank scaled to range from 0 (low score) to 1 (high score).
+
+    Examples
+    --------
+    >>> from psifr import transitions
+    >>> actual = 3
+    >>> possible = [1, 2, 2, 2, 3]
+    >>> transitions.percentile_rank(actual, possible)
+    1.0
+    """
     possible_rank = stats.rankdata(possible)
     actual_rank = possible_rank[actual == np.asarray(possible)]
     possible_count = np.count_nonzero(~np.isnan(possible))
@@ -25,7 +48,8 @@ def transitions_masker(
     recall_test=None,
     test=None,
 ):
-    """Iterate over transitions with masking.
+    """
+    Iterate over transitions with masking.
 
     Transitions are between a "previous" item and a "current" item.
     Non-included transitions will be skipped. A transition is yielded
@@ -82,8 +106,20 @@ def transitions_masker(
 
     poss : numpy.array
         Output values for all possible valid "to" items.
-    """
 
+    Examples
+    --------
+    >>> pool = [1, 2, 3, 4, 5, 6]
+    >>> recs = [6, 2, 3, 6, 1, 4]
+    >>> masker = transitions_masker(
+    ...     pool_items=pool, recall_items=recs, pool_output=pool, recall_output=recs
+    ... )
+    >>> for prev, curr, poss in masker:
+    ...     print(prev, curr, poss)
+    6 2 [1 2 3 4 5]
+    2 3 [1 3 4 5]
+    1 4 [4 5]
+    """
     n = 0
     pool_items = pool_items.copy()
     pool_output = pool_output.copy()
@@ -137,7 +173,8 @@ def count_lags(
     test=None,
     count_unique=False,
 ):
-    """Count actual and possible serial position lags.
+    """
+    Count actual and possible serial position lags.
 
     Parameters
     ----------
@@ -178,8 +215,44 @@ def count_lags(
         given transition and a given bin, that bin will only be
         incremented once. If false, all possible transitions will add
         to the count.
-    """
 
+    Returns
+    -------
+    actual : pandas.Series
+        Count of actual lags that occurred in the recall sequence.
+
+    possible : pandas.Series
+        Count of possible lags.
+
+    See Also
+    --------
+    rank_lags : Rank of serial position lags.
+
+    Examples
+    --------
+    >>> from psifr import transitions
+    >>> pool_items = [[1, 2, 3, 4]]
+    >>> recall_items = [[4, 2, 3, 1]]
+    >>> actual, possible = transitions.count_lags(4, pool_items, recall_items)
+    >>> actual
+    -3    0
+    -2    2
+    -1    0
+     0    0
+     1    1
+     2    0
+     3    0
+    dtype: int64
+    >>> possible
+    -3    1
+    -2    2
+    -1    2
+     0    0
+     1    1
+     2    0
+     3    0
+    dtype: int64
+    """
     if pool_label is None:
         pool_label = pool_items
 
@@ -267,6 +340,18 @@ def rank_lags(
         rank is 0 if the lag was the most distant of the available
         transitions, and 1 if the lag was the closest. Ties are
         assigned to the average percentile rank.
+
+    See Also
+    --------
+    count_lags : Count actual and possible serial position lags.
+
+    Examples
+    --------
+    >>> from psifr import transitions
+    >>> pool_items = [[1, 2, 3, 4]]
+    >>> recall_items = [[4, 2, 3, 1]]
+    >>> transitions.rank_lags(pool_items, recall_items)
+    [0.5, 0.5, nan]
     """
     if pool_label is None:
         pool_label = pool_items
@@ -355,8 +440,34 @@ def count_distance(
 
     possible : pandas.Series
         Count of possible transitions for each bin.
-    """
 
+    See Also
+    --------
+    rank_distance : Calculate percentile rank of transition distances.
+
+    Examples
+    --------
+    >>> from psifr import transitions
+    >>> distances = np.array([[0, 1, 2, 2], [1, 0, 2, 2], [2, 2, 0, 3], [2, 2, 3, 0]])
+    >>> edges = np.array([0.5, 1.5, 2.5, 3.5])
+    >>> pool_items = [[1, 2, 3, 4]]
+    >>> recall_items = [[4, 2, 3, 1]]
+    >>> pool_index = [[0, 1, 2, 3]]
+    >>> recall_index = [[3, 1, 2, 0]]
+    >>> actual, possible = transitions.count_distance(
+    ...     distances, edges, pool_items, recall_items, pool_index, recall_index
+    ... )
+    >>> actual
+    (0.5, 1.5]    0
+    (1.5, 2.5]    3
+    (2.5, 3.5]    0
+    dtype: int64
+    >>> possible
+    (0.5, 1.5]    1
+    (1.5, 2.5]    4
+    (2.5, 3.5]    1
+    dtype: int64
+    """
     list_actual = []
     list_possible = []
     centers = edges[:-1] + np.diff(edges) / 2
@@ -440,6 +551,24 @@ def rank_distance(
         rank is 0 if the distance was the largest of the available
         transitions, and 1 if the distance was the smallest. Ties are
         assigned to the average percentile rank.
+
+    See Also
+    --------
+    count_distance : Count transitions within distance bins.
+
+    Examples
+    --------
+    >>> from psifr import transitions
+    >>> distances = np.array([[0, 1, 2, 2], [1, 0, 2, 2], [2, 2, 0, 3], [2, 2, 3, 0]])
+    >>> edges = np.array([0.5, 1.5, 2.5, 3.5])
+    >>> pool_items = [[1, 2, 3, 4]]
+    >>> recall_items = [[4, 2, 3, 1]]
+    >>> pool_index = [[0, 1, 2, 3]]
+    >>> recall_index = [[3, 1, 2, 0]]
+    >>> transitions.rank_distance(
+    ...     distances, pool_items, recall_items, pool_index, recall_index
+    ... )
+    [0.75, 0.0, nan]
     """
     rank = []
     for i in range(len(recall_items)):
@@ -473,8 +602,57 @@ def count_category(
     recall_test=None,
     test=None,
 ):
-    """Count within-category transitions."""
+    """
+    Count within-category transitions.
 
+    Parameters
+    ----------
+    pool_items : list
+        List of the serial positions available for recall in each list.
+        Must match the serial position codes used in `recall_items`.
+
+    recall_items : list
+        List indicating the serial position of each recall in output
+        order (NaN for intrusions).
+
+    pool_category : list
+        List of the category of each item in the pool for each list.
+
+    recall_category : list
+        List of item category in recall order.
+
+    pool_test : list, optional
+         List of some test value for each item in the pool.
+
+    recall_test : list, optional
+        List of some test value for each recall attempt by output
+        position.
+
+    test : callable
+        Callable that evaluates each transition between items n and
+        n+1. Must take test values for items n and n+1 and return True
+        if a given transition should be included.
+
+    Returns
+    -------
+    actual : int
+        Count of actual within-category transitions.
+
+    possible : int
+        Count of possible within-category transitions.
+
+    Examples
+    --------
+    >>> from psifr import transitions
+    >>> pool_items = [[1, 2, 3, 4]]
+    >>> recall_items = [[4, 3, 1, 2]]
+    >>> pool_category = [[1, 1, 2, 2]]
+    >>> recall_category = [[2, 2, 1, 1]]
+    >>> transitions.count_category(
+    ...     pool_items, recall_items, pool_category, recall_category
+    ... )
+    (2, 2)
+    """
     actual = 0
     possible = 0
     for i in range(len(recall_items)):
@@ -503,7 +681,6 @@ def count_pairs(
     n_item, pool_items, recall_items, pool_test=None, recall_test=None, test=None
 ):
     """Count transitions between pairs of specific items."""
-
     actual = np.zeros((n_item, n_item), dtype=int)
     possible = np.zeros((n_item, n_item), dtype=int)
     for i, recall_items_list in enumerate(recall_items):
