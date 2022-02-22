@@ -1458,6 +1458,9 @@ def plot_lag_crp(recall, max_lag=5, split=True, **facet_kws):
 
     max_lag : int
         Maximum absolute lag to plot.
+
+    split : bool, optional
+        If true, will plot as two separate lines with a gap at lag 0.
     """
     if split:
         filt_neg = f'{-max_lag} <= lag < 0'
