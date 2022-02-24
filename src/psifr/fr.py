@@ -7,6 +7,7 @@ import pandas as pd
 import seaborn as sns
 
 from psifr import measures
+from psifr import clustering
 
 
 def sample_data(study):
@@ -1423,6 +1424,72 @@ def category_crp(df, category_key, item_query=None, test_key=None, test=None):
     )
     crp = measure.analyze(df)
     return crp
+
+
+def _subject_category_clustering(df, category_key):
+    """Subject category clustering."""
+    study = split_lists(df, 'study', keys=[category_key])
+    recall = split_lists(df, 'recall', keys=[category_key])
+    lbc = clustering.lbc(study[category_key], recall[category_key])
+    arc = clustering.arc(recall[category_key])
+    stats = pd.Series({'lbc': np.nanmean(lbc), 'arc': np.nanmean(arc)})
+    return stats
+
+
+def category_clustering(df, category_key):
+    """
+    Category clustering of recall sequences.
+
+    Calculates ARC (adjusted ratio of clustering) and LBC (list-based
+    clustering) statistics indexing recall clustering by category.
+
+    The papers introducing these measures do not describe how to handle
+    repeats and intrusions. Here, to maintain the assumptions of the
+    measures, they are removed from the recall sequences.
+
+    Note that ARC is undefined when only one category is recalled.
+    Lists with undefined statistics will be excluded from calculation
+    of mean subject-level statistics. To calculate for each list
+    separately, group by list before calling the function. For example:
+    :code:`df.groupby('list').apply(fr.category_clustering, 'category')`.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Merged study and recall data. See merge_free_recall. Must have
+        a field indicating the category of each study and recall event.
+
+    category_key : str
+        Column with category labels. Labels may be any hashable (e.g.,
+        a str or int).
+
+    Returns
+    -------
+    stats : pandas.DataFrame
+        For each subject, includes columns with the mean ARC and LBC
+        statistics.
+
+    Examples
+    --------
+    >>> from psifr import fr
+    >>> raw = fr.sample_data('Morton2013')
+    >>> mixed = raw.query('list_type == "mixed"')
+    >>> data = fr.merge_free_recall(mixed, list_keys=['category'])
+    >>> stats = fr.category_clustering(data, 'category')
+    >>> stats.head()
+                  lbc       arc
+    subject                    
+    1        3.657971  0.614545
+    2        2.953623  0.407839
+    3        3.363768  0.627371
+    4        4.444928  0.688761
+    5        7.530435  0.873755
+    """
+    # these analyses are undefined when there are repeats and
+    # intrusions, so strip them out
+    clean = df.query('~intrusion and repeat == 0')
+    stats = clean.groupby('subject').apply(_subject_category_clustering, category_key)
+    return stats
 
 
 def plot_spc(recall, **facet_kws):
