@@ -428,6 +428,33 @@ def test_category_crp(data):
     assert crp['possible'].iloc[0] == 1
 
 
+def test_category_clustering():
+    """Test category clustering statistics."""
+    subject = [1] * 2
+
+    # category of study and list items (two cases from category
+    # clustering tests)
+    study_category = [list('abcd') * 4] * 2
+    recall_str = ['aaabbbcccddd', 'aabbcdcd']
+    recall_category = [list(s) for s in recall_str]
+
+    # unique item codes (needed for merging study and recall events;
+    # not actually needed for the stats)
+    study_item = [[i for i in range(len(c))] for c in study_category]
+    recall_item = [[0, 4, 8, 1, 5, 9, 2, 6, 10, 3, 7, 11], [0, 4, 1, 5, 2, 3, 6, 7]]
+
+    # create merged free recall data
+    raw = fr.table_from_lists(
+        subject, study_item, recall_item, category=(study_category, recall_category)
+    )
+    data = fr.merge_free_recall(raw, list_keys=['category'])
+
+    # test ARC and LBC stats
+    stats = fr.category_clustering(data, 'category')
+    np.testing.assert_allclose(stats.loc[1, 'arc'], 0.667, rtol=0.011)
+    np.testing.assert_allclose(stats.loc[1, 'lbc'], 3.2, rtol=0.011)
+
+
 def test_lag_rank(data):
     """Test lag rank analysis."""
     stat = fr.lag_rank(data)
