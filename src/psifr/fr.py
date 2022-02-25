@@ -293,7 +293,6 @@ def block_index(list_labels):
 
     Examples
     --------
-    >>> import numpy as np
     >>> from psifr import fr
     >>> list_labels = [2, 2, 3, 3, 3, 1, 1]
     >>> fr.block_index(list_labels)
