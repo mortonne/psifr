@@ -29,7 +29,7 @@ First, load some sample data and create a merged DataFrame:
 Raster plot
 ~~~~~~~~~~~
 
-Raster plots can give you a quick overview of a whole dataset. We'll look at
+Raster plots can give you a quick overview of a whole dataset :cite:p:`Romani:2016`. We'll look at
 all of the first subject's recalls. This will plot every individual recall,
 colored by the serial position of the recalled item in the list. Items near
 the end of the list are shown in yellow, and items near the beginning of the
@@ -44,7 +44,7 @@ list are shown in purple. Intrusions of items not on the list are shown in red.
 Serial position curve
 ~~~~~~~~~~~~~~~~~~~~~
 
-We can calculate average recall for each serial position
+We can calculate average recall for each serial position :cite:p:`Murdock:1962`
 using :py:func:`~psifr.fr.spc` and plot using :py:func:`~psifr.fr.plot_spc`.
 
 .. ipython:: python

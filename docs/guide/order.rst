@@ -40,7 +40,7 @@ Lag-CRP
 ~~~~~~~
 
 In all CRP analyses, transition probabilities are calculated conditional
-on a given transition being available. For example, in a six-item list,
+on a given transition being available :cite:p:`Kahana:1996`. For example, in a six-item list,
 if the items 6, 1, and 4 have been recalled, then possible items that could
 have been recalled next are 2, 3, or 5; therefore, possible lags at
 that point in the recall sequence are -2, -1, or +1. The number of actual
@@ -85,7 +85,7 @@ Lag rank
 ~~~~~~~~
 
 We can summarize the tendency to group together nearby items using a lag
-rank analysis. For each recall, this determines the absolute lag of all
+rank analysis :cite:p:`Polyn:2009`. For each recall, this determines the absolute lag of all
 remaining items available for recall and then calculates their percentile
 rank. Then the rank of the actual transition made is taken, scaled to vary
 between 0 (furthest item chosen) and 1 (nearest item chosen). Chance
@@ -104,7 +104,7 @@ Category CRP
 If there are multiple categories or conditions of trials in a list, we
 can test whether participants tend to successively recall items from the
 same category. The category-CRP estimates the probability of successively
-recalling two items from the same category.
+recalling two items from the same category :cite:p:`Polyn:2009`.
 
 .. ipython:: python
 
@@ -122,8 +122,8 @@ Category clustering
 
 A number of measures have been developed to measure category clustering
 relative to that expected due to chance, under certain assumptions. Two
-such measures are list-based clustering (LBC) and adjusted ratio of
-clustering (ARC).
+such measures are list-based clustering (LBC) :cite:p:`Stricker:2002` and adjusted ratio of
+clustering (ARC) :cite:p:`Roenker:1971`.
 
 These measures can be calculated using the
 :py:func:`~psifr.fr.category_clustering` function.
@@ -148,7 +148,7 @@ not), recall may also depend on more nuanced semantic relationships.
 Models of semantic knowledge allow the semantic distance between
 pairs of items to be quantified. If you have such a model defined for
 your stimulus pool, you can use the distance CRP analysis to examine
-how semantic distance affects recall transitions.
+how semantic distance affects recall transitions :cite:p:`Howard:2002,Morton:2016`.
 
 You must first define distances between pairs of items. Here, we
 use correlation distances based on the wiki2USE model.
@@ -204,7 +204,7 @@ Distance rank
 
 Similarly to the lag rank analysis of temporal clustering, we can
 summarize distance-based clustering (such as semantic clustering) with
-a single rank measure. The distance rank varies from 0 (the
+a single rank measure :cite:p:`Polyn:2009`. The distance rank varies from 0 (the
 most-distant item is always recalled) to 1 (the closest item is always
 recalled), with chance clustering corresponding to 0.5.
 
@@ -247,7 +247,8 @@ Restricting analysis to specific transitions
 In other cases, you may want to focus an analysis on a subset of
 transitions based on some criteria. For example, if a list contains
 items from different categories, it is a good idea to take this into
-account when measuring temporal clustering using a lag-CRP analysis.
+account when measuring temporal clustering using a lag-CRP analysis
+:cite:p:`Polyn:2011,Morton:2017`.
 One approach is to separately analyze within- and across-category
 transitions.
 
