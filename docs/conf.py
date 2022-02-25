@@ -37,6 +37,7 @@ extensions = [
     'IPython.sphinxext.ipython_directive',
     'sphinx.ext.napoleon',
     'sphinx.ext.doctest',
+    'sphinx.ext.intersphinx',
 ]
 
 doctest_default_flags = (
@@ -45,6 +46,12 @@ doctest_default_flags = (
     | doctest.DONT_ACCEPT_TRUE_FOR_1
     | doctest.NORMALIZE_WHITESPACE
 )
+
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3', None),
+    'seaborn': ('https://seaborn.pydata.org', None),
+    'pandas': ('https://pandas.pydata.org/docs/', None),
+}
 
 autosummary_generate = True
 

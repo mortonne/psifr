@@ -52,10 +52,10 @@ See :ref:`custom-columns` for details.
 Filtering and sorting
 ---------------------
 
-Now that we have a merged :code:`DataFrame`, we can use Pandas methods to quickly
+Now that we have a merged :py:class:`~pandas.DataFrame`, we can use Pandas methods to quickly
 get different views of the data. For some analyses, we may want to organize in
 terms of the study list by removing repeats and intrusions. Because our data
-are in a :code:`DataFrame`, we can use the :code:`DataFrame.query` method:
+are in a :py:class:`~pandas.DataFrame`, we can use the :py:meth:`~pandas.DataFrame.query` method:
 
 .. ipython:: python
 
