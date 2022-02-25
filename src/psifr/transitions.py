@@ -109,9 +109,10 @@ def transitions_masker(
 
     Examples
     --------
+    >>> from psifr import transitions
     >>> pool = [1, 2, 3, 4, 5, 6]
     >>> recs = [6, 2, 3, 6, 1, 4]
-    >>> masker = transitions_masker(
+    >>> masker = transitions.transitions_masker(
     ...     pool_items=pool, recall_items=recs, pool_output=pool, recall_output=recs
     ... )
     >>> for prev, curr, poss in masker:
@@ -447,6 +448,7 @@ def count_distance(
 
     Examples
     --------
+    >>> import numpy as np
     >>> from psifr import transitions
     >>> distances = np.array([[0, 1, 2, 2], [1, 0, 2, 2], [2, 2, 0, 3], [2, 2, 3, 0]])
     >>> edges = np.array([0.5, 1.5, 2.5, 3.5])
@@ -558,6 +560,7 @@ def rank_distance(
 
     Examples
     --------
+    >>> import numpy as np
     >>> from psifr import transitions
     >>> distances = np.array([[0, 1, 2, 2], [1, 0, 2, 2], [2, 2, 0, 3], [2, 2, 3, 0]])
     >>> edges = np.array([0.5, 1.5, 2.5, 3.5])

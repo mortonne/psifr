@@ -580,6 +580,7 @@ def merge_free_recall(data, **kwargs):
 
     Examples
     --------
+    >>> import numpy as np
     >>> from psifr import fr
     >>> study = [['absence', 'hollow'], ['fountain', 'piano']]
     >>> recall = [['absence'], ['piano', 'hollow']]
@@ -1251,6 +1252,7 @@ def distance_crp(
 
     Examples
     --------
+    >>> import numpy as np
     >>> from scipy.spatial.distance import squareform
     >>> from psifr import fr
     >>> raw = fr.sample_data('Morton2013')
