@@ -117,6 +117,27 @@ categories in the list. In this case, there are three categories, so
 a category CRP of 0.33 would be predicted if recalls were sampled
 randomly from the list.
 
+Category clustering
+~~~~~~~~~~~~~~~~~~~
+
+A number of measures have been developed to measure category clustering
+relative to that expected due to chance, under certain assumptions. Two
+such measures are list-based clustering (LBC) and adjusted ratio of
+clustering (ARC).
+
+These measures can be calculated using the
+:py:func:`~psifr.fr.category_clustering` function.
+
+.. ipython:: python
+
+    clust = fr.category_clustering(data, category_key='category')
+    clust.agg(['mean', 'sem'])
+
+Both measures are defined such that positive values indicate above-chance
+clustering. ARC scores have a maximum of 1, while the upper
+bound of LBC scores depends on the number of categories and the number
+of items per category in the study list.
+
 Distance CRP
 ~~~~~~~~~~~~
 

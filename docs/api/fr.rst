@@ -56,6 +56,14 @@ Transition rank
     lag_rank
     distance_rank
 
+Clustering
+~~~~~~~~~~
+
+.. autosummary::
+    :toctree: api/
+
+    category_clustering
+
 Plotting
 ~~~~~~~~
 
