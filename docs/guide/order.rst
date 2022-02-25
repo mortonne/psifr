@@ -168,7 +168,7 @@ the pool corresponding to the distances matrix.
 
 Finally, we must define distance bins. Here, we use 10 bins with
 equally spaced distance percentiles. Note that, when calculating
-distance percentiles, we use the :py:func:`squareform` function to
+distance percentiles, we use the :py:func:`~scipy.spatial.distance.squareform` function to
 get only the non-diagonal entries.
 
 .. ipython:: python

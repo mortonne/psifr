@@ -52,6 +52,7 @@ doctest_default_flags = (
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
+    'scipy': ('https://scipy.github.io/devdocs', None),
     'seaborn': ('https://seaborn.pydata.org', None),
     'pandas': ('https://pandas.pydata.org/docs/', None),
 }
