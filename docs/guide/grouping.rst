@@ -18,7 +18,7 @@ Comparing conditions
 ====================
 
 When analyzing a dataset, it's often important to compare different
-experimental conditions. Psifr is built on the Pandas DataFrame, which
+experimental conditions. Psifr is built on the Pandas :py:class:`~pandas.DataFrame`, which
 has powerful ways of splitting data and applying operations to it.
 This makes it possible to analyze and plot different conditions using
 very little code.
@@ -77,9 +77,8 @@ Plotting by condition
 
 We can then plot a separate curve for each condition. All plotting functions
 take optional :code:`hue`, :code:`col`, :code:`col_wrap`, and :code:`row`
-inputs that can be used to divide up data when plotting. See the
-`Seaborn documentation <https://seaborn.pydata.org/generated/seaborn.relplot.html>`_
-for details. Most inputs to :py:func:`seaborn.relplot` are supported.
+inputs that can be used to divide up data when plotting.
+Most inputs to :py:func:`seaborn.relplot` are supported.
 
 For example, we can plot two curves for the different list types:
 

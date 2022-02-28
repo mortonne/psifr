@@ -67,6 +67,9 @@ class TransitionMeasure(object):
         """
         names = list(self.keys.keys())
         keys = list(self.keys.values())
+        for key in keys:
+            if (key is not None) and (key not in data.columns):
+                raise ValueError(f'Required column {key} is missing.')
         split = fr.split_lists(data, phase, keys, names, item_query, as_list=True)
         return split
 

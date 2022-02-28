@@ -52,6 +52,21 @@ def outputs_masker(
 
     output : int
         Current output position.
+
+    Examples
+    --------
+    >>> from psifr import outputs
+    >>> pool_items = [1, 2, 3, 4]
+    >>> recall_items = [4, 2, 3, 1]
+    >>> masker = outputs.outputs_masker(
+    ...     pool_items, recall_items, pool_items, recall_items
+    ... )
+    >>> for curr, poss, output in masker:
+    ...     print(curr, poss, output)
+    4 [1 2 3 4] 1
+    2 [1 2 3] 2
+    3 [1 3] 3
+    1 [1] 4
     """
     pool_items = pool_items.copy()
     pool_output = pool_output.copy()
@@ -116,11 +131,11 @@ def count_outputs(
         List indicating the serial position of each recall in output
         order (NaN for intrusions).
 
-    pool_label : list, optional
+    pool_label : list
         List of the positions to use for calculating lag. Default is to
         use `pool_items`.
 
-    recall_label : list, optional
+    recall_label : list
         List of position labels in recall order. Default is to use
         `recall_items`.
 
@@ -139,6 +154,33 @@ def count_outputs(
     count_unique : bool
         If true, possible recalls with the same label will only be
         counted once.
+
+    Returns
+    -------
+    actual : numpy.ndarray
+        [outputs x inputs] array of actual recall counts.
+
+    possible : numpy.ndarray
+        [outputs x inputs] array of possible recall counts.
+
+    Examples
+    --------
+    >>> from psifr import outputs
+    >>> pool_items = [[1, 2, 3, 4]]
+    >>> recall_items = [[4, 2, 3, 1]]
+    >>> actual, possible = outputs.count_outputs(
+    ...     4, pool_items, recall_items, pool_items, recall_items
+    ... )
+    >>> actual
+    array([[0, 0, 0, 1],
+           [0, 1, 0, 0],
+           [0, 0, 1, 0],
+           [1, 0, 0, 0]])
+    >>> possible
+    array([[1, 1, 1, 1],
+           [1, 1, 1, 0],
+           [1, 0, 1, 0],
+           [1, 0, 0, 0]])
     """
     if pool_label is None:
         pool_label = pool_items

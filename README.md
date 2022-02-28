@@ -1,16 +1,16 @@
 # Psifr
 [![PyPI version](https://badge.fury.io/py/psifr.svg)](https://badge.fury.io/py/psifr)
 [![Documentation Status](https://readthedocs.org/projects/psifr/badge/?version=latest)](https://psifr.readthedocs.io/en/latest/?badge=latest)
-[![Build Status](https://travis-ci.com/mortonne/psifr.svg?branch=master)](https://travis-ci.com/mortonne/psifr)
+[![Pytest](https://github.com/mortonne/psifr/actions/workflows/pytest.yml/badge.svg)](https://github.com/mortonne/psifr/actions/workflows/pytest.yml)
 [![codecov](https://codecov.io/gh/mortonne/psifr/branch/master/graph/badge.svg)](https://codecov.io/gh/mortonne/psifr)
 [![status](https://joss.theoj.org/papers/712d4452e465229d61d0e281d3d6f299/status.svg)](https://joss.theoj.org/papers/712d4452e465229d61d0e281d3d6f299)
 [![DOI](https://zenodo.org/badge/248593723.svg)](https://zenodo.org/badge/latestdoi/248593723)
 
 Advanced analysis and visualization of free recall data in Python.
 
-In free recall, participants study a list of items and then name all of the items they can remember in any order they choose. Many sophisticated analyses have been developed to analyze data from free recall experiments, but these analyses are often complicated and difficult to implement. 
+Psifr has tools to visualize recall sequences, to make it easier to see general trends in the data. Psifr also provides targeted analyses to examine factors that may affect recall, such as recency, primacy, temporal contiguity, stimulus category, and semantic relatedness. Analyses are customizable, allowing flexible filtering of included data to help answer precise questions. Extensive automated testing is used to ensure the consistency and correctness of analysis results. 
 
-Psifr leverages the Pandas data analysis package to make precise and flexible analysis of free recall data faster and easier. The name Psifr is pronounced "cipher". It's taken from Psi, in reference to the field of psychology, and FR for free recall.
+The name Psifr is pronounced "cipher". It's taken from Psi, in reference to the field of psychology, and FR for free recall.
 
 <div align="center">
   <div style="max-width:500px; margin:0 20px;">
@@ -56,9 +56,19 @@ Also see the Jupyter notebooks for more analysis examples:
 
 ## Importing data
 
-Generally the best way to get your data into shape for analysis in Psifr is to create a CSV file with one row for each event in the experiment, including study events (i.e., item presentations) and all recall attempts (including repeats and intrusions). See [importing data](https://psifr.readthedocs.io/en/latest/guide/import.html) for details.
+Generally the best way to get your data into shape for analysis in Psifr is to create a CSV (or TSV) file with one row for each event in the experiment, including study events (i.e., item presentations) and all recall attempts (including repeats and intrusions).
+See [importing data](https://psifr.readthedocs.io/en/latest/guide/import.html) for details.
 
-If you have data in the standard [EMBAM](https://github.com/vucml/EMBAM) format, use `scripts/frdata2table.m` to convert your data struct to a table with standard format. Then use the Matlab function `writetable` to write a CSV file which can then be read into Python for analysis.
+A number of archival free recall datasets are available in the Matlab-based EMBAM format.
+Data archives for a number of studies are available from the [UPenn](https://memory.psych.upenn.edu/Data_Archive) and [Vanderbilt](https://memory.psy.vanderbilt.edu/w/index.php/Publications) memory labs.
+If you have data in [EMBAM](https://github.com/vucml/EMBAM) format, use `matlab/frdata2table.m` to convert your data struct to a table with standard format.
+Then use the Matlab function `writetable` to write a CSV file which can then be read into Python for analysis.
+
+## Citation
+
+If you use Psifr, please cite the paper:
+
+Morton, N. W., (2020). Psifr: Analysis and visualization of free recall data. Journal of Open Source Software, 5(54), 2669, https://doi.org/10.21105/joss.02669
 
 ## Related projects
 

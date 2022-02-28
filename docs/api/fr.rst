@@ -10,11 +10,15 @@ Managing data
 .. autosummary::
     :toctree: api/
 
+    table_from_lists
+    check_data
     merge_free_recall
     merge_lists
     filter_data
     reset_list
     split_lists
+    pool_index
+    block_index
 
 Recall probability
 ~~~~~~~~~~~~~~~~~~
@@ -24,6 +28,14 @@ Recall probability
 
     spc
     pnr
+
+Intrusions
+~~~~~~~~~~
+
+.. autosummary::
+    :toctree: api/
+
+    pli_list_lag
 
 Transition probability
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -43,6 +55,14 @@ Transition rank
 
     lag_rank
     distance_rank
+
+Clustering
+~~~~~~~~~~
+
+.. autosummary::
+    :toctree: api/
+
+    category_clustering
 
 Plotting
 ~~~~~~~~

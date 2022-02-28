@@ -24,5 +24,6 @@ See the code repository for version `release notes`_.
    /tutorials/overview
    /api/overview
    /development/overview
+   /references
 
 .. _release notes: https://github.com/mortonne/psifr/releases

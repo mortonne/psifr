@@ -91,6 +91,70 @@ def distances2():
     return distances
 
 
+def test_table_from_lists():
+    """Test creating a data table from lists."""
+    subjects = [1, 1, 2, 2]
+    lists = [1, 2, 3, 4]
+    study = [
+        ['absence', 'hollow', 'pupil'],
+        ['fountain', 'piano', 'pillow'],
+        ['fountain', 'piano', 'pillow'],
+        ['absence', 'hollow', 'pupil'],
+    ]
+    recall = [
+        ['hollow', 'pupil', 'empty'],
+        ['fountain', 'piano', 'fountain'],
+        ['pillow', 'piano'],
+        ['pupil'],
+    ]
+    category = (
+        [[1, 1, 2], [2, 2, 2], [1, 1, 2], [2, 2, 2]],
+        [[1, 2, 1], [2, 2, 2], [2, 2], [2]],
+    )
+    task = ([[1, 2, 1], [2, 1, 2], [2, 1, 2], [1, 2, 1]], None)
+
+    # explicit labeling of list number
+    data = fr.table_from_lists(
+        subjects, study, recall, lists=lists, category=category, task=task
+    )
+
+    # subject, list, and trial_type labels
+    np.testing.assert_array_equal(
+        data['subject'].to_numpy(), np.repeat([1, 2], [12, 9])
+    )
+    np.testing.assert_array_equal(
+        data['list'].to_numpy(), np.repeat([1, 2, 3, 4], [6, 6, 5, 4])
+    )
+    np.testing.assert_array_equal(
+        data['trial_type'].to_numpy(),
+        np.repeat(np.tile(['study', 'recall'], 4), [3, 3, 3, 3, 3, 2, 3, 1]),
+    )
+
+    # position
+    n = [len(items) for seqs in zip(study, recall) for items in seqs]
+    position = np.array([i for j in n for i in range(1, j + 1)])
+    np.testing.assert_array_equal(data['position'].to_numpy(), position)
+
+    # items
+    items = [item for phase in zip(study, recall) for items in phase for item in items]
+    np.testing.assert_array_equal(data['item'].to_numpy(), np.array(items))
+
+    # category
+    category = [cat for phase in zip(*category) for cats in phase for cat in cats]
+    np.testing.assert_array_equal(data['category'].to_numpy(), category)
+
+    # task
+    task_recall = [np.tile(np.nan, n) for n in [3, 3, 2, 1]]
+    task = np.hstack([t for t_list in zip(task[0], task_recall) for t in t_list])
+    np.testing.assert_array_equal(data['task'].to_numpy(), task)
+
+    # implicit labeling of list number
+    data = fr.table_from_lists(subjects, study, recall)
+    np.testing.assert_array_equal(
+        data['list'].to_numpy(), np.repeat([1, 2, 1, 2], [6, 6, 5, 4])
+    )
+
+
 def test_merge(raw):
     """Test merging of study and recall trials."""
     study = raw.loc[raw['trial_type'] == 'study'].copy()
@@ -131,6 +195,27 @@ def test_merge(raw):
     assert repeat['recall']
     assert repeat['repeat'] == 1
     assert not repeat['intrusion']
+
+
+def test_pli(raw):
+    """Test labeling of prior-list intrusions."""
+    data = raw.copy()
+    data.loc[3:5, 'item'] = ['hollow', 'pupil', 'fountain']
+    data.loc[9:11, 'item'] = ['pillow', 'fountain', 'pupil']
+    merged = fr.merge_free_recall(data)
+    assert 'prior_list' in merged.columns
+    assert 'prior_input' in merged.columns
+
+    # check the PLI (prior-list intrusion) in the second list
+    pli = merged.query('item == "pupil" and output == 3')
+    pli = pli.reset_index().loc[0]
+    assert pli['prior_list'] == 1
+    assert pli['prior_input'] == 3
+
+    # check the FLI (future-list intrusion) in the first list
+    fli = merged.query('item == "fountain" and output == 3')
+    assert np.isnan(fli['prior_list'].to_numpy()[0])
+    assert np.isnan(fli['prior_input'].to_numpy()[0])
 
 
 def test_filter_raw_data(raw):
@@ -191,6 +276,61 @@ def test_pnr(data):
     expected = np.array([0, 0.5, 0.5, 0.5, 0, 1, np.nan, np.nan, np.nan])
     observed = stat['prob'].to_numpy()
     np.testing.assert_array_equal(expected, observed)
+
+
+def test_pli_list_lag():
+    """Test proportion of list lags for prior-list intrusions."""
+    subjects = [1, 1, 1, 1, 2, 2, 2, 2]
+    study = [
+        ['tree', 'cat'],
+        ['absence', 'hollow'],
+        ['fountain', 'piano'],
+        ['pillow', 'pupil'],
+        ['tree', 'cat'],
+        ['absence', 'hollow'],
+        ['fountain', 'piano'],
+        ['pillow', 'pupil'],
+    ]
+    recall = [
+        ['tree', 'cat'],
+        ['hollow', 'absence'],
+        ['fountain', 'hollow'],
+        ['absence', 'piano', 'cat'],
+        ['tree', 'cat'],
+        ['absence', 'hollow'],
+        ['fountain', 'piano'],
+        ['pillow', 'pupil'],
+    ]
+    raw = fr.table_from_lists(subjects, study, recall)
+    data = fr.merge_free_recall(raw)
+
+    # max lag 1 (exclude just the first list)
+    stat = fr.pli_list_lag(data, max_lag=1)
+    np.testing.assert_array_equal(stat['count'].to_numpy(), np.array([2, 0]))
+    np.testing.assert_array_equal(stat['per_list'].to_numpy(), np.array([2 / 3, 0]))
+    np.testing.assert_array_equal(stat['prob'].to_numpy(), np.array([0.5, np.nan]))
+
+    # max lag 2 (exclude first two lists)
+    stat = fr.pli_list_lag(data, max_lag=2)
+    np.testing.assert_array_equal(stat['count'].to_numpy(), np.array([2, 1, 0, 0]))
+    np.testing.assert_array_equal(
+        stat['per_list'].to_numpy(), np.array([1, 0.5, 0, 0])
+    )
+    np.testing.assert_array_equal(
+        stat['prob'].to_numpy(), np.array([0.5, 0.25, np.nan, np.nan])
+    )
+
+    # max lag 3 (exclude first three lists)
+    stat = fr.pli_list_lag(data, max_lag=3)
+    np.testing.assert_array_equal(
+        stat['count'].to_numpy(), np.array([1, 1, 1, 0, 0, 0])
+    )
+    np.testing.assert_array_equal(
+        stat['per_list'].to_numpy(), np.array([1, 1, 1, 0, 0, 0])
+    )
+    np.testing.assert_array_equal(
+        stat['prob'].to_numpy(), np.array([1/3, 1/3, 1/3, np.nan, np.nan, np.nan])
+    )
 
 
 def test_lag_crp(data):
@@ -286,6 +426,33 @@ def test_category_crp(data):
     assert crp['prob'].iloc[0] == 1
     assert crp['actual'].iloc[0] == 1
     assert crp['possible'].iloc[0] == 1
+
+
+def test_category_clustering():
+    """Test category clustering statistics."""
+    subject = [1] * 2
+
+    # category of study and list items (two cases from category
+    # clustering tests)
+    study_category = [list('abcd') * 4] * 2
+    recall_str = ['aaabbbcccddd', 'aabbcdcd']
+    recall_category = [list(s) for s in recall_str]
+
+    # unique item codes (needed for merging study and recall events;
+    # not actually needed for the stats)
+    study_item = [[i for i in range(len(c))] for c in study_category]
+    recall_item = [[0, 4, 8, 1, 5, 9, 2, 6, 10, 3, 7, 11], [0, 4, 1, 5, 2, 3, 6, 7]]
+
+    # create merged free recall data
+    raw = fr.table_from_lists(
+        subject, study_item, recall_item, category=(study_category, recall_category)
+    )
+    data = fr.merge_free_recall(raw, list_keys=['category'])
+
+    # test ARC and LBC stats
+    stats = fr.category_clustering(data, 'category')
+    np.testing.assert_allclose(stats.loc[1, 'arc'], 0.667, rtol=0.011)
+    np.testing.assert_allclose(stats.loc[1, 'lbc'], 3.2, rtol=0.011)
 
 
 def test_lag_rank(data):
