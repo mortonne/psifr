@@ -279,7 +279,7 @@ def count_lags(
             test,
         )
 
-        for prev, curr, poss, output in masker:
+        for output, prev, curr, poss in masker:
             # for this step, calculate actual lag and all possible lags
             list_actual.append(curr - prev)
             tran_poss = poss - prev
@@ -378,7 +378,7 @@ def rank_lags(
             test,
         )
 
-        for prev, curr, poss, output in masker:
+        for output, prev, curr, poss in masker:
             actual = np.abs(curr - prev)
             possible = np.abs(poss - prev)
             rank.append(1 - percentile_rank(actual, possible))
@@ -488,7 +488,7 @@ def count_distance(
             recall_test_list,
             test,
         )
-        for prev, curr, poss, output in masker:
+        for output, prev, curr, poss in masker:
             prev = int(prev)
             curr = int(curr)
             poss = poss.astype(int)
@@ -589,7 +589,7 @@ def rank_distance(
             recall_test_list,
             test,
         )
-        for prev, curr, poss, output in masker:
+        for output, prev, curr, poss in masker:
             prev = int(prev)
             curr = int(curr)
             poss = poss.astype(int)
@@ -675,7 +675,7 @@ def count_category(
             test,
         )
 
-        for prev, curr, poss, output in masker:
+        for output, prev, curr, poss in masker:
             if prev == curr:
                 actual += 1
             if np.any(prev == poss):
@@ -703,7 +703,7 @@ def count_pairs(
             test,
         )
 
-        for prev, curr, poss, output in masker:
+        for output, prev, curr, poss in masker:
             actual[prev, curr] += 1
             possible[prev, poss] += 1
     return actual, possible
