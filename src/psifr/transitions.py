@@ -118,11 +118,11 @@ def transitions_masker(
     >>> masker = transitions.transitions_masker(
     ...     pool_items=pool, recall_items=recs, pool_output=pool, recall_output=recs
     ... )
-    >>> for prev, curr, poss, output in masker:
-    ...     print(prev, curr, poss, output)
-    6 2 [1 2 3 4 5] 1
-    2 3 [1 3 4 5] 2
-    1 4 [4 5] 5
+    >>> for output, prev, curr, poss in masker:
+    ...     print(output, prev, curr, poss)
+    1 6 2 [1 2 3 4 5]
+    2 2 3 [1 3 4 5]
+    5 1 4 [4 5]
     """
     n = 0
     pool_items = pool_items.copy()
@@ -163,7 +163,7 @@ def transitions_masker(
                 ind = np.repeat(ind, poss.shape)
             poss = poss[ind]
         n += 1
-        yield prev, curr, poss, n
+        yield n, prev, curr, poss
 
 
 def count_lags(
