@@ -107,6 +107,9 @@ def transitions_masker(
     poss : numpy.array
         Output values for all possible valid "to" items.
 
+    output : int
+        Output position of this transition. The first transition is 1.
+
     Examples
     --------
     >>> from psifr import transitions
@@ -115,11 +118,11 @@ def transitions_masker(
     >>> masker = transitions.transitions_masker(
     ...     pool_items=pool, recall_items=recs, pool_output=pool, recall_output=recs
     ... )
-    >>> for prev, curr, poss in masker:
-    ...     print(prev, curr, poss)
-    6 2 [1 2 3 4 5]
-    2 3 [1 3 4 5]
-    1 4 [4 5]
+    >>> for prev, curr, poss, output in masker:
+    ...     print(prev, curr, poss, output)
+    6 2 [1 2 3 4 5] 1
+    2 3 [1 3 4 5] 2
+    1 4 [4 5] 5
     """
     n = 0
     pool_items = pool_items.copy()
@@ -160,7 +163,7 @@ def transitions_masker(
                 ind = np.repeat(ind, poss.shape)
             poss = poss[ind]
         n += 1
-        yield prev, curr, poss
+        yield prev, curr, poss, n
 
 
 def count_lags(
