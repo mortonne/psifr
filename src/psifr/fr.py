@@ -1628,7 +1628,7 @@ def plot_lag_crp(recall, max_lag=5, split=True, **facet_kws):
     recall : pandas.DataFrame
         Results from calling `lag_crp`.
 
-    max_lag : int
+    max_lag : int, optional
         Maximum absolute lag to plot.
 
     split : bool, optional
