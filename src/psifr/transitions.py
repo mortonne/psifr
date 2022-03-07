@@ -167,7 +167,16 @@ def transitions_masker(
         yield n, prev, curr, poss
 
 
-def sequences_masker(n_transitions, *args, **kwargs):
+def sequences_masker(
+    n_transitions,
+    pool_items,
+    recall_items,
+    pool_output,
+    recall_output,
+    pool_test=None,
+    recall_test=None,
+    test=None,
+):
     """
     Yield sequences of adjacent included transitions.
 
@@ -246,7 +255,15 @@ def sequences_masker(n_transitions, *args, **kwargs):
     ...     print(output, prev, curr, poss)
     [1, 2, 3] [4, 3, 1] [3, 1, 2] [array([1, 2, 3]), array([1, 2]), array([2])]
     """
-    masker = transitions_masker(*args, **kwargs)
+    masker = transitions_masker(
+        pool_items,
+        recall_items,
+        pool_output,
+        recall_output,
+        pool_test=pool_test,
+        recall_test=recall_test,
+        test=test,
+    )
     s_output = []
     s_prev = []
     s_curr = []
