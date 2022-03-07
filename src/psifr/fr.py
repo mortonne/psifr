@@ -1115,6 +1115,110 @@ def lag_crp(
     return crp
 
 
+def lag_crp_compound(
+    df, lag_key='input', count_unique=False, item_query=None, test_key=None, test=None
+):
+    """
+    Conditional response probability by lag of current and prior transitions.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Merged study and recall data. See merge_lists. List length is
+        assumed to be the same for all lists. Must have fields:
+        subject, list, input, output, recalled. Input position must be
+        defined such that the first serial position is 1, not 0.
+
+    lag_key : str, optional
+        Name of column to use when calculating lag between recalled
+        items. Default is to calculate lag based on input position.
+
+    count_unique : bool, optional
+        If true, possible transitions of the same lag will only be
+        incremented once per transition.
+
+    item_query : str, optional
+        Query string to select items to include in the pool of possible
+        recalls to be examined. See `pandas.DataFrame.query` for
+        allowed format.
+
+    test_key : str, optional
+        Name of column with labels to use when testing transitions for
+        inclusion.
+
+    test : callable, optional
+        Callable that takes in previous and current item values and
+        returns True for transitions that should be included.
+
+    Returns
+    -------
+    results : pandas.DataFrame
+        Has fields:
+
+        subject : hashable
+            Results are separated by each subject.
+
+        previous : int
+            Lag of the previous transition.
+
+        current : int
+            Lag of the current transition.
+
+        prob : float
+            Probability of each lag transition.
+
+        actual : int
+            Total of actual made transitions at each lag.
+
+        possible : int
+            Total of times each lag was possible, given the prior
+            input position and the remaining items to be recalled.
+
+    See Also
+    --------
+    lag_crp : Conditional response probability by lag.
+
+    Examples
+    --------
+    >>> from psifr import fr
+    >>> subjects = [1]
+    >>> study = [['absence', 'hollow', 'pupil', 'fountain']]
+    >>> recall = [['fountain', 'hollow', 'absence']]
+    >>> raw = fr.table_from_lists(subjects, study, recall)
+    >>> data = fr.merge_free_recall(raw)
+    >>> crp = fr.lag_crp_compound(data)
+    >>> crp.head(14)
+                              prob  actual  possible
+    subject previous current                        
+    1       -3       -3        NaN       0         0
+                     -2        NaN       0         0
+                     -1        NaN       0         0
+                      0        NaN       0         0
+                      1        NaN       0         0
+                      2        NaN       0         0
+                      3        NaN       0         0
+            -2       -3        NaN       0         0
+                     -2        NaN       0         0
+                     -1        1.0       1         1
+                      0        NaN       0         0
+                      1        0.0       0         1
+                      2        NaN       0         0
+                      3        NaN       0         0
+    """
+    list_length = df[lag_key].max()
+    measure = measures.TransitionLag(
+        list_length,
+        lag_key=lag_key,
+        count_unique=count_unique,
+        item_query=item_query,
+        test_key=test_key,
+        test=test,
+        compound=True
+    )
+    crp = measure.analyze(df)
+    return crp
+
+
 def lag_rank(df, item_query=None, test_key=None, test=None):
     """
     Calculate rank of the absolute lags in free recall lists.
