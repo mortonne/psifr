@@ -415,8 +415,9 @@ def count_lags(
     # count the actual and possible transitions for each lag
     max_lag = list_length - 1
     lags = np.arange(-max_lag, max_lag + 2)
-    actual = pd.Series(np.histogram(list_actual, lags)[0], index=lags[:-1])
-    possible = pd.Series(np.histogram(list_possible, lags)[0], index=lags[:-1])
+    index = pd.Index(lags[:-1], name='lag')
+    actual = pd.Series(np.histogram(list_actual, lags)[0], index=index)
+    possible = pd.Series(np.histogram(list_possible, lags)[0], index=index)
     return actual, possible
 
 
