@@ -56,8 +56,8 @@ including the current item).
     In [4]: masker = transitions_masker(pool_items=pool, recall_items=recs,
        ...:                             pool_output=pool, recall_output=recs)
 
-    In [5]: for prev, curr, poss in masker:
-       ...:     print(prev, curr, poss)
+    In [5]: for op, prev, curr, poss in masker:
+       ...:     print(op, prev, curr, poss)
        ...:
 
 Only valid transitions are yielded, so the code
