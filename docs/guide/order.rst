@@ -81,6 +81,56 @@ show evidence of a temporal contiguity effect; that is, items presented near
 to one another in the list are more likely to be recalled successively than
 items that are distant from one another in the list.
 
+Compound lag-CRP
+~~~~~~~~~~~~~~~~
+
+The compound lag-CRP was developed to measure how temporal clustering
+changes as a result of prior clustering during recall :cite:p:`Lohnas:2014`.
+They found evidence that temporal clustering is greater immediately after
+transitions with short lags compared to long lags. This
+analysis calculates conditional response probability by lag, but with the
+additional condition of the lag of the previous transition.
+
+.. ipython:: python
+
+    crp = fr.lag_crp_compound(data)
+    crp
+
+The results show conditional response probabilities as in the standard
+lag-CRP analysis, but with two lag columns: :code:`previous` (the lag
+of the prior transition) and :code:`current` (the lag of the current
+transition).
+
+This is a lot of information, and the sample size for many bins is very
+small. Following :cite:p:`Lohnas:2014`, we can apply bins to the lag of
+the previous transition to increase the sample size in each bin. We
+first sum the actual and possible transition counts, and then calculate
+the probability of each of the new bins.
+
+.. ipython:: python
+
+    binned = crp.reset_index()
+    binned.loc[binned['previous'].abs() > 3, 'Previous'] = '|Lag|>3'
+    binned.loc[binned['previous'] == 1, 'Previous'] = 'Lag=+1'
+    binned.loc[binned['previous'] == -1, 'Previous'] = 'Lag=-1'
+    summed = binned.groupby(['subject', 'Previous', 'current'])[['actual', 'possible']].sum()
+    summed['prob'] = summed['actual'] / summed['possible']
+    summed
+
+We can then plot the compound lag-CRP using the standard
+:py:func:`~psifr.fr.plot_lag_crp` plotting function.
+
+.. ipython:: python
+
+    @savefig lag_crp_compound.svg
+    g = fr.plot_lag_crp(summed, lag_key='current', hue='Previous').add_legend()
+
+Note that some lags are considered impossible as they would require
+a repeat of a previously recalled item (e.g., a +1 lag followed by a -1
+lag is not possible). For both of the adjacent conditions (+1 and -1),
+the lag-CRP is sharper compared to the long-lag condition (:math:`| \mathrm{lag} | >3`).
+This suggests that there is compound temporal clustering.
+
 Lag rank
 ~~~~~~~~
 
