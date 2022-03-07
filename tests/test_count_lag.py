@@ -88,3 +88,40 @@ def test_lag_count_block_unique(data):
     )
     np.testing.assert_array_equal(actual.to_numpy(), np.array([0, 0, 2, 1, 1, 1, 0]))
     np.testing.assert_array_equal(possible.to_numpy(), np.array([2, 0, 4, 3, 3, 3, 1]))
+
+
+def test_compound_lag_count():
+    """Test transition lag count conditional on prior lag."""
+    list_length = 4
+    pool_position = [[1, 2, 3, 4]]
+    output_position = [[4, 1, 2, 3]]
+    # -3: +1 (+1, +2)
+    # +1: +1 (+1)
+    # -3:-3, -3:-2, -3:-1, -3:0, -3:+1, -3:+2, -3:+3, ...
+    expected_actual = np.hstack(
+        (
+            [0, 0, 0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+        )
+    )
+    expected_possible = np.hstack(
+        (
+            [0, 0, 0, 0, 1, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+        )
+    )
+    actual, possible = transitions.count_lags_compound(
+        list_length, pool_position, output_position
+    )
+    np.testing.assert_array_equal(actual, expected_actual)
+    np.testing.assert_array_equal(possible, expected_possible)
