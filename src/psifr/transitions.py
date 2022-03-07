@@ -98,6 +98,9 @@ def transitions_masker(
 
     Yields
     ------
+    output : int
+        Output position of this transition. The first transition is 1.
+
     prev : object
         Output value for the "from" item on this transition.
 
@@ -106,9 +109,6 @@ def transitions_masker(
 
     poss : numpy.array
         Output values for all possible valid "to" items.
-
-    output : int
-        Output position of this transition. The first transition is 1.
 
     Examples
     --------
