@@ -1,5 +1,6 @@
 """Module to analyze transitions during free recall."""
 
+import itertools
 import numpy as np
 from scipy import stats
 import pandas as pd
@@ -399,6 +400,121 @@ def count_lags(
     lags = np.arange(-max_lag, max_lag + 2)
     actual = pd.Series(np.histogram(list_actual, lags)[0], index=lags[:-1])
     possible = pd.Series(np.histogram(list_possible, lags)[0], index=lags[:-1])
+    return actual, possible
+
+
+def count_lags_compound(
+    list_length,
+    pool_items,
+    recall_items,
+    pool_label=None,
+    recall_label=None,
+    pool_test=None,
+    recall_test=None,
+    test=None,
+    count_unique=False,
+):
+    """
+    Count lags conditional on the lag of the previous transition.
+
+    Parameters
+    ----------
+    list_length : int
+        Number of items in each list.
+
+    pool_items : list
+        List of the serial positions available for recall in each list.
+        Must match the serial position codes used in `recall_items`.
+
+    recall_items : list
+        List indicating the serial position of each recall in output
+        order (NaN for intrusions).
+
+    pool_label : list, optional
+        List of the positions to use for calculating lag. Default is to
+        use `pool_items`.
+
+    recall_label : list, optional
+        List of position labels in recall order. Default is to use
+        `recall_items`.
+
+    pool_test : list, optional
+         List of some test value for each item in the pool.
+
+    recall_test : list, optional
+        List of some test value for each recall attempt by output
+        position.
+
+    test : callable
+        Callable that evaluates each transition between items n and
+        n+1. Must take test values for items n and n+1 and return True
+        if a given transition should be included.
+
+    count_unique : bool, optional
+        If true, only unique values will be counted toward the possible
+        transitions. If multiple items are avilable for recall for a
+        given transition and a given bin, that bin will only be
+        incremented once. If false, all possible transitions will add
+        to the count.
+
+    Returns
+    -------
+    actual : pandas.Series
+        Count of actual lags that occurred in the recall sequence.
+
+    possible : pandas.Series
+        Count of possible lags.
+
+    See Also
+    --------
+    count_lags : Count of individual transitions.
+    """
+    if pool_label is None:
+        pool_label = pool_items
+
+    if recall_label is None:
+        recall_label = recall_items
+
+    list_actual = []
+    list_possible = []
+    for i, recall_items_list in enumerate(recall_items):
+        # set up masker to filter pairs of transitions
+        pool_test_list = None if pool_test is None else pool_test[i]
+        recall_test_list = None if recall_test is None else recall_test[i]
+        masker = sequences_masker(
+            2,
+            pool_items[i],
+            recall_items_list,
+            pool_label[i],
+            recall_label[i],
+            pool_test_list,
+            recall_test_list,
+            test,
+        )
+
+        for output, prev, curr, poss in masker:
+            # calculate lag of prior transition
+            prev_lag = curr[-2] - prev[-2]
+
+            # actual and possible lags of current transition
+            curr_lag = curr[-1] - prev[-1]
+            poss_lag = poss[-1] - prev[-1]
+
+            # count lags as tuples of (previous, current)
+            list_actual.append((prev_lag, curr_lag))
+            if count_unique:
+                poss_lag = np.unique(poss_lag)
+            poss_compound = [(prev_lag, p) for p in poss_lag]
+            list_possible.extend(poss_compound)
+
+    # count the actual and possible transitions for each (lag, lag)
+    # combination
+    max_lag = list_length - 1
+    lags = np.arange(-max_lag, max_lag + 1)
+    compound_lags = list(itertools.product(lags, lags))
+    index = pd.MultiIndex.from_tuples(compound_lags, names=['previous', 'current'])
+    actual = pd.Series([list_actual.count(c) for c in compound_lags], index=index)
+    possible = pd.Series([list_possible.count(c) for c in compound_lags], index=index)
     return actual, possible
 
 
