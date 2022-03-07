@@ -530,8 +530,10 @@ def count_lags_compound(
     if recall_label is None:
         recall_label = recall_items
 
-    list_actual = []
-    list_possible = []
+    prev_actual = []
+    prev_possible = []
+    curr_actual = []
+    curr_possible = []
     for i, recall_items_list in enumerate(recall_items):
         # set up masker to filter pairs of transitions
         pool_test_list = None if pool_test is None else pool_test[i]
@@ -555,21 +557,27 @@ def count_lags_compound(
             curr_lag = curr[-1] - prev[-1]
             poss_lag = poss[-1] - prev[-1]
 
-            # count lags as tuples of (previous, current)
-            list_actual.append((prev_lag, curr_lag))
+            # add lags to count
+            prev_actual.append(prev_lag)
+            curr_actual.append(curr_lag)
             if count_unique:
                 poss_lag = np.unique(poss_lag)
-            poss_compound = [(prev_lag, p) for p in poss_lag]
-            list_possible.extend(poss_compound)
+            prev_possible.extend([prev_lag] * len(poss_lag))
+            curr_possible.extend(poss_lag)
+
+    # define possible combinations of previous and current lags
+    max_lag = list_length - 1
+    bins = np.arange(-max_lag, max_lag + 2)
+    lags = bins[:-1]
+    compound_lags = list(itertools.product(lags, lags))
+    index = pd.MultiIndex.from_tuples(compound_lags, names=['previous', 'current'])
 
     # count the actual and possible transitions for each (lag, lag)
     # combination
-    max_lag = list_length - 1
-    lags = np.arange(-max_lag, max_lag + 1)
-    compound_lags = list(itertools.product(lags, lags))
-    index = pd.MultiIndex.from_tuples(compound_lags, names=['previous', 'current'])
-    actual = pd.Series([list_actual.count(c) for c in compound_lags], index=index)
-    possible = pd.Series([list_possible.count(c) for c in compound_lags], index=index)
+    count_actual = np.histogram2d(prev_actual, curr_actual, bins)[0].astype(int)
+    actual = pd.Series(count_actual.ravel(), index=index)
+    count_possible = np.histogram2d(prev_possible, curr_possible, bins)[0].astype(int)
+    possible = pd.Series(count_possible.ravel(), index=index)
     return actual, possible
 
 
