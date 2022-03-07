@@ -485,6 +485,43 @@ def count_lags_compound(
     See Also
     --------
     count_lags : Count of individual transitions.
+
+    Examples
+    --------
+    >>> from psifr import transitions
+    >>> pool_items = [[1, 2, 3]]
+    >>> recall_items = [[3, 1, 2]]
+    >>> actual, possible = transitions.count_lags_compound(3, pool_items, recall_items)
+    >>> (actual == possible).all()
+    True
+    >>> actual
+    previous  current
+    -2        -2         0
+              -1         0
+               0         0
+               1         1
+               2         0
+    -1        -2         0
+              -1         0
+               0         0
+               1         0
+               2         0
+     0        -2         0
+              -1         0
+               0         0
+               1         0
+               2         0
+     1        -2         0
+              -1         0
+               0         0
+               1         0
+               2         0
+     2        -2         0
+              -1         0
+               0         0
+               1         0
+               2         0
+    dtype: int64
     """
     if pool_label is None:
         pool_label = pool_items
