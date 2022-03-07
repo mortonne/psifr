@@ -13,24 +13,13 @@ class TimeFR:
         data_file = resource_filename('psifr', 'data/Morton2013.csv')
         self.raw = pd.read_csv(data_file, dtype={'category': 'category'})
         self.raw.category.cat.as_ordered(inplace=True)
-        study = self.raw.query('trial_type == "study"').copy()
-        recall = self.raw.query('trial_type == "recall"').copy()
-        data = fr.merge_lists(
-            study,
-            recall,
-            list_keys=['list_type', 'list_category'],
-            study_keys=['category'],
+        self.data = fr.merge_free_recall(
+            self.raw, list_keys=['list_type', 'list_category'], study_keys=['category']
         )
-        self.data = data
 
     def time_merge(self):
-        study = self.raw.query('trial_type == "study"').copy()
-        recall = self.raw.query('trial_type == "recall"').copy()
-        data = fr.merge_lists(
-            study,
-            recall,
-            list_keys=['list_type', 'list_category'],
-            study_keys=['category'],
+        data = fr.merge_free_recall(
+            self.raw, list_keys=['list_type', 'list_category'], study_keys=['category']
         )
 
     def time_lag_crp(self):
