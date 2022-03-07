@@ -25,6 +25,9 @@ class TimeFR:
     def time_lag_crp(self):
         crp = fr.lag_crp(self.data)
 
+    def time_lag_crp_compound(self):
+        crp = fr.lag_crp_compound(self.data)
+
     def time_category_crp(self):
         crp = fr.category_crp(self.data, 'category')
 
