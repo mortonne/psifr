@@ -166,6 +166,113 @@ def transitions_masker(
         yield n, prev, curr, poss
 
 
+def sequences_masker(n_transitions, *args, **kwargs):
+    """
+    Yield sequences of adjacent included transitions.
+
+    Parameters
+    ----------
+    n_transitions : int
+        Number of transitions to include in yielded sequences.
+
+    pool_items : list
+        Items available for recall. Order does not matter. May contain
+        repeated values. Item identifiers must be unique within pool.
+
+    recall_items : list
+        Recalled items in output position order.
+
+    pool_output : list
+        Output values for pool items. Must be the same order as pool.
+
+    recall_output : list
+        Output values in output position order.
+
+    pool_test : list, optional
+        Test values for items available for recall. Must be the same
+        order as pool.
+
+    recall_test : list, optional
+        Test values for items in output position order.
+
+    test : callable, optional
+        Used to test whether individual transitions should be included,
+        based on test values.
+
+            test(prev, curr) - test for included transition
+
+            test(prev, poss) - test for included possible transition
+
+    Yields
+    ------
+    output : int
+        Output positions of included transitions. The first transition
+        is 1.
+
+    prev : list
+        Output values for the "from" item in included transitions.
+
+    curr : list
+        Output values for the "to" item in included transitions.
+
+    poss : list of numpy.ndarray
+        Output values for all possible valid "to" items in included
+        transitions.
+
+    See Also
+    --------
+    transitions_masker : Yield included transitions.
+
+    Examples
+    --------
+    >>> from psifr import transitions
+    >>> pool = [1, 2, 3, 4, 5, 6]
+    >>> recs = [6, 2, 3, 6, 1, 4, 5]
+    >>> masker = transitions.sequences_masker(
+    ...     2, pool_items=pool, recall_items=recs, pool_output=pool, recall_output=recs
+    ... )
+    >>> for output, prev, curr, poss in masker:
+    ...     print(output, prev, curr, poss)
+    [1, 2] [6, 2] [2, 3] [array([1, 2, 3, 4, 5]), array([1, 3, 4, 5])]
+    [5, 6] [1, 4] [4, 5] [array([4, 5]), array([5])]
+
+    >>> pool = [1, 2, 3, 4]
+    >>> recs = [4, 3, 1, 2]
+    >>> masker = transitions.sequences_masker(
+    ...     3, pool_items=pool, recall_items=recs, pool_output=pool, recall_output=recs
+    ... )
+    >>> for output, prev, curr, poss in masker:
+    ...     print(output, prev, curr, poss)
+    [1, 2, 3] [4, 3, 1] [3, 1, 2] [array([1, 2, 3]), array([1, 2]), array([2])]
+    """
+    masker = transitions_masker(*args, **kwargs)
+    s_output = []
+    s_prev = []
+    s_curr = []
+    s_poss = []
+    prev_output = 0
+    sequence_len = 0
+    for output, prev, curr, poss in masker:
+        if (output - prev_output) == 1:
+            s_output.append(output)
+            s_prev.append(prev)
+            s_curr.append(curr)
+            s_poss.append(poss)
+            sequence_len += 1
+        else:
+            # a break in the chain
+            s_output = [output]
+            s_prev = [prev]
+            s_curr = [curr]
+            s_poss = [poss]
+            sequence_len = 1
+        prev_output = output
+
+        if sequence_len >= n_transitions:
+            ind = slice(sequence_len - n_transitions, None)
+            yield s_output[ind], s_prev[ind], s_curr[ind], s_poss[ind]
+
+
 def count_lags(
     list_length,
     pool_items,
