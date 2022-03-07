@@ -172,16 +172,23 @@ class TransitionLag(TransitionMeasure):
         item_query=None,
         test_key=None,
         test=None,
+        compound=False,
     ):
         super().__init__(
             'input', lag_key, item_query=item_query, test_key=test_key, test=test
         )
         self.list_length = list_length
         self.count_unique = count_unique
+        self.compound = compound
 
     def analyze_subject(self, subject, pool, recall):
 
-        actual, possible = transitions.count_lags(
+        if self.compound:
+            counter = transitions.count_lags_compound
+        else:
+            counter = transitions.count_lags
+
+        actual, possible = counter(
             self.list_length,
             pool['items'],
             recall['items'],
@@ -195,13 +202,17 @@ class TransitionLag(TransitionMeasure):
         crp = pd.DataFrame(
             {
                 'subject': subject,
-                'lag': actual.index,
                 'prob': actual / possible,
                 'actual': actual,
                 'possible': possible,
-            }
+            }, index=actual.index
         )
-        crp = crp.set_index(['subject', 'lag'])
+        if self.compound:
+            crp = crp.set_index('subject', append=True)
+            crp = crp.reorder_levels(['subject', 'previous', 'current'])
+        else:
+            crp = crp.set_index('subject', append=True)
+            crp = crp.reorder_levels(['subject', 'lag'])
         return crp
 
 
