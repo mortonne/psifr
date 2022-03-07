@@ -1617,7 +1617,7 @@ def plot_spc(recall, **facet_kws):
     return g
 
 
-def plot_lag_crp(recall, max_lag=5, split=True, **facet_kws):
+def plot_lag_crp(recall, max_lag=5, lag_key='lag', split=True, **facet_kws):
     """
     Plot conditional response probability by lag.
 
@@ -1631,27 +1631,30 @@ def plot_lag_crp(recall, max_lag=5, split=True, **facet_kws):
     max_lag : int, optional
         Maximum absolute lag to plot.
 
+    lag_key : str, optional
+        Name of the column indicating lag.
+
     split : bool, optional
         If true, will plot as two separate lines with a gap at lag 0.
     """
     if split:
-        filt_neg = f'{-max_lag} <= lag < 0'
-        filt_pos = f'0 < lag <= {max_lag}'
+        filt_neg = f'{-max_lag} <= {lag_key} < 0'
+        filt_pos = f'0 < {lag_key} <= {max_lag}'
         g = sns.FacetGrid(dropna=False, **facet_kws, data=recall.reset_index())
         g.map_dataframe(
             lambda data, **kws: sns.lineplot(
-                data=data.query(filt_neg), x='lag', y='prob', **kws
+                data=data.query(filt_neg), x=lag_key, y='prob', **kws
             )
         )
         g.map_dataframe(
             lambda data, **kws: sns.lineplot(
-                data=data.query(filt_pos), x='lag', y='prob', **kws
+                data=data.query(filt_pos), x=lag_key, y='prob', **kws
             )
         )
     else:
-        data = recall.query(f'{-max_lag} <= lag <= {max_lag}')
+        data = recall.query(f'{-max_lag} <= {lag_key} <= {max_lag}')
         g = sns.FacetGrid(dropna=False, **facet_kws, data=data.reset_index())
-        g.map_dataframe(sns.lineplot, x='lag', y='prob')
+        g.map_dataframe(sns.lineplot, x=lag_key, y='prob')
 
     g.set_xlabels('Lag')
     g.set_ylabels('CRP')
