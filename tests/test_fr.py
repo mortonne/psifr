@@ -390,6 +390,46 @@ def test_lag_crp_cat(data):
     np.testing.assert_array_equal(crp['prob'], prob)
 
 
+def test_lag_crp_compound():
+    """Test compound lag-CRP analysis."""
+    subjects = [1, 1]
+    study = [
+        ['absence', 'hollow', 'pupil', 'fountain'], ['tree', 'cat', 'house', 'dog']
+    ]
+    recall = [
+        ['fountain', 'hollow', 'absence'], ['mouse', 'cat', 'tree', 'house', 'dog']
+    ]
+    raw = fr.table_from_lists(subjects, study, recall)
+    data = fr.merge_free_recall(raw)
+    crp = fr.lag_crp_compound(data)
+    # -2, -1
+    # NaN, -1, +2, +1
+    actual = np.hstack(
+        [
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+        ]
+    )
+    possible = np.hstack(
+        [
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 1, 0, 1, 0, 0],
+            [0, 0, 0, 0, 0, 1, 1],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+        ]
+    )
+    np.testing.assert_array_equal(actual, crp['actual'].to_numpy())
+    np.testing.assert_array_equal(possible, crp['possible'].to_numpy())
+
+
 def test_distance_crp(data, distances2):
     """Test distance CRP analysis."""
     edges = [0.5, 1.5, 2.5, 3.5]
