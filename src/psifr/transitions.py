@@ -364,6 +364,7 @@ def count_lags(
     >>> recall_items = [[4, 2, 3, 1]]
     >>> actual, possible = transitions.count_lags(4, pool_items, recall_items)
     >>> actual
+    lag
     -3    0
     -2    2
     -1    0
@@ -373,6 +374,7 @@ def count_lags(
      3    0
     dtype: int64
     >>> possible
+    lag
     -3    1
     -2    2
     -1    2
