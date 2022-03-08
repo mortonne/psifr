@@ -55,6 +55,7 @@ Transition rank
 
     lag_rank
     distance_rank
+    distance_rank_shifted
 
 Clustering
 ~~~~~~~~~~

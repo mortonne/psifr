@@ -390,6 +390,46 @@ def test_lag_crp_cat(data):
     np.testing.assert_array_equal(crp['prob'], prob)
 
 
+def test_lag_crp_compound():
+    """Test compound lag-CRP analysis."""
+    subjects = [1, 1]
+    study = [
+        ['absence', 'hollow', 'pupil', 'fountain'], ['tree', 'cat', 'house', 'dog']
+    ]
+    recall = [
+        ['fountain', 'hollow', 'absence'], ['mouse', 'cat', 'tree', 'house', 'dog']
+    ]
+    raw = fr.table_from_lists(subjects, study, recall)
+    data = fr.merge_free_recall(raw)
+    crp = fr.lag_crp_compound(data)
+    # -2, -1
+    # NaN, -1, +2, +1
+    actual = np.hstack(
+        [
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+        ]
+    )
+    possible = np.hstack(
+        [
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 1, 0, 1, 0, 0],
+            [0, 0, 0, 0, 0, 1, 1],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+        ]
+    )
+    np.testing.assert_array_equal(actual, crp['actual'].to_numpy())
+    np.testing.assert_array_equal(possible, crp['possible'].to_numpy())
+
+
 def test_distance_crp(data, distances2):
     """Test distance CRP analysis."""
     edges = [0.5, 1.5, 2.5, 3.5]
@@ -469,3 +509,33 @@ def test_distance_rank(data, distances):
     expected = np.array([0.25])
     observed = stat['rank'].to_numpy()
     np.testing.assert_array_equal(expected, observed)
+
+
+def test_distance_rank_shifted():
+    """Test shifted distance rank analysis."""
+    distances = np.array(
+        [
+            [0, 1, 1, 1, 2, 2, 2, 2],
+            [1, 0, 1, 4, 2, 2, 2, 2],
+            [1, 1, 0, 1, 2, 2, 2, 2],
+            [1, 4, 1, 0, 2, 2, 2, 2],
+            [2, 2, 2, 2, 0, 3, 3, 3],
+            [2, 2, 2, 2, 3, 0, 3, 3],
+            [2, 2, 2, 2, 3, 3, 0, 3],
+            [2, 2, 2, 2, 3, 3, 3, 0],
+        ]
+    )
+    subjects = [1]
+    study = [
+        ['absence', 'hollow', 'pupil', 'fountain', 'piano', 'pillow', 'cat', 'tree']
+    ]
+    recall = [
+        ['piano', 'fountain', 'hollow', 'tree', 'fountain', 'absence', 'cat', 'pupil']
+    ]
+    item_index = ([[0, 1, 2, 3, 4, 5, 6, 7]], [[4, 3, 1, 7, 3, 0, 6, 2]])
+    raw = fr.table_from_lists(subjects, study, recall, item_index=item_index)
+    data = fr.merge_free_recall(raw, list_keys=['item_index'])
+    stat = fr.distance_rank_shifted(data, 'item_index', distances, 2)
+
+    expected = np.array([0.683333, 0.416667])
+    np.testing.assert_allclose(expected, stat['rank'].to_numpy(), atol=0.000001)

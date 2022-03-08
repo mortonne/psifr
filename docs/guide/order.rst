@@ -6,6 +6,7 @@
    import pandas as pd
    import matplotlib as mpl
    import matplotlib.pyplot as plt
+   import seaborn as sns
 
    plt.style.use('default')
    mpl.rcParams['axes.labelsize'] = 'large'
@@ -80,6 +81,56 @@ The peaks at small lags (e.g., +1 and -1) indicate that the recall sequences
 show evidence of a temporal contiguity effect; that is, items presented near
 to one another in the list are more likely to be recalled successively than
 items that are distant from one another in the list.
+
+Compound lag-CRP
+~~~~~~~~~~~~~~~~
+
+The compound lag-CRP was developed to measure how temporal clustering
+changes as a result of prior clustering during recall :cite:p:`Lohnas:2014`.
+They found evidence that temporal clustering is greater immediately after
+transitions with short lags compared to long lags. This
+analysis calculates conditional response probability by lag, but with the
+additional condition of the lag of the previous transition.
+
+.. ipython:: python
+
+    crp = fr.lag_crp_compound(data)
+    crp
+
+The results show conditional response probabilities as in the standard
+lag-CRP analysis, but with two lag columns: :code:`previous` (the lag
+of the prior transition) and :code:`current` (the lag of the current
+transition).
+
+This is a lot of information, and the sample size for many bins is very
+small. Following :cite:p:`Lohnas:2014`, we can apply bins to the lag of
+the previous transition to increase the sample size in each bin. We
+first sum the actual and possible transition counts, and then calculate
+the probability of each of the new bins.
+
+.. ipython:: python
+
+    binned = crp.reset_index()
+    binned.loc[binned['previous'].abs() > 3, 'Previous'] = '|Lag|>3'
+    binned.loc[binned['previous'] == 1, 'Previous'] = 'Lag=+1'
+    binned.loc[binned['previous'] == -1, 'Previous'] = 'Lag=-1'
+    summed = binned.groupby(['subject', 'Previous', 'current'])[['actual', 'possible']].sum()
+    summed['prob'] = summed['actual'] / summed['possible']
+    summed
+
+We can then plot the compound lag-CRP using the standard
+:py:func:`~psifr.fr.plot_lag_crp` plotting function.
+
+.. ipython:: python
+
+    @savefig lag_crp_compound.svg
+    g = fr.plot_lag_crp(summed, lag_key='current', hue='Previous').add_legend()
+
+Note that some lags are considered impossible as they would require
+a repeat of a previously recalled item (e.g., a +1 lag followed by a -1
+lag is not possible). For both of the adjacent conditions (+1 and -1),
+the lag-CRP is sharper compared to the long-lag condition (:math:`| \mathrm{lag} | >3`).
+This suggests that there is compound temporal clustering.
 
 Lag rank
 ~~~~~~~~
@@ -212,6 +263,36 @@ recalled), with chance clustering corresponding to 0.5.
 
     dist_rank = fr.distance_rank(data, 'item_index', distances)
     dist_rank.agg(['mean', 'sem'])
+
+Distance rank shifted
+~~~~~~~~~~~~~~~~~~~~~
+
+Like with the compound lag-CRP, we can also examine how recalls before
+the just-previous one may predict subsequent recalls. To examine whether
+distances relative to earlier items are predictive of the next recall,
+we can use a shifted distance rank analysis :cite:p:`Morton:2016`.
+
+Here, to account for the category structure of the list, we will only
+include within-category transitions (see the
+:ref:`Restricting analysis to specific items <restricting>` section for details).
+
+.. ipython:: python
+
+    ranks = fr.distance_rank_shifted(
+        data, 'item_index', distances, 4, test_key='category', test=lambda x, y: x == y
+    )
+    ranks
+
+The distance rank is returned for each shift. The -1 shift is the same as
+the standard distance rank analysis. We can visualize how distance rank
+changes with shift using :py:func:`seaborn.relplot`.
+
+.. ipython:: python
+
+    @savefig distance_rank_shifted.svg
+    g = sns.relplot(
+        data=ranks.reset_index(), x='shift', y='rank', kind='line', height=3
+    ).set(xlabel='Output lag', ylabel='Distance rank', xticks=[-4, -3, -2, -1])
 
 Restricting analysis to specific items
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
