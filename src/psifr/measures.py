@@ -321,6 +321,38 @@ class TransitionDistanceRank(TransitionMeasure):
         return stat
 
 
+class TransitionDistanceRankShifted(TransitionMeasure):
+    """Measure shifted transition rank by distance."""
+
+    def __init__(
+        self, index_key, distances, max_shift, item_query=None, test_key=None, test=None
+    ):
+        super().__init__(
+            index_key, index_key, item_query=item_query, test_key=test_key, test=test
+        )
+        self.distances = distances
+        self.max_shift = max_shift
+
+    def analyze_subject(self, subject, pool, recall):
+        ranks = transitions.rank_distance_shifted(
+            self.distances,
+            self.max_shift,
+            pool['items'],
+            recall['items'],
+            pool['label'],
+            recall['label'],
+            pool['test'],
+            recall['test'],
+            self.test,
+        )
+        shifts = np.arange(-self.max_shift, 0)
+        index = pd.MultiIndex.from_arrays(
+            [[subject] * self.max_shift, shifts], names=['subject', 'shift']
+        )
+        stat = pd.DataFrame({'rank': np.nanmean(ranks, 0)}, index=index)
+        return stat
+
+
 class TransitionCategory(TransitionMeasure):
     """Measure conditional response probability by category transition."""
 
