@@ -6,6 +6,7 @@
    import pandas as pd
    import matplotlib as mpl
    import matplotlib.pyplot as plt
+   import seaborn as sns
 
    plt.style.use('default')
    mpl.rcParams['axes.labelsize'] = 'large'
@@ -262,6 +263,36 @@ recalled), with chance clustering corresponding to 0.5.
 
     dist_rank = fr.distance_rank(data, 'item_index', distances)
     dist_rank.agg(['mean', 'sem'])
+
+Distance rank shifted
+~~~~~~~~~~~~~~~~~~~~~
+
+Like with the compound lag-CRP, we can also examine how recalls before
+the just-previous one may predict subsequent recalls. To examine whether
+distances relative to earlier items are predictive of the next recall,
+we can use a shifted distance rank analysis :cite:p:`Morton:2016`.
+
+Here, to account for the category structure of the list, we will only
+include within-category transitions (see the
+:ref:`Restricting analysis to specific items <restricting>` section for details).
+
+.. ipython:: python
+
+    ranks = fr.distance_rank_shifted(
+        data, 'item_index', distances, 4, test_key='category', test=lambda x, y: x == y
+    )
+    ranks
+
+The distance rank is returned for each shift. The -1 shift is the same as
+the standard distance rank analysis. We can visualize how distance rank
+changes with shift using :py:func:`seaborn.relplot`.
+
+.. ipython:: python
+
+    @savefig distance_rank_shifted.svg
+    g = sns.relplot(
+        data=ranks.reset_index(), x='shift', y='rank', kind='line', height=3
+    ).set(xlabel='Output lag', ylabel='Distance rank', xticks=[-4, -3, -2, -1])
 
 Restricting analysis to specific items
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
