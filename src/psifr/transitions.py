@@ -854,7 +854,6 @@ def rank_distance(
     >>> import numpy as np
     >>> from psifr import transitions
     >>> distances = np.array([[0, 1, 2, 2], [1, 0, 2, 2], [2, 2, 0, 3], [2, 2, 3, 0]])
-    >>> edges = np.array([0.5, 1.5, 2.5, 3.5])
     >>> pool_items = [[1, 2, 3, 4]]
     >>> recall_items = [[4, 2, 3, 1]]
     >>> pool_index = [[0, 1, 2, 3]]
