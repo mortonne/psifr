@@ -1511,7 +1511,8 @@ def distance_rank_shifted(
     --------
     pool_index : Given a list of presented items and an item pool, look
         up the pool index of each item.
-    distance_crp : Conditional response probability by distance bin.
+    distance_rank : Rank of transition distances relative to the
+        just-previous item.
 
     Examples
     --------
