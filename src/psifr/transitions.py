@@ -886,6 +886,115 @@ def rank_distance(
     return rank
 
 
+def rank_distance_shifted(
+    distances,
+    max_shift,
+    pool_items,
+    recall_items,
+    pool_index,
+    recall_index,
+    pool_test=None,
+    recall_test=None,
+    test=None,
+):
+    """
+    Calculate percentile rank of shifted distances.
+
+    Parameters
+    ----------
+    distances : numpy.array
+        Items x items matrix of pairwise distances or similarities.
+
+    max_shift : int
+        Maximum number of items back for which to rank distances.
+
+    pool_items : list of list
+        Unique item codes for each item in the pool available for recall.
+
+    recall_items : list of list
+        Unique item codes of recalled items.
+
+    pool_index : list of list
+        Index of each item in the distances matrix.
+
+    recall_index : list of list
+        Index of each recalled item.
+
+    pool_test : list of list, optional
+        Test value for each item in the pool.
+
+    recall_test : list of list, optional
+        Test value for each recalled item.
+
+    test : callable
+        Called as test(prev, curr) or test(prev, poss) to screen
+        actual and possible transitions, respectively.
+
+    Returns
+    -------
+    rank : numpy.ndarray
+        [transitions x max_shift] array with distance percentile ranks.
+        The rank is 0 if the distance was the largest of the available
+        transitions, and 1 if the distance was the smallest. Ties are
+        assigned to the average percentile rank.
+
+    See Also
+    --------
+    rank_distance - Percentile rank of transition distances relative
+        to the immediately preceding item only.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from psifr import transitions
+    >>> distances = np.array(
+    ...     [
+    ...         [0, 1, 2, 2, 2],
+    ...         [1, 0, 2, 2, 2],
+    ...         [2, 2, 0, 3, 3],
+    ...         [2, 2, 3, 0, 2],
+    ...         [2, 2, 3, 2, 0],
+    ...     ]
+    ... )
+    >>> pool_items = [[1, 2, 3, 4, 5]]
+    >>> recall_items = [[4, 2, 3, 1]]
+    >>> pool_index = [[0, 1, 2, 3, 4]]
+    >>> recall_index = [[3, 1, 2, 0]]
+    >>> transitions.rank_distance_shifted(
+    ...     distances, 2, pool_items, recall_items, pool_index, recall_index
+    ... )
+    array([[0.  , 0.25],
+           [1.  , 1.  ]])
+    """
+    rank = []
+    for i in range(len(recall_items)):
+        pool_test_list = None if pool_test is None else pool_test[i]
+        recall_test_list = None if recall_test is None else recall_test[i]
+        masker = sequences_masker(
+            max_shift,
+            pool_items[i],
+            recall_items[i],
+            pool_index[i],
+            recall_index[i],
+            pool_test_list,
+            recall_test_list,
+            test,
+        )
+        for s_output, s_prev, s_curr, s_poss in masker:
+            curr = int(s_curr[-1])
+            poss = s_poss[-1].astype(int)
+            rank_shift = []
+            for j in range(max_shift, 0, -1):
+                # rank previous to current distance for this shift
+                prev = int(s_prev[-j])
+                actual = distances[prev, curr]
+                possible = distances[prev, poss]
+                rank_shift.append(1 - percentile_rank(actual, possible))
+            rank.append(rank_shift)
+    rank = np.array(rank)
+    return rank
+
+
 def count_category(
     pool_items,
     recall_items,
