@@ -509,3 +509,33 @@ def test_distance_rank(data, distances):
     expected = np.array([0.25])
     observed = stat['rank'].to_numpy()
     np.testing.assert_array_equal(expected, observed)
+
+
+def test_distance_rank_shifted():
+    """Test shifted distance rank analysis."""
+    distances = np.array(
+        [
+            [0, 1, 1, 1, 2, 2, 2, 2],
+            [1, 0, 1, 4, 2, 2, 2, 2],
+            [1, 1, 0, 1, 2, 2, 2, 2],
+            [1, 4, 1, 0, 2, 2, 2, 2],
+            [2, 2, 2, 2, 0, 3, 3, 3],
+            [2, 2, 2, 2, 3, 0, 3, 3],
+            [2, 2, 2, 2, 3, 3, 0, 3],
+            [2, 2, 2, 2, 3, 3, 3, 0],
+        ]
+    )
+    subjects = [1]
+    study = [
+        ['absence', 'hollow', 'pupil', 'fountain', 'piano', 'pillow', 'cat', 'tree']
+    ]
+    recall = [
+        ['piano', 'fountain', 'hollow', 'tree', 'fountain', 'absence', 'cat', 'pupil']
+    ]
+    item_index = ([[0, 1, 2, 3, 4, 5, 6, 7]], [[4, 3, 1, 7, 3, 0, 6, 2]])
+    raw = fr.table_from_lists(subjects, study, recall, item_index=item_index)
+    data = fr.merge_free_recall(raw, list_keys=['item_index'])
+    stat = fr.distance_rank_shifted(data, 'item_index', distances, 2)
+
+    expected = np.array([0.683333, 0.416667])
+    np.testing.assert_allclose(expected, stat['rank'].to_numpy(), atol=0.000001)
