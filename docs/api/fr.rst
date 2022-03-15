@@ -44,6 +44,7 @@ Transition probability
     :toctree: api/
 
     lag_crp
+    lag_crp_compound
     category_crp
     distance_crp
 
