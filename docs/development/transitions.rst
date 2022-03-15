@@ -38,8 +38,9 @@ it simple to iterate over transitions while "masking" out events such as
 intrusions of items not on the list and repeats of items that have already
 been recalled.
 
-On each step of the iterator, the previous, current, and possible items are
-yielded. The *previous*
+On each step of the iterator, the output position and the previous, current,
+and possible items are yielded. The *output position* is the position of the transition
+in the recall sequence, starting from one, including all repeats and intrusions. The *previous*
 item is the item being transitioned from. The *current* item is the item being
 transitioned to. The *possible* items includes an array of all items that
 were valid to be recalled next, given the recall sequence up to that point (not
@@ -82,4 +83,6 @@ Four inputs are required:
     Output codes for each recall in the sequence of recalls.
 
 By using different values for these four inputs and defining different
-transition measures, a wide range of analyses can be implemented.
+transition measures, a wide range of analyses can be implemented. All
+conditional response probability and rank analyses are implemented using
+the same core of the transitions masker.
