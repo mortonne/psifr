@@ -75,3 +75,11 @@ output position instead of input position:
 
 Note that we first sort by list, then output position, to keep the
 lists together.
+
+In addition to using the :py:meth:`~pandas.DataFrame.query` method directly,
+we can also use :py:func:`~psifr.fr.filter_data` to get subsets of data. For
+example, to get the first list only:
+
+.. ipython:: python
+
+    fr.filter_data(merged, lists=1)
