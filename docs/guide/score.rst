@@ -23,6 +23,11 @@ a sample dataset with a given set of study lists and recalls:
 
 Next, we'll merge together the study and recall events by matching up
 corresponding events using :py:func:`~psifr.fr.merge_free_recall`.
+This scoring and merging step labels recall attempts
+in terms of whether they were correct recalls, repeats, or intrusions. At the
+same time, it also labels study events in terms of whether they were correctly
+recalled, and, if so, at which output position they were recalled. Free-recall
+analyses in Psifr are computed from data in this "merged" format.
 
 .. ipython:: python
 
