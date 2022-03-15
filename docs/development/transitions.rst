@@ -86,3 +86,45 @@ By using different values for these four inputs and defining different
 transition measures, a wide range of analyses can be implemented. All
 conditional response probability and rank analyses are implemented using
 the same core of the transitions masker.
+
+The sequences masker
+~~~~~~~~~~~~~~~~~~~~
+
+Some analyses, such as :py:func:`~psifr.fr.lag_crp_compound` and
+:py:func:`~psifr.fr.distance_rank_shifted`, require examining
+longer sequences rather than individual one-step transitions.
+These analyses are implemented using the :py:func:`~psifr.transitions.sequences_masker`,
+which allows analysis code to iterate over sequences of a specified length.
+Only contiguous sequences are yielded; repeats or intrusions will interrupt
+the sequence and start it over at the next recall.
+
+Any other conditions, applied using the :code:`test` input, must also apply
+to every transition in the sequence for that sequence to be yielded by the
+masker. This makes it simple to, for example, run an analysis that only
+examines sequences of within-category transitions. See the
+:ref:`user guide <distance_rank_shifted>` for an example
+of conditionalizing a sequence analysis.
+
+Similarly to the
+:py:func:`~psifr.transitions.transitions_masker`, the sequences masker will
+yield the output position, previous item, current item, and possible items
+for each transition. Here, however, there is a list of values corresponding
+to positions within the sequence. For example, :code:`curr[-1]` is the
+"current" item for the most recent transition, and :code:`prev[-2]` is the
+"previous" item for the prior transition.
+
+.. ipython:: python
+
+    from psifr.transitions import sequences_masker
+    pool = [1, 2, 3, 4, 5, 6]
+    recs = [6, 2, 3, 6, 1, 4, 5]
+    masker = sequences_masker(
+        2, pool_items=pool, recall_items=recs, pool_output=pool, recall_output=recs
+    )
+    for output, prev, curr, poss in masker:
+        print(output, prev, curr, poss)
+
+From these outputs, it is then relatively simple to do things like
+calculate response probabilities conditionalized on prior transitions
+(like in the compound lag-CRP analysis) or measure distances to recalls before
+the just-recalled item (like in the shifted distance rank analysis).

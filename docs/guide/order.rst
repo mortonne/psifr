@@ -268,6 +268,8 @@ of item distances, we can calculate distance rank using
     dist_rank = fr.distance_rank(data, 'item_index', distances)
     dist_rank.agg(['mean', 'sem'])
 
+.. _distance_rank_shifted:
+
 Distance rank shifted
 ~~~~~~~~~~~~~~~~~~~~~
 
