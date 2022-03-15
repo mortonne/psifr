@@ -33,7 +33,7 @@ the actual count divided by the possible count.
 The transitions masker
 ~~~~~~~~~~~~~~~~~~~~~~
 
-The :py:func:`psifr.transitions.transitions_masker` is a generator that makes
+The :py:func:`~psifr.transitions.transitions_masker` is a generator that makes
 it simple to iterate over transitions while "masking" out events such as
 intrusions of items not on the list and repeats of items that have already
 been recalled.
