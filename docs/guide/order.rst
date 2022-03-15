@@ -88,7 +88,7 @@ Compound lag-CRP
 The compound lag-CRP was developed to measure how temporal clustering
 changes as a result of prior clustering during recall :cite:p:`Lohnas:2014`.
 They found evidence that temporal clustering is greater immediately after
-transitions with short lags compared to long lags. This
+transitions with short lags compared to long lags. The :py:func:`~psifr.fr.lag_crp_compound`
 analysis calculates conditional response probability by lag, but with the
 additional condition of the lag of the previous transition.
 
@@ -135,8 +135,9 @@ This suggests that there is compound temporal clustering.
 Lag rank
 ~~~~~~~~
 
-We can summarize the tendency to group together nearby items using a lag
-rank analysis :cite:p:`Polyn:2009`. For each recall, this determines the absolute lag of all
+We can summarize the tendency to group together nearby items by running a lag
+rank analysis :cite:p:`Polyn:2009` using :py:func:`~psifr.fr.lag_rank`.
+For each recall, this determines the absolute lag of all
 remaining items available for recall and then calculates their percentile
 rank. Then the rank of the actual transition made is taken, scaled to vary
 between 0 (furthest item chosen) and 1 (nearest item chosen). Chance
@@ -154,7 +155,8 @@ Category CRP
 
 If there are multiple categories or conditions of trials in a list, we
 can test whether participants tend to successively recall items from the
-same category. The category-CRP estimates the probability of successively
+same category. The category-CRP, calculated using
+:py:func:`~psifr.fr.category_crp`, estimates the probability of successively
 recalling two items from the same category :cite:p:`Polyn:2009`.
 
 .. ipython:: python
@@ -228,8 +230,8 @@ get only the non-diagonal entries.
     edges = np.percentile(squareform(distances), np.linspace(1, 99, 10))
 
 We can now calculate conditional response probability as a function of
-distance bin, to examine how response probability varies with semantic
-distance.
+distance bin using :py:func:`~psifr.fr.distance_crp`,
+to examine how response probability varies with semantic distance.
 
 .. ipython:: python
 
@@ -257,7 +259,9 @@ Similarly to the lag rank analysis of temporal clustering, we can
 summarize distance-based clustering (such as semantic clustering) with
 a single rank measure :cite:p:`Polyn:2009`. The distance rank varies from 0 (the
 most-distant item is always recalled) to 1 (the closest item is always
-recalled), with chance clustering corresponding to 0.5.
+recalled), with chance clustering corresponding to 0.5. Given a matrix
+of item distances, we can calculate distance rank using
+:py:func:`~psifr.fr.distance_rank`.
 
 .. ipython:: python
 
@@ -270,7 +274,8 @@ Distance rank shifted
 Like with the compound lag-CRP, we can also examine how recalls before
 the just-previous one may predict subsequent recalls. To examine whether
 distances relative to earlier items are predictive of the next recall,
-we can use a shifted distance rank analysis :cite:p:`Morton:2016`.
+we can use a shifted distance rank analysis :cite:p:`Morton:2016` using
+:py:func:`~psifr.fr.distance_rank_shifted`.
 
 Here, to account for the category structure of the list, we will only
 include within-category transitions (see the

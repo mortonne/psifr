@@ -22,7 +22,7 @@ a sample dataset with a given set of study lists and recalls:
     data
 
 Next, we'll merge together the study and recall events by matching up
-corresponding events:
+corresponding events using :py:func:`~psifr.fr.merge_free_recall`.
 
 .. ipython:: python
 
