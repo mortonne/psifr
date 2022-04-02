@@ -125,16 +125,14 @@ def transitions_masker(
     2 2 3 [1 3 4 5]
     5 1 4 [4 5]
     """
-    n = 0
     pool_items = pool_items.copy()
     pool_output = pool_output.copy()
     if test is not None:
         pool_test = pool_test.copy()
 
-    while n < len(recall_items) - 1:
+    for n in range(len(recall_items) - 1):
         # test if the previous item is in the pool
         if pd.isnull(recall_items[n]) or (recall_items[n] not in pool_items):
-            n += 1
             continue
 
         # remove the item from the pool
@@ -146,7 +144,6 @@ def transitions_masker(
 
         # test if the current item is in the pool
         if pd.isnull(recall_items[n + 1]) or (recall_items[n + 1] not in pool_items):
-            n += 1
             continue
 
         prev = recall_output[n]
@@ -155,7 +152,6 @@ def transitions_masker(
         if test is not None:
             # test if this transition is included
             if not test(recall_test[n], recall_test[n + 1]):
-                n += 1
                 continue
 
             # get included possible items
@@ -163,8 +159,7 @@ def transitions_masker(
             if not isinstance(ind, np.ndarray):
                 ind = np.repeat(ind, poss.shape)
             poss = poss[ind]
-        n += 1
-        yield n, prev, curr, poss
+        yield n + 1, prev, curr, poss
 
 
 def sequences_masker(
