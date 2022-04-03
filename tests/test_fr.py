@@ -539,3 +539,32 @@ def test_distance_rank_shifted():
 
     expected = np.array([0.683333, 0.416667])
     np.testing.assert_allclose(expected, stat['rank'].to_numpy(), atol=0.000001)
+
+
+def test_distance_rank_window():
+    """Test distance rank window analysis."""
+    distances = np.array(
+        [
+            [0, 3, 1, 1, 2, 2, 2, 2],
+            [3, 0, 1, 1, 2, 2, 2, 2],
+            [1, 1, 0, 4, 2, 2, 2, 2],
+            [1, 1, 4, 0, 2, 2, 2, 2],
+            [2, 2, 2, 2, 0, 5, 1, 1],
+            [2, 2, 2, 2, 5, 0, 1, 1],
+            [2, 2, 2, 2, 1, 1, 0, 6],
+            [2, 2, 2, 2, 1, 1, 6, 0],
+        ]
+    )
+    subjects = [1]
+    study = [
+        ['absence', 'hollow', 'pupil', 'fountain', 'piano', 'pillow', 'cat', 'tree']
+    ]
+    recall = [
+        ['fountain', 'hollow', 'absence', 'cat', 'piano', 'pupil', 'fountain']
+    ]
+    item_index = ([[0, 1, 2, 3, 4, 5, 6, 7]], [[3, 1, 0, 6, 4, 2, 3]])
+    raw = fr.table_from_lists(subjects, study, recall, item_index=item_index)
+    data = fr.merge_free_recall(raw, list_keys=['item_index'])
+    stat = fr.distance_rank_window(data, 'item_index', distances, [-1, 0, 1])
+    expected = np.array([[0.875, 0.875, 0.375], [0, 1, 1], [0, 0, 0]])
+    np.testing.assert_allclose(np.mean(expected, 0), stat['rank'].to_numpy())
