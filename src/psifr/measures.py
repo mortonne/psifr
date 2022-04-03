@@ -353,6 +353,47 @@ class TransitionDistanceRankShifted(TransitionMeasure):
         return stat
 
 
+class TransitionDistanceRankWindow(TransitionMeasure):
+    """Measure transition distance rank within a window."""
+
+    def __init__(
+        self,
+        index_key,
+        distances,
+        list_length,
+        window_lags,
+        item_query=None,
+        test_key=None,
+        test=None,
+    ):
+        super().__init__(
+            'input', index_key, item_query=item_query, test_key=test_key, test=test
+        )
+        self.distances = distances
+        self.list_length = list_length
+        self.window_lags = window_lags
+
+    def analyze_subject(self, subject, pool, recall):
+        ranks = transitions.rank_distance_window(
+            self.distances,
+            self.list_length,
+            self.window_lags,
+            pool['items'],
+            recall['items'],
+            pool['label'],
+            recall['label'],
+            pool['test'],
+            recall['test'],
+            self.test,
+        )
+        index = pd.MultiIndex.from_arrays(
+            [[subject] * len(self.window_lags), self.window_lags],
+            names=['subject', 'lag'],
+        )
+        stat = pd.DataFrame({'rank': np.nanmean(ranks, 0)}, index=index)
+        return stat
+
+
 class TransitionCategory(TransitionMeasure):
     """Measure conditional response probability by category transition."""
 

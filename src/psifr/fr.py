@@ -1547,6 +1547,66 @@ def distance_rank_shifted(
     return rank
 
 
+def distance_rank_window(
+    df, index_key, distances, window_lags, item_query=None, test_key=None, test=None
+):
+    """
+    Rank of transition distances relative to items in a window.
+
+    Transitions are ranked based on their distance relative to items
+    at specified lags from the previous item in the input list.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Merged study and recall data. See merge_lists. List length is
+        assumed to be the same for all lists within each subject.
+        Must have fields: subject, list, input, output, recalled.
+        Input position must be defined such that the first serial
+        position is 1, not 0.
+
+    index_key : str
+        Name of column containing the index of each item in the
+        `distances` matrix.
+
+    distances : numpy.array
+        Items x items matrix of pairwise distances or similarities.
+
+    window_lags : array_like
+        Serial position lags to include in the window.
+
+    item_query : str, optional
+        Query string to select items to include in the pool of possible
+        recalls to be examined. See `pandas.DataFrame.query` for
+        allowed format.
+
+    test_key : str, optional
+        Name of column with labels to use when testing transitions for
+        inclusion.
+
+    test : callable, optional
+        Callable that takes in previous and current item values and
+        returns True for transitions that should be included.
+
+    Returns
+    -------
+    stat : pandas.DataFrame
+        Has fields 'subject', 'lag', and 'rank'.
+    """
+    list_length = int(df['input'].max())
+    measure = measures.TransitionDistanceRankWindow(
+        index_key,
+        distances,
+        list_length,
+        window_lags,
+        item_query=item_query,
+        test_key=test_key,
+        test=test,
+    )
+    rank = measure.analyze(df)
+    return rank
+
+
 def category_crp(df, category_key, item_query=None, test_key=None, test=None):
     """
     Conditional response probability of within-category transitions.
