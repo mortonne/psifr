@@ -286,6 +286,124 @@ def sequences_masker(
             yield s_output[ind], s_prev[ind], s_curr[ind], s_poss[ind]
 
 
+def windows_masker(
+    list_length,
+    window_lags,
+    pool_items,
+    recall_items,
+    pool_output,
+    recall_output,
+    pool_test=None,
+    recall_test=None,
+    test=None,
+):
+    """
+    Yield windows around previous items in the input list.
+
+    Parameters
+    ----------
+    list_length : int
+        Number of items in each list.
+
+    window_lags : array_like
+        Serial position lags to include in the window.
+
+    pool_items : list
+        Input position of items available for recall.
+
+    recall_items : list
+        Input position of recalled items, in output position order.
+
+    pool_output : list
+        Output values for pool items. Must be the same order as pool.
+
+    recall_output : list
+        Output values in output position order.
+
+    pool_test : list, optional
+        Test values for items available for recall. Must be the same
+        order as pool.
+
+    recall_test : list, optional
+        Test values for items in output position order.
+
+    test : callable, optional
+        Used to test whether individual transitions should be included,
+        based on test values.
+
+            test(prev, curr) - test for included transition
+
+            test(prev, poss) - test for included possible transition
+
+    Yields
+    ------
+    output : int
+        Output positions of included transitions. The first transition
+        is 1.
+
+    prev : list
+        Output values for the "from" item in included transitions.
+
+    curr : list
+        Output values for the "to" item in included transitions.
+
+    poss : list of numpy.ndarray
+        Output values for all possible valid "to" items in included
+        transitions.
+    """
+    # pool items include all items in presentation order; poss items
+    # include only items that have not been recalled yet
+    poss_items = pool_items.copy()
+    poss_output = pool_output.copy()
+    if test is not None:
+        poss_test = pool_test.copy()
+        pool_test = np.asarray(pool_test)
+    window_lags = np.asarray(window_lags)
+
+    for n in range(len(recall_items) - 1):
+        # test if the previous item is in the pool
+        if pd.isnull(recall_items[n]) or (recall_items[n] not in poss_items):
+            continue
+
+        # remove the item from the pool
+        ind = poss_items.index(recall_items[n])
+        del poss_items[ind]
+        del poss_output[ind]
+        if test is not None:
+            del poss_test[ind]
+
+        # test if the current item is in the pool
+        if pd.isnull(recall_items[n + 1]) or (recall_items[n + 1] not in poss_items):
+            continue
+
+        # get windowed items in the input list
+        prev = recall_output[n] + window_lags
+
+        # exclude if any windowed items do not exist or fail test
+        if np.any(prev < 1) or np.any(prev > list_length):
+            continue
+
+        # exclude current/possible items in the window
+        curr = recall_output[n + 1]
+        if curr in prev:
+            continue
+        poss = np.asarray(poss_output)
+        include_poss = ~np.isin(poss, prev)
+        poss = poss[include_poss]
+
+        if test is not None:
+            # test if this transition is included
+            prev_ind = prev - 1
+            if np.any(~test(pool_test[prev_ind], recall_test[n + 1])):
+                continue
+
+            # get included possible items
+            poss_include_test = np.asarray(poss_test)[include_poss]
+            include = test(pool_test[prev_ind][:, np.newaxis], poss_include_test)
+            poss = poss[np.all(include, axis=0)]
+        yield n + 1, prev, curr, poss
+
+
 def count_lags(
     list_length,
     pool_items,
