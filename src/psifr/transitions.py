@@ -355,6 +355,7 @@ def windows_masker(
     # include only items that have not been recalled yet
     poss_items = pool_items.copy()
     poss_output = pool_output.copy()
+    pool_output = np.asarray(pool_output)
     if test is not None:
         poss_test = pool_test.copy()
         pool_test = np.asarray(pool_test)
@@ -377,31 +378,29 @@ def windows_masker(
             continue
 
         # get windowed items in the input list
-        prev = recall_output[n] + window_lags
+        prev = int(recall_items[n]) + window_lags
 
         # exclude if any windowed items do not exist or fail test
         if np.any(prev < 1) or np.any(prev > list_length):
             continue
 
         # exclude current/possible items in the window
-        curr = recall_output[n + 1]
+        curr = int(recall_items[n + 1])
         if curr in prev:
             continue
-        poss = np.asarray(poss_output)
+        poss = np.asarray(poss_items, int)
         include_poss = ~np.isin(poss, prev)
         poss = poss[include_poss]
 
         if test is not None:
             # test if this transition is included
-            prev_ind = prev - 1
-            if np.any(~test(pool_test[prev_ind], recall_test[n + 1])):
+            if np.any(~test(pool_test[prev - 1], recall_test[n + 1])):
                 continue
 
             # get included possible items
-            poss_include_test = np.asarray(poss_test)[include_poss]
-            include = test(pool_test[prev_ind][:, np.newaxis], poss_include_test)
+            include = test(pool_test[prev - 1][:, np.newaxis], pool_test[poss - 1])
             poss = poss[np.all(include, axis=0)]
-        yield n + 1, prev, curr, poss
+        yield n + 1, pool_output[prev - 1], pool_output[curr - 1], pool_output[poss - 1]
 
 
 def count_lags(
