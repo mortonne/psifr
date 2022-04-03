@@ -1121,7 +1121,7 @@ def rank_distance_windowed(
     test=None,
 ):
     """
-    Calculate percentile rank of shifted distances.
+    Calculate percentile rank of distances relative to items in a window.
 
     Parameters
     ----------
