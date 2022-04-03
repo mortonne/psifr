@@ -147,3 +147,39 @@ def test_windows_position():
         assert a_prev.tolist() == prev[i]
         assert a_curr == curr[i]
         assert a_poss.tolist() == poss[i]
+
+
+def test_windows_position_cond_category():
+    """Test study position within a window conditional on category."""
+    pool = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+    pool_category = [1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2]
+    outputs = [16, 15, 9, 1, 4, 8, 13, 14, 4, 7, 5]
+    outputs_category = [2, 2, 2, 1, 1, 1, 2, 2, 1, 1, 1]
+    window_lags = [-1, 0, 1]
+    list_length = 16
+    test = lambda x, y: x == y
+
+    # included: [(15, 9), (4, 8), (7, 5)]
+    # excluded: [(16, 15), (9, 1), (1, 4), (8, 13), (13, 14), (14, 4), (4, 7)]
+    output = [2, 5, 10]
+    prev = [[14, 15, 16], [3, 4, 5], [6, 7, 8]]
+    curr = [9, 8, 5]
+    poss = [[9, 10, 11, 12, 13], [2, 6, 7, 8], [2, 3, 5]]
+
+    # test the yielded values at each included output position
+    masker = transitions.windows_masker(
+        list_length,
+        window_lags,
+        pool,
+        outputs,
+        pool,
+        outputs,
+        pool_category,
+        outputs_category,
+        test,
+    )
+    for i, (a_output, a_prev, a_curr, a_poss) in enumerate(masker):
+        assert a_output == output[i]
+        assert a_prev.tolist() == prev[i]
+        assert a_curr == curr[i]
+        assert a_poss.tolist() == poss[i]
