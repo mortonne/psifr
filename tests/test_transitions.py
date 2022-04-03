@@ -116,3 +116,34 @@ def test_sequences_position(list_data):
         [[2, 5, 6, 7, 8], [2, 5, 6, 7]]
     ]
     assert steps == list(zip(output, prev, curr, poss))
+
+
+def test_windows_position():
+    """Test study position within a window."""
+    pool = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+    outputs = [16, 15, 9, 1, 4, 8, 13, 14, 4, 7, 5]
+    window_lags = [-1, 0, 1]
+    list_length = 16
+
+    # included: [(15, 9), (9, 1), (4, 8), (8, 13), (7, 5)]
+    # excluded: [(16, 15), (1, 4), (13, 14), (14, 4)]
+    output = [2, 3, 5, 6, 10]
+    prev = [[14, 15, 16], [8, 9, 10], [3, 4, 5], [7, 8, 9], [6, 7, 8]]
+    curr = [9, 1, 8, 13, 5]
+    poss = [
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+        [1, 2, 3, 4, 5, 6, 7, 11, 12, 13, 14],
+        [2, 6, 7, 8, 10, 11, 12, 13, 14],
+        [2, 3, 5, 6, 10, 11, 12, 13, 14],
+        [2, 3, 5, 10, 11, 12],
+    ]
+
+    # test the yielded values at each included output position
+    masker = transitions.windows_masker(
+        list_length, window_lags, pool, outputs, pool, outputs
+    )
+    for i, (a_output, a_prev, a_curr, a_poss) in enumerate(masker):
+        assert a_output == output[i]
+        assert a_prev.tolist() == prev[i]
+        assert a_curr == curr[i]
+        assert a_poss.tolist() == poss[i]
