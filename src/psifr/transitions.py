@@ -1179,12 +1179,12 @@ def rank_distance_window(
             test,
         )
         for output, w_prev, curr, poss in masker:
-            rank_shift = []
+            rank_lag = []
             for prev in w_prev:
                 actual = distances[prev, curr]
                 possible = distances[prev, poss]
-                rank_shift.append(1 - percentile_rank(actual, possible))
-            rank.append(rank_shift)
+                rank_lag.append(1 - percentile_rank(actual, possible))
+            rank.append(rank_lag)
     rank = np.array(rank)
     return rank
 
