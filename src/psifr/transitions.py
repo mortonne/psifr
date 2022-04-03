@@ -1108,7 +1108,7 @@ def rank_distance_shifted(
     return rank
 
 
-def rank_distance_windowed(
+def rank_distance_window(
     distances,
     list_length,
     window_lags,

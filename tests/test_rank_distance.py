@@ -142,7 +142,7 @@ def test_rank_distance_shifted(list_data, distances):
     np.testing.assert_allclose(ranks, expected)
 
 
-def test_rank_distance_windowed():
+def test_rank_distance_window():
     """Test rank distance relative to items in a window."""
     distances = np.array(
         [
@@ -182,7 +182,7 @@ def test_rank_distance_windowed():
     # actual: [2, 1, 2]
     # possible: [[2, 2, 5, 1, 1], [2, 1], [2, 1]]
     # rank: [0.625, 0.0, 1.0]
-    ranks = transitions.rank_distance_windowed(
+    ranks = transitions.rank_distance_window(
         distances,
         list_length,
         window_lags,
