@@ -12,4 +12,4 @@ repository on GitHub:
 
 .. code-block:: bash
 
-    pip install git+git://github.com/mortonne/psifr
+    pip install git+https://github.com/mortonne/psifr

@@ -33,7 +33,7 @@ You can also install the development version directly from the code
 repository on GitHub:
 
 ```bash
-pip install git+git://github.com/mortonne/psifr
+pip install git+https://github.com/mortonne/psifr
 ```
 
 ## Quickstart
