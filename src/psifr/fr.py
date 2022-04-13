@@ -293,7 +293,6 @@ def block_index(list_labels):
 
     Examples
     --------
-    >>> import numpy as np
     >>> from psifr import fr
     >>> list_labels = [2, 2, 3, 3, 3, 1, 1]
     >>> fr.block_index(list_labels)
@@ -581,6 +580,7 @@ def merge_free_recall(data, **kwargs):
 
     Examples
     --------
+    >>> import numpy as np
     >>> from psifr import fr
     >>> study = [['absence', 'hollow'], ['fountain', 'piano']]
     >>> recall = [['absence'], ['piano', 'hollow']]
@@ -1115,6 +1115,110 @@ def lag_crp(
     return crp
 
 
+def lag_crp_compound(
+    df, lag_key='input', count_unique=False, item_query=None, test_key=None, test=None
+):
+    """
+    Conditional response probability by lag of current and prior transitions.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Merged study and recall data. See merge_lists. List length is
+        assumed to be the same for all lists. Must have fields:
+        subject, list, input, output, recalled. Input position must be
+        defined such that the first serial position is 1, not 0.
+
+    lag_key : str, optional
+        Name of column to use when calculating lag between recalled
+        items. Default is to calculate lag based on input position.
+
+    count_unique : bool, optional
+        If true, possible transitions of the same lag will only be
+        incremented once per transition.
+
+    item_query : str, optional
+        Query string to select items to include in the pool of possible
+        recalls to be examined. See `pandas.DataFrame.query` for
+        allowed format.
+
+    test_key : str, optional
+        Name of column with labels to use when testing transitions for
+        inclusion.
+
+    test : callable, optional
+        Callable that takes in previous and current item values and
+        returns True for transitions that should be included.
+
+    Returns
+    -------
+    results : pandas.DataFrame
+        Has fields:
+
+        subject : hashable
+            Results are separated by each subject.
+
+        previous : int
+            Lag of the previous transition.
+
+        current : int
+            Lag of the current transition.
+
+        prob : float
+            Probability of each lag transition.
+
+        actual : int
+            Total of actual made transitions at each lag.
+
+        possible : int
+            Total of times each lag was possible, given the prior
+            input position and the remaining items to be recalled.
+
+    See Also
+    --------
+    lag_crp : Conditional response probability by lag.
+
+    Examples
+    --------
+    >>> from psifr import fr
+    >>> subjects = [1]
+    >>> study = [['absence', 'hollow', 'pupil', 'fountain']]
+    >>> recall = [['fountain', 'hollow', 'absence']]
+    >>> raw = fr.table_from_lists(subjects, study, recall)
+    >>> data = fr.merge_free_recall(raw)
+    >>> crp = fr.lag_crp_compound(data)
+    >>> crp.head(14)
+                              prob  actual  possible
+    subject previous current                        
+    1       -3       -3        NaN       0         0
+                     -2        NaN       0         0
+                     -1        NaN       0         0
+                      0        NaN       0         0
+                      1        NaN       0         0
+                      2        NaN       0         0
+                      3        NaN       0         0
+            -2       -3        NaN       0         0
+                     -2        NaN       0         0
+                     -1        1.0       1         1
+                      0        NaN       0         0
+                      1        0.0       0         1
+                      2        NaN       0         0
+                      3        NaN       0         0
+    """
+    list_length = df[lag_key].max()
+    measure = measures.TransitionLag(
+        list_length,
+        lag_key=lag_key,
+        count_unique=count_unique,
+        item_query=item_query,
+        test_key=test_key,
+        test=test,
+        compound=True
+    )
+    crp = measure.analyze(df)
+    return crp
+
+
 def lag_rank(df, item_query=None, test_key=None, test=None):
     """
     Calculate rank of the absolute lags in free recall lists.
@@ -1252,6 +1356,7 @@ def distance_crp(
 
     Examples
     --------
+    >>> import numpy as np
     >>> from scipy.spatial.distance import squareform
     >>> from psifr import fr
     >>> raw = fr.sample_data('Morton2013')
@@ -1354,6 +1459,149 @@ def distance_rank(df, index_key, distances, item_query=None, test_key=None, test
     """
     measure = measures.TransitionDistanceRank(
         index_key, distances, item_query=item_query, test_key=test_key, test=test
+    )
+    rank = measure.analyze(df)
+    return rank
+
+
+def distance_rank_shifted(
+    df, index_key, distances, max_shift, item_query=None, test_key=None, test=None
+):
+    """
+    Rank of transition distances relative to earlier items.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Merged study and recall data. See merge_lists. List length is
+        assumed to be the same for all lists within each subject.
+        Must have fields: subject, list, input, output, recalled.
+        Input position must be defined such that the first serial
+        position is 1, not 0.
+
+    index_key : str
+        Name of column containing the index of each item in the
+        `distances` matrix.
+
+    distances : numpy.array
+        Items x items matrix of pairwise distances or similarities.
+
+    max_shift : int
+        Maximum number of items back for which to rank distances.
+
+    item_query : str, optional
+        Query string to select items to include in the pool of possible
+        recalls to be examined. See `pandas.DataFrame.query` for
+        allowed format.
+
+    test_key : str, optional
+        Name of column with labels to use when testing transitions for
+        inclusion.
+
+    test : callable, optional
+        Callable that takes in previous and current item values and
+        returns True for transitions that should be included.
+
+    Returns
+    -------
+    stat : pandas.DataFrame
+        Has fields 'subject' and 'rank'.
+
+    See Also
+    --------
+    pool_index : Given a list of presented items and an item pool, look
+        up the pool index of each item.
+    distance_rank : Rank of transition distances relative to the
+        just-previous item.
+
+    Examples
+    --------
+    >>> from scipy.spatial.distance import squareform
+    >>> from psifr import fr
+    >>> raw = fr.sample_data('Morton2013')
+    >>> data = fr.merge_free_recall(raw)
+    >>> items, distances = fr.sample_distances('Morton2013')
+    >>> data['item_index'] = fr.pool_index(data['item'], items)
+    >>> dist_rank = fr.distance_rank_shifted(data, 'item_index', distances, 3)
+    >>> dist_rank
+                       rank
+    subject shift          
+    1       -3     0.523426
+            -2     0.559199
+            -1     0.634392
+    2       -3     0.475931
+            -2     0.507574
+    ...                 ...
+    46      -2     0.515332
+            -1     0.603304
+    47      -3     0.542951
+            -2     0.565001
+            -1     0.635415
+    <BLANKLINE>
+    [120 rows x 1 columns]
+    """
+    measure = measures.TransitionDistanceRankShifted(
+        index_key, distances, max_shift, item_query=item_query, test_key=test_key, test=test
+    )
+    rank = measure.analyze(df)
+    return rank
+
+
+def distance_rank_window(
+    df, index_key, distances, window_lags, item_query=None, test_key=None, test=None
+):
+    """
+    Rank of transition distances relative to items in a window.
+
+    Transitions are ranked based on their distance relative to items
+    at specified lags from the previous item in the input list.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Merged study and recall data. See merge_lists. List length is
+        assumed to be the same for all lists within each subject.
+        Must have fields: subject, list, input, output, recalled.
+        Input position must be defined such that the first serial
+        position is 1, not 0.
+
+    index_key : str
+        Name of column containing the index of each item in the
+        `distances` matrix.
+
+    distances : numpy.array
+        Items x items matrix of pairwise distances or similarities.
+
+    window_lags : array_like
+        Serial position lags to include in the window.
+
+    item_query : str, optional
+        Query string to select items to include in the pool of possible
+        recalls to be examined. See `pandas.DataFrame.query` for
+        allowed format.
+
+    test_key : str, optional
+        Name of column with labels to use when testing transitions for
+        inclusion.
+
+    test : callable, optional
+        Callable that takes in previous and current item values and
+        returns True for transitions that should be included.
+
+    Returns
+    -------
+    stat : pandas.DataFrame
+        Has fields 'subject', 'lag', and 'rank'.
+    """
+    list_length = int(df['input'].max())
+    measure = measures.TransitionDistanceRankWindow(
+        index_key,
+        distances,
+        list_length,
+        window_lags,
+        item_query=item_query,
+        test_key=test_key,
+        test=test,
     )
     rank = measure.analyze(df)
     return rank
@@ -1512,7 +1760,7 @@ def plot_spc(recall, **facet_kws):
     return g
 
 
-def plot_lag_crp(recall, max_lag=5, split=True, **facet_kws):
+def plot_lag_crp(recall, max_lag=5, lag_key='lag', split=True, **facet_kws):
     """
     Plot conditional response probability by lag.
 
@@ -1523,30 +1771,33 @@ def plot_lag_crp(recall, max_lag=5, split=True, **facet_kws):
     recall : pandas.DataFrame
         Results from calling `lag_crp`.
 
-    max_lag : int
+    max_lag : int, optional
         Maximum absolute lag to plot.
+
+    lag_key : str, optional
+        Name of the column indicating lag.
 
     split : bool, optional
         If true, will plot as two separate lines with a gap at lag 0.
     """
     if split:
-        filt_neg = f'{-max_lag} <= lag < 0'
-        filt_pos = f'0 < lag <= {max_lag}'
+        filt_neg = f'{-max_lag} <= {lag_key} < 0'
+        filt_pos = f'0 < {lag_key} <= {max_lag}'
         g = sns.FacetGrid(dropna=False, **facet_kws, data=recall.reset_index())
         g.map_dataframe(
             lambda data, **kws: sns.lineplot(
-                data=data.query(filt_neg), x='lag', y='prob', **kws
+                data=data.query(filt_neg), x=lag_key, y='prob', **kws
             )
         )
         g.map_dataframe(
             lambda data, **kws: sns.lineplot(
-                data=data.query(filt_pos), x='lag', y='prob', **kws
+                data=data.query(filt_pos), x=lag_key, y='prob', **kws
             )
         )
     else:
-        data = recall.query(f'{-max_lag} <= lag <= {max_lag}')
+        data = recall.query(f'{-max_lag} <= {lag_key} <= {max_lag}')
         g = sns.FacetGrid(dropna=False, **facet_kws, data=data.reset_index())
-        g.map_dataframe(sns.lineplot, x='lag', y='prob')
+        g.map_dataframe(sns.lineplot, x=lag_key, y='prob')
 
     g.set_xlabels('Lag')
     g.set_ylabels('CRP')

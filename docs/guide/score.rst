@@ -22,7 +22,12 @@ a sample dataset with a given set of study lists and recalls:
     data
 
 Next, we'll merge together the study and recall events by matching up
-corresponding events:
+corresponding events using :py:func:`~psifr.fr.merge_free_recall`.
+This scoring and merging step labels recall attempts
+in terms of whether they were correct recalls, repeats, or intrusions. At the
+same time, it also labels study events in terms of whether they were correctly
+recalled, and, if so, at which output position they were recalled. Free-recall
+analyses in Psifr are computed from data in this "merged" format.
 
 .. ipython:: python
 
@@ -52,10 +57,10 @@ See :ref:`custom-columns` for details.
 Filtering and sorting
 ---------------------
 
-Now that we have a merged :code:`DataFrame`, we can use Pandas methods to quickly
+Now that we have a merged :py:class:`~pandas.DataFrame`, we can use Pandas methods to quickly
 get different views of the data. For some analyses, we may want to organize in
 terms of the study list by removing repeats and intrusions. Because our data
-are in a :code:`DataFrame`, we can use the :code:`DataFrame.query` method:
+are in a :py:class:`~pandas.DataFrame`, we can use the :py:meth:`~pandas.DataFrame.query` method:
 
 .. ipython:: python
 
@@ -70,3 +75,11 @@ output position instead of input position:
 
 Note that we first sort by list, then output position, to keep the
 lists together.
+
+In addition to using the :py:meth:`~pandas.DataFrame.query` method directly,
+we can also use :py:func:`~psifr.fr.filter_data` to get subsets of data. For
+example, to get the first list only:
+
+.. ipython:: python
+
+    fr.filter_data(merged, lists=1)

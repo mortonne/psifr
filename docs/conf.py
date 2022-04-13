@@ -13,6 +13,7 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
+import doctest
 
 # -- Project information -----------------------------------------------------
 
@@ -21,7 +22,7 @@ copyright = '2020, Neal Morton'
 author = 'Neal Morton'
 
 # The full version, including alpha/beta/rc tags
-release = 'v0.7.0'
+release = 'v0.8.0'
 
 
 # -- General configuration ---------------------------------------------------
@@ -34,8 +35,27 @@ extensions = [
     'sphinx.ext.autosummary',
     'IPython.sphinxext.ipython_console_highlighting',
     'IPython.sphinxext.ipython_directive',
-    'sphinx.ext.napoleon'
+    'sphinx.ext.napoleon',
+    'sphinx.ext.doctest',
+    'sphinx.ext.intersphinx',
+    'sphinxcontrib.bibtex',
 ]
+
+bibtex_bibfiles = ['references.bib']
+
+doctest_default_flags = (
+    doctest.ELLIPSIS
+    | doctest.IGNORE_EXCEPTION_DETAIL
+    | doctest.DONT_ACCEPT_TRUE_FOR_1
+    | doctest.NORMALIZE_WHITESPACE
+)
+
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3', None),
+    'scipy': ('https://scipy.github.io/devdocs', None),
+    'seaborn': ('https://seaborn.pydata.org', None),
+    'pandas': ('https://pandas.pydata.org/docs/', None),
+}
 
 autosummary_generate = True
 

@@ -11,6 +11,7 @@ Counting transitions
     :toctree: api/
 
     count_lags
+    count_lags_compound
     count_category
     count_distance
 
@@ -23,6 +24,7 @@ Ranking transitions
     percentile_rank
     rank_lags
     rank_distance
+    rank_distance_shifted
 
 Iterating over transitions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -31,3 +33,4 @@ Iterating over transitions
     :toctree: api/
 
     transitions_masker
+    sequences_masker

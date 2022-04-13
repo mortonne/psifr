@@ -10,7 +10,7 @@ were not present in the study list.
 
 This type of information is well represented in a CSV spreadsheet,
 though any file format supported by pandas may be used for input. To
-import from a CSV, use pandas. For example:
+import from a CSV, use :py:func:`pandas.read_csv`. For example:
 
 .. code-block:: python
 

@@ -172,16 +172,23 @@ class TransitionLag(TransitionMeasure):
         item_query=None,
         test_key=None,
         test=None,
+        compound=False,
     ):
         super().__init__(
             'input', lag_key, item_query=item_query, test_key=test_key, test=test
         )
         self.list_length = list_length
         self.count_unique = count_unique
+        self.compound = compound
 
     def analyze_subject(self, subject, pool, recall):
 
-        actual, possible = transitions.count_lags(
+        if self.compound:
+            counter = transitions.count_lags_compound
+        else:
+            counter = transitions.count_lags
+
+        actual, possible = counter(
             self.list_length,
             pool['items'],
             recall['items'],
@@ -195,13 +202,17 @@ class TransitionLag(TransitionMeasure):
         crp = pd.DataFrame(
             {
                 'subject': subject,
-                'lag': actual.index,
                 'prob': actual / possible,
                 'actual': actual,
                 'possible': possible,
-            }
+            }, index=actual.index
         )
-        crp = crp.set_index(['subject', 'lag'])
+        if self.compound:
+            crp = crp.set_index('subject', append=True)
+            crp = crp.reorder_levels(['subject', 'previous', 'current'])
+        else:
+            crp = crp.set_index('subject', append=True)
+            crp = crp.reorder_levels(['subject', 'lag'])
         return crp
 
 
@@ -307,6 +318,79 @@ class TransitionDistanceRank(TransitionMeasure):
             {'subject': subject, 'rank': np.nanmean(ranks)}, index=[subject]
         )
         stat = stat.set_index('subject')
+        return stat
+
+
+class TransitionDistanceRankShifted(TransitionMeasure):
+    """Measure shifted transition rank by distance."""
+
+    def __init__(
+        self, index_key, distances, max_shift, item_query=None, test_key=None, test=None
+    ):
+        super().__init__(
+            index_key, index_key, item_query=item_query, test_key=test_key, test=test
+        )
+        self.distances = distances
+        self.max_shift = max_shift
+
+    def analyze_subject(self, subject, pool, recall):
+        ranks = transitions.rank_distance_shifted(
+            self.distances,
+            self.max_shift,
+            pool['items'],
+            recall['items'],
+            pool['label'],
+            recall['label'],
+            pool['test'],
+            recall['test'],
+            self.test,
+        )
+        shifts = np.arange(-self.max_shift, 0)
+        index = pd.MultiIndex.from_arrays(
+            [[subject] * self.max_shift, shifts], names=['subject', 'shift']
+        )
+        stat = pd.DataFrame({'rank': np.nanmean(ranks, 0)}, index=index)
+        return stat
+
+
+class TransitionDistanceRankWindow(TransitionMeasure):
+    """Measure transition distance rank within a window."""
+
+    def __init__(
+        self,
+        index_key,
+        distances,
+        list_length,
+        window_lags,
+        item_query=None,
+        test_key=None,
+        test=None,
+    ):
+        super().__init__(
+            'input', index_key, item_query=item_query, test_key=test_key, test=test
+        )
+        self.distances = distances
+        self.list_length = list_length
+        self.window_lags = window_lags
+
+    def analyze_subject(self, subject, pool, recall):
+        ranks = transitions.rank_distance_window(
+            self.distances,
+            self.list_length,
+            self.window_lags,
+            pool['items'],
+            recall['items'],
+            pool['label'],
+            recall['label'],
+            pool['test'],
+            recall['test'],
+            self.test,
+        )
+        index = pd.MultiIndex.from_arrays(
+            [[subject] * len(self.window_lags), self.window_lags],
+            names=['subject', 'lag'],
+        )
+        stat = pd.DataFrame({'rank': np.nanmean(ranks, 0)}, index=index)
         return stat
 
 

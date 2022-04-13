@@ -6,6 +6,7 @@
    import pandas as pd
    import matplotlib as mpl
    import matplotlib.pyplot as plt
+   import seaborn as sns
 
    plt.style.use('default')
    mpl.rcParams['axes.labelsize'] = 'large'
@@ -40,7 +41,7 @@ Lag-CRP
 ~~~~~~~
 
 In all CRP analyses, transition probabilities are calculated conditional
-on a given transition being available. For example, in a six-item list,
+on a given transition being available :cite:p:`Kahana:1996`. For example, in a six-item list,
 if the items 6, 1, and 4 have been recalled, then possible items that could
 have been recalled next are 2, 3, or 5; therefore, possible lags at
 that point in the recall sequence are -2, -1, or +1. The number of actual
@@ -81,11 +82,62 @@ show evidence of a temporal contiguity effect; that is, items presented near
 to one another in the list are more likely to be recalled successively than
 items that are distant from one another in the list.
 
+Compound lag-CRP
+~~~~~~~~~~~~~~~~
+
+The compound lag-CRP was developed to measure how temporal clustering
+changes as a result of prior clustering during recall :cite:p:`Lohnas:2014`.
+They found evidence that temporal clustering is greater immediately after
+transitions with short lags compared to long lags. The :py:func:`~psifr.fr.lag_crp_compound`
+analysis calculates conditional response probability by lag, but with the
+additional condition of the lag of the previous transition.
+
+.. ipython:: python
+
+    crp = fr.lag_crp_compound(data)
+    crp
+
+The results show conditional response probabilities as in the standard
+lag-CRP analysis, but with two lag columns: :code:`previous` (the lag
+of the prior transition) and :code:`current` (the lag of the current
+transition).
+
+This is a lot of information, and the sample size for many bins is very
+small. Following :cite:p:`Lohnas:2014`, we can apply bins to the lag of
+the previous transition to increase the sample size in each bin. We
+first sum the actual and possible transition counts, and then calculate
+the probability of each of the new bins.
+
+.. ipython:: python
+
+    binned = crp.reset_index()
+    binned.loc[binned['previous'].abs() > 3, 'Previous'] = '|Lag|>3'
+    binned.loc[binned['previous'] == 1, 'Previous'] = 'Lag=+1'
+    binned.loc[binned['previous'] == -1, 'Previous'] = 'Lag=-1'
+    summed = binned.groupby(['subject', 'Previous', 'current'])[['actual', 'possible']].sum()
+    summed['prob'] = summed['actual'] / summed['possible']
+    summed
+
+We can then plot the compound lag-CRP using the standard
+:py:func:`~psifr.fr.plot_lag_crp` plotting function.
+
+.. ipython:: python
+
+    @savefig lag_crp_compound.svg
+    g = fr.plot_lag_crp(summed, lag_key='current', hue='Previous').add_legend()
+
+Note that some lags are considered impossible as they would require
+a repeat of a previously recalled item (e.g., a +1 lag followed by a -1
+lag is not possible). For both of the adjacent conditions (+1 and -1),
+the lag-CRP is sharper compared to the long-lag condition (:math:`| \mathrm{lag} | >3`).
+This suggests that there is compound temporal clustering.
+
 Lag rank
 ~~~~~~~~
 
-We can summarize the tendency to group together nearby items using a lag
-rank analysis. For each recall, this determines the absolute lag of all
+We can summarize the tendency to group together nearby items by running a lag
+rank analysis :cite:p:`Polyn:2009` using :py:func:`~psifr.fr.lag_rank`.
+For each recall, this determines the absolute lag of all
 remaining items available for recall and then calculates their percentile
 rank. Then the rank of the actual transition made is taken, scaled to vary
 between 0 (furthest item chosen) and 1 (nearest item chosen). Chance
@@ -103,8 +155,9 @@ Category CRP
 
 If there are multiple categories or conditions of trials in a list, we
 can test whether participants tend to successively recall items from the
-same category. The category-CRP estimates the probability of successively
-recalling two items from the same category.
+same category. The category-CRP, calculated using
+:py:func:`~psifr.fr.category_crp`, estimates the probability of successively
+recalling two items from the same category :cite:p:`Polyn:2009`.
 
 .. ipython:: python
 
@@ -117,6 +170,27 @@ categories in the list. In this case, there are three categories, so
 a category CRP of 0.33 would be predicted if recalls were sampled
 randomly from the list.
 
+Category clustering
+~~~~~~~~~~~~~~~~~~~
+
+A number of measures have been developed to measure category clustering
+relative to that expected due to chance, under certain assumptions. Two
+such measures are list-based clustering (LBC) :cite:p:`Stricker:2002` and adjusted ratio of
+clustering (ARC) :cite:p:`Roenker:1971`.
+
+These measures can be calculated using the
+:py:func:`~psifr.fr.category_clustering` function.
+
+.. ipython:: python
+
+    clust = fr.category_clustering(data, category_key='category')
+    clust.agg(['mean', 'sem'])
+
+Both measures are defined such that positive values indicate above-chance
+clustering. ARC scores have a maximum of 1, while the upper
+bound of LBC scores depends on the number of categories and the number
+of items per category in the study list.
+
 Distance CRP
 ~~~~~~~~~~~~
 
@@ -127,7 +201,7 @@ not), recall may also depend on more nuanced semantic relationships.
 Models of semantic knowledge allow the semantic distance between
 pairs of items to be quantified. If you have such a model defined for
 your stimulus pool, you can use the distance CRP analysis to examine
-how semantic distance affects recall transitions.
+how semantic distance affects recall transitions :cite:p:`Howard:2002,Morton:2016`.
 
 You must first define distances between pairs of items. Here, we
 use correlation distances based on the wiki2USE model.
@@ -147,7 +221,7 @@ the pool corresponding to the distances matrix.
 
 Finally, we must define distance bins. Here, we use 10 bins with
 equally spaced distance percentiles. Note that, when calculating
-distance percentiles, we use the :py:func:`squareform` function to
+distance percentiles, we use the :py:func:`~scipy.spatial.distance.squareform` function to
 get only the non-diagonal entries.
 
 .. ipython:: python
@@ -156,8 +230,8 @@ get only the non-diagonal entries.
     edges = np.percentile(squareform(distances), np.linspace(1, 99, 10))
 
 We can now calculate conditional response probability as a function of
-distance bin, to examine how response probability varies with semantic
-distance.
+distance bin using :py:func:`~psifr.fr.distance_crp`,
+to examine how response probability varies with semantic distance.
 
 .. ipython:: python
 
@@ -183,14 +257,49 @@ Distance rank
 
 Similarly to the lag rank analysis of temporal clustering, we can
 summarize distance-based clustering (such as semantic clustering) with
-a single rank measure. The distance rank varies from 0 (the
+a single rank measure :cite:p:`Polyn:2009`. The distance rank varies from 0 (the
 most-distant item is always recalled) to 1 (the closest item is always
-recalled), with chance clustering corresponding to 0.5.
+recalled), with chance clustering corresponding to 0.5. Given a matrix
+of item distances, we can calculate distance rank using
+:py:func:`~psifr.fr.distance_rank`.
 
 .. ipython:: python
 
     dist_rank = fr.distance_rank(data, 'item_index', distances)
     dist_rank.agg(['mean', 'sem'])
+
+.. _distance_rank_shifted:
+
+Distance rank shifted
+~~~~~~~~~~~~~~~~~~~~~
+
+Like with the compound lag-CRP, we can also examine how recalls before
+the just-previous one may predict subsequent recalls. To examine whether
+distances relative to earlier items are predictive of the next recall,
+we can use a shifted distance rank analysis :cite:p:`Morton:2016` using
+:py:func:`~psifr.fr.distance_rank_shifted`.
+
+Here, to account for the category structure of the list, we will only
+include within-category transitions (see the
+:ref:`Restricting analysis to specific items <restricting>` section for details).
+
+.. ipython:: python
+
+    ranks = fr.distance_rank_shifted(
+        data, 'item_index', distances, 4, test_key='category', test=lambda x, y: x == y
+    )
+    ranks
+
+The distance rank is returned for each shift. The -1 shift is the same as
+the standard distance rank analysis. We can visualize how distance rank
+changes with shift using :py:func:`seaborn.relplot`.
+
+.. ipython:: python
+
+    @savefig distance_rank_shifted.svg
+    g = sns.relplot(
+        data=ranks.reset_index(), x='shift', y='rank', kind='line', height=3
+    ).set(xlabel='Output lag', ylabel='Distance rank', xticks=[-4, -3, -2, -1])
 
 Restricting analysis to specific items
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -226,7 +335,8 @@ Restricting analysis to specific transitions
 In other cases, you may want to focus an analysis on a subset of
 transitions based on some criteria. For example, if a list contains
 items from different categories, it is a good idea to take this into
-account when measuring temporal clustering using a lag-CRP analysis.
+account when measuring temporal clustering using a lag-CRP analysis
+:cite:p:`Polyn:2011,Morton:2017`.
 One approach is to separately analyze within- and across-category
 transitions.
 

@@ -208,7 +208,8 @@ def count_outputs(
             curr = int(curr)
             poss = poss.astype(int)
 
-            # for this step, calculate actual lag and all possible lags
+            # for this step, calculate actual input position and
+            # possible input positions
             count_actual[op - 1, curr - 1] += 1
             if count_unique:
                 for j in poss:

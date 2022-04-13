@@ -33,32 +33,30 @@ the actual count divided by the possible count.
 The transitions masker
 ~~~~~~~~~~~~~~~~~~~~~~
 
-The :py:func:`psifr.transitions.transitions_masker` is a generator that makes
+The :py:func:`~psifr.transitions.transitions_masker` is a generator that makes
 it simple to iterate over transitions while "masking" out events such as
 intrusions of items not on the list and repeats of items that have already
 been recalled.
 
-On each step of the iterator, the previous, current, and possible items are
-yielded. The *previous*
+On each step of the iterator, the output position and the previous, current,
+and possible items are yielded. The *output position* is the position of the transition
+in the recall sequence, starting from one, including all repeats and intrusions. The *previous*
 item is the item being transitioned from. The *current* item is the item being
 transitioned to. The *possible* items includes an array of all items that
 were valid to be recalled next, given the recall sequence up to that point (not
 including the current item).
 
-.. ipython::
+.. ipython:: python
 
-    In [1]: from psifr.transitions import transitions_masker
+    from psifr.transitions import transitions_masker
+    pool = [1, 2, 3, 4, 5, 6]
+    recs = [6, 2, 3, 6, 1, 4]
+    masker = transitions_masker(
+        pool_items=pool, recall_items=recs, pool_output=pool, recall_output=recs
+    )
 
-    In [2]: pool = [1, 2, 3, 4, 5, 6]
-
-    In [3]: recs = [6, 2, 3, 6, 1, 4]
-
-    In [4]: masker = transitions_masker(pool_items=pool, recall_items=recs,
-       ...:                             pool_output=pool, recall_output=recs)
-
-    In [5]: for prev, curr, poss in masker:
-       ...:     print(prev, curr, poss)
-       ...:
+    for op, prev, curr, poss in masker:
+       print(op, prev, curr, poss)
 
 Only valid transitions are yielded, so the code
 for a specific analysis only needs to calculate the transition measure of
@@ -85,4 +83,48 @@ Four inputs are required:
     Output codes for each recall in the sequence of recalls.
 
 By using different values for these four inputs and defining different
-transition measures, a wide range of analyses can be implemented.
+transition measures, a wide range of analyses can be implemented. All
+conditional response probability and rank analyses are implemented using
+the same core of the transitions masker.
+
+The sequences masker
+~~~~~~~~~~~~~~~~~~~~
+
+Some analyses, such as :py:func:`~psifr.fr.lag_crp_compound` and
+:py:func:`~psifr.fr.distance_rank_shifted`, require examining
+longer sequences rather than individual one-step transitions.
+These analyses are implemented using the :py:func:`~psifr.transitions.sequences_masker`,
+which allows analysis code to iterate over sequences of a specified length.
+Only contiguous sequences are yielded; repeats or intrusions will interrupt
+the sequence and start it over at the next recall.
+
+Any other conditions, applied using the :code:`test` input, must also apply
+to every transition in the sequence for that sequence to be yielded by the
+masker. This makes it simple to, for example, run an analysis that only
+examines sequences of within-category transitions. See the
+:ref:`user guide <distance_rank_shifted>` for an example
+of conditionalizing a sequence analysis.
+
+Similarly to the
+:py:func:`~psifr.transitions.transitions_masker`, the sequences masker will
+yield the output position, previous item, current item, and possible items
+for each transition. Here, however, there is a list of values corresponding
+to positions within the sequence. For example, :code:`curr[-1]` is the
+"current" item for the most recent transition, and :code:`prev[-2]` is the
+"previous" item for the prior transition.
+
+.. ipython:: python
+
+    from psifr.transitions import sequences_masker
+    pool = [1, 2, 3, 4, 5, 6]
+    recs = [6, 2, 3, 6, 1, 4, 5]
+    masker = sequences_masker(
+        2, pool_items=pool, recall_items=recs, pool_output=pool, recall_output=recs
+    )
+    for output, prev, curr, poss in masker:
+        print(output, prev, curr, poss)
+
+From these outputs, it is then relatively simple to do things like
+calculate response probabilities conditionalized on prior transitions
+(like in the compound lag-CRP analysis) or measure distances to recalls before
+the just-recalled item (like in the shifted distance rank analysis).

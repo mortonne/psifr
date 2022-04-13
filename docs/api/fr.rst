@@ -44,6 +44,7 @@ Transition probability
     :toctree: api/
 
     lag_crp
+    lag_crp_compound
     category_crp
     distance_crp
 
@@ -55,6 +56,15 @@ Transition rank
 
     lag_rank
     distance_rank
+    distance_rank_shifted
+
+Clustering
+~~~~~~~~~~
+
+.. autosummary::
+    :toctree: api/
+
+    category_clustering
 
 Plotting
 ~~~~~~~~
