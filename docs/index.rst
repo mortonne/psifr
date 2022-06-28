@@ -14,6 +14,8 @@ analyses are often complicated and difficult to implement.
 Psifr leverages the Pandas data analysis package to make precise and flexible
 analysis of free recall data faster and easier.
 
+If you use Psifr, please cite the paper :cite:p:`Morton:2020`.
+
 See the code repository for version `release notes`_.
 
 .. toctree::
