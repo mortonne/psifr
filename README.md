@@ -68,11 +68,16 @@ Then use the Matlab function `writetable` to write a CSV file which can then be 
 
 If you use Psifr, please cite the paper:
 
-Morton, N. W., (2020). Psifr: Analysis and visualization of free recall data. Journal of Open Source Software, 5(54), 2669, https://doi.org/10.21105/joss.02669
+Morton, N. W., (2020). 
+Psifr: Analysis and visualization of free recall data. 
+Journal of Open Source Software, 5(54), 2669, https://doi.org/10.21105/joss.02669
 
 ## Publications using Psifr
 
-Hong, B., Barense, M. D., Pace-Tonna, C. A. & Mack, M. L. (2022) Emphasizing associations from encoding affects free recall at retrieval. Proceedings of the Annual Meeting of the Cognitive Science Society 453–460.
+Hong, B., Barense, M. D., Pace-Tonna, C. A. & Mack, M. L. (2022). 
+Emphasizing associations from encoding affects free recall at retrieval. 
+Proceedings of the Annual Meeting of the Cognitive Science Society 453–460.
+https://escholarship.org/uc/item/2gw1s36q
 
 ## Related projects
 
