@@ -143,3 +143,6 @@ docs/api/api
 
 # macOS
 .DS_Store
+
+# Jupyter test notebooks
+jupyter/
