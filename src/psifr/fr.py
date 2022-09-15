@@ -1783,7 +1783,7 @@ def plot_lag_crp(recall, max_lag=5, lag_key='lag', split=True, **facet_kws):
     if split:
         filt_neg = f'{-max_lag} <= {lag_key} < 0'
         filt_pos = f'0 < {lag_key} <= {max_lag}'
-        g = sns.FacetGrid(dropna=False, **facet_kws, data=recall.reset_index())
+        g = sns.FacetGrid(dropna=True, **facet_kws, data=recall.reset_index())
         g.map_dataframe(
             lambda data, **kws: sns.lineplot(
                 data=data.query(filt_neg), x=lag_key, y='prob', **kws
@@ -1869,7 +1869,7 @@ def plot_swarm_error(
         sns.swarmplot, x=x, y=y, color=swarm_color, size=swarm_size, zorder=1
     )
     g.map_dataframe(
-        sns.pointplot, x=x, y=y, color=point_color, join=False, capsize=0.5, linewidth=1
+        sns.pointplot, x=x, y=y, color=point_color, join=False, capsize=0.5
     )
     return g
 
