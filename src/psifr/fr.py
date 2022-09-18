@@ -830,16 +830,12 @@ def spc(df):
 
     Returns
     -------
-    recall : pandas.Series
-        Index includes:
-
+    recall : pandas.DataFrame
         subject : hashable
             Subject identifier.
 
         input : int
             Serial position in the list.
-
-        Values are:
 
         recall : float
             Recall probability for each serial position.
@@ -855,21 +851,20 @@ def spc(df):
     >>> raw = fr.sample_data('Morton2013')
     >>> data = fr.merge_free_recall(raw)
     >>> fr.spc(data)
-                     recall
-    subject input          
-    1       1.0    0.541667
-            2.0    0.458333
-            3.0    0.625000
-            4.0    0.333333
-            5.0    0.437500
-    ...                 ...
-    47      20.0   0.500000
-            21.0   0.770833
-            22.0   0.729167
-            23.0   0.895833
-            24.0   0.958333
+         subject  input    recall
+    0          1    1.0  0.541667
+    1          1    2.0  0.458333
+    2          1    3.0  0.625000
+    3          1    4.0  0.333333
+    4          1    5.0  0.437500
+    ..       ...    ...       ...
+    955       47   20.0  0.500000
+    956       47   21.0  0.770833
+    957       47   22.0  0.729167
+    958       47   23.0  0.895833
+    959       47   24.0  0.958333
     <BLANKLINE>
-    [960 rows x 1 columns]
+    [960 rows x 3 columns]
     """
     clean = df.query('study')
     recall = clean.groupby(['subject', 'input'])['recall'].mean()
@@ -929,21 +924,20 @@ def pnr(df, item_query=None, test_key=None, test=None):
     >>> raw = fr.sample_data('Morton2013')
     >>> data = fr.merge_free_recall(raw)
     >>> fr.pnr(data)
-                              prob  actual  possible
-    subject output input                            
-    1       1      1      0.000000       0        48
-                   2      0.020833       1        48
-                   3      0.000000       0        48
-                   4      0.000000       0        48
-                   5      0.000000       0        48
-    ...                        ...     ...       ...
-    47      24     20          NaN       0         0
-                   21          NaN       0         0
-                   22          NaN       0         0
-                   23          NaN       0         0
-                   24          NaN       0         0
+           subject  output  input      prob  actual  possible
+    0            1       1      1  0.000000       0        48
+    1            1       1      2  0.020833       1        48
+    2            1       1      3  0.000000       0        48
+    3            1       1      4  0.000000       0        48
+    4            1       1      5  0.000000       0        48
+    ...        ...     ...    ...       ...     ...       ...
+    23035       47      24     20       NaN       0         0
+    23036       47      24     21       NaN       0         0
+    23037       47      24     22       NaN       0         0
+    23038       47      24     23       NaN       0         0
+    23039       47      24     24       NaN       0         0
     <BLANKLINE>
-    [23040 rows x 3 columns]
+    [23040 rows x 6 columns]
     """
     list_length = int(df['input'].max())
     measure = measures.TransitionOutputs(
@@ -1001,21 +995,20 @@ def pli_list_lag(df, max_lag):
     >>> raw = fr.sample_data('Morton2013')
     >>> data = fr.merge_free_recall(raw)
     >>> fr.pli_list_lag(data, 3)
-                      count  per_list      prob
-    subject list_lag                           
-    1       1             7  0.155556  0.259259
-            2             5  0.111111  0.185185
-            3             0  0.000000  0.000000
-    2       1             9  0.200000  0.191489
-            2             2  0.044444  0.042553
-    ...                 ...       ...       ...
-    46      2             1  0.022222  0.100000
-            3             0  0.000000  0.000000
-    47      1             5  0.111111  0.277778
-            2             1  0.022222  0.055556
-            3             0  0.000000  0.000000
+         subject  list_lag  count  per_list      prob
+    0          1         1      7  0.155556  0.259259
+    1          1         2      5  0.111111  0.185185
+    2          1         3      0  0.000000  0.000000
+    3          2         1      9  0.200000  0.191489
+    4          2         2      2  0.044444  0.042553
+    ..       ...       ...    ...       ...       ...
+    115       46         2      1  0.022222  0.100000
+    116       46         3      0  0.000000  0.000000
+    117       47         1      5  0.111111  0.277778
+    118       47         2      1  0.022222  0.055556
+    119       47         3      0  0.000000  0.000000
     <BLANKLINE>
-    [120 rows x 3 columns]
+    [120 rows x 5 columns]
     """
     result = df.groupby('subject').apply(_subject_pli_list_lag, max_lag)
     result = result.reset_index()
@@ -1088,21 +1081,20 @@ def lag_crp(
     >>> raw = fr.sample_data('Morton2013')
     >>> data = fr.merge_free_recall(raw)
     >>> fr.lag_crp(data)
-                       prob  actual  possible
-    subject lag                              
-    1       -23.0  0.020833       1        48
-            -22.0  0.035714       3        84
-            -21.0  0.026316       3       114
-            -20.0  0.024000       3       125
-            -19.0  0.014388       2       139
-    ...                 ...     ...       ...
-    47       19.0  0.061224       3        49
-             20.0  0.055556       2        36
-             21.0  0.045455       1        22
-             22.0  0.071429       1        14
-             23.0  0.000000       0         6
+          subject   lag      prob  actual  possible
+    0           1 -23.0  0.020833       1        48
+    1           1 -22.0  0.035714       3        84
+    2           1 -21.0  0.026316       3       114
+    3           1 -20.0  0.024000       3       125
+    4           1 -19.0  0.014388       2       139
+    ...       ...   ...       ...     ...       ...
+    1875       47  19.0  0.061224       3        49
+    1876       47  20.0  0.055556       2        36
+    1877       47  21.0  0.045455       1        22
+    1878       47  22.0  0.071429       1        14
+    1879       47  23.0  0.000000       0         6
     <BLANKLINE>
-    [1880 rows x 3 columns]
+    [1880 rows x 5 columns]
     """
     list_length = df[lag_key].max()
     measure = measures.TransitionLag(
@@ -1190,22 +1182,21 @@ def lag_crp_compound(
     >>> data = fr.merge_free_recall(raw)
     >>> crp = fr.lag_crp_compound(data)
     >>> crp.head(14)
-                              prob  actual  possible
-    subject previous current                        
-    1       -3       -3        NaN       0         0
-                     -2        NaN       0         0
-                     -1        NaN       0         0
-                      0        NaN       0         0
-                      1        NaN       0         0
-                      2        NaN       0         0
-                      3        NaN       0         0
-            -2       -3        NaN       0         0
-                     -2        NaN       0         0
-                     -1        1.0       1         1
-                      0        NaN       0         0
-                      1        0.0       0         1
-                      2        NaN       0         0
-                      3        NaN       0         0
+        subject  previous  current  prob  actual  possible
+    0         1        -3       -3   NaN       0         0
+    1         1        -3       -2   NaN       0         0
+    2         1        -3       -1   NaN       0         0
+    3         1        -3        0   NaN       0         0
+    4         1        -3        1   NaN       0         0
+    5         1        -3        2   NaN       0         0
+    6         1        -3        3   NaN       0         0
+    7         1        -2       -3   NaN       0         0
+    8         1        -2       -2   NaN       0         0
+    9         1        -2       -1   1.0       1         1
+    10        1        -2        0   NaN       0         0
+    11        1        -2        1   0.0       0         1
+    12        1        -2        2   NaN       0         0
+    13        1        -2        3   NaN       0         0
     """
     list_length = df[lag_key].max()
     measure = measures.TransitionLag(
@@ -1263,13 +1254,12 @@ def lag_rank(df, item_query=None, test_key=None, test=None):
     >>> data = fr.merge_free_recall(raw)
     >>> lag_rank = fr.lag_rank(data)
     >>> lag_rank.head()
-                 rank
-    subject          
-    1        0.610953
-    2        0.635676
-    3        0.612607
-    4        0.667090
-    5        0.643923
+       subject      rank
+    0        1  0.610953
+    1        2  0.635676
+    2        3  0.612607
+    3        4  0.667090
+    4        5  0.643923
     """
     measure = measures.TransitionLagRank(
         item_query=item_query, test_key=test_key, test=test
@@ -1367,21 +1357,20 @@ def distance_crp(
     >>> data['item_index'] = fr.pool_index(data['item'], items)
     >>> edges = np.percentile(squareform(distances), np.linspace(1, 99, 10))
     >>> fr.distance_crp(data, 'item_index', distances, edges)
-                                 bin      prob  actual  possible
-    subject center                                              
-    1       0.467532  (0.352, 0.583]  0.085456     151      1767
-            0.617748  (0.583, 0.653]  0.067916      87      1281
-            0.673656  (0.653, 0.695]  0.062500      65      1040
-            0.711075  (0.695, 0.727]  0.051836      48       926
-            0.742069  (0.727, 0.757]  0.050633      44       869
-    ...                          ...       ...     ...       ...
-    47      0.742069  (0.727, 0.757]  0.062822      61       971
-            0.770867  (0.757, 0.785]  0.030682      27       880
-            0.800404  (0.785, 0.816]  0.040749      37       908
-            0.834473  (0.816, 0.853]  0.046651      39       836
-            0.897275  (0.853, 0.941]  0.028868      25       866
+         subject    center             bin      prob  actual  possible
+    0          1  0.467532  (0.352, 0.583]  0.085456     151      1767
+    1          1  0.617748  (0.583, 0.653]  0.067916      87      1281
+    2          1  0.673656  (0.653, 0.695]  0.062500      65      1040
+    3          1  0.711075  (0.695, 0.727]  0.051836      48       926
+    4          1  0.742069  (0.727, 0.757]  0.050633      44       869
+    ..       ...       ...             ...       ...     ...       ...
+    355       47  0.742069  (0.727, 0.757]  0.062822      61       971
+    356       47  0.770867  (0.757, 0.785]  0.030682      27       880
+    357       47  0.800404  (0.785, 0.816]  0.040749      37       908
+    358       47  0.834473  (0.816, 0.853]  0.046651      39       836
+    359       47  0.897275  (0.853, 0.941]  0.028868      25       866
     <BLANKLINE>
-    [360 rows x 4 columns]
+    [360 rows x 6 columns]
     """
     measure = measures.TransitionDistance(
         index_key,
@@ -1451,13 +1440,12 @@ def distance_rank(df, index_key, distances, item_query=None, test_key=None, test
     >>> data['item_index'] = fr.pool_index(data['item'], items)
     >>> dist_rank = fr.distance_rank(data, 'item_index', distances)
     >>> dist_rank.head()
-                 rank
-    subject          
-    1        0.635571
-    2        0.571457
-    3        0.627282
-    4        0.637596
-    5        0.646181
+       subject      rank
+    0        1  0.635571
+    1        2  0.571457
+    2        3  0.627282
+    3        4  0.637596
+    4        5  0.646181
     """
     measure = measures.TransitionDistanceRank(
         index_key, distances, item_query=item_query, test_key=test_key, test=test
@@ -1526,21 +1514,20 @@ def distance_rank_shifted(
     >>> data['item_index'] = fr.pool_index(data['item'], items)
     >>> dist_rank = fr.distance_rank_shifted(data, 'item_index', distances, 3)
     >>> dist_rank
-                       rank
-    subject shift          
-    1       -3     0.523426
-            -2     0.559199
-            -1     0.634392
-    2       -3     0.475931
-            -2     0.507574
-    ...                 ...
-    46      -2     0.515332
-            -1     0.603304
-    47      -3     0.542951
-            -2     0.565001
-            -1     0.635415
+         subject  shift      rank
+    0          1     -3  0.523426
+    1          1     -2  0.559199
+    2          1     -1  0.634392
+    3          2     -3  0.475931
+    4          2     -2  0.507574
+    ..       ...    ...       ...
+    115       46     -2  0.515332
+    116       46     -1  0.603304
+    117       47     -3  0.542951
+    118       47     -2  0.565001
+    119       47     -1  0.635415
     <BLANKLINE>
-    [120 rows x 1 columns]
+    [120 rows x 3 columns]
     """
     measure = measures.TransitionDistanceRankShifted(
         index_key, distances, max_shift, item_query=item_query, test_key=test_key, test=test
@@ -1661,13 +1648,12 @@ def category_crp(df, category_key, item_query=None, test_key=None, test=None):
     >>> data = fr.merge_free_recall(raw, study_keys=['category'])
     >>> cat_crp = fr.category_crp(data, 'category')
     >>> cat_crp.head()
-                 prob  actual  possible
-    subject                            
-    1        0.801147     419       523
-    2        0.733456     399       544
-    3        0.763158     377       494
-    4        0.814882     449       551
-    5        0.877273     579       660
+       subject      prob  actual  possible
+    0        1  0.801147     419       523
+    1        2  0.733456     399       544
+    2        3  0.763158     377       494
+    3        4  0.814882     449       551
+    4        5  0.877273     579       660
     """
     measure = measures.TransitionCategory(
         category_key, item_query=item_query, test_key=test_key, test=test
@@ -1727,13 +1713,12 @@ def category_clustering(df, category_key):
     >>> data = fr.merge_free_recall(mixed, list_keys=['category'])
     >>> stats = fr.category_clustering(data, 'category')
     >>> stats.head()
-                  lbc       arc
-    subject                    
-    1        3.657971  0.614545
-    2        2.953623  0.407839
-    3        3.363768  0.627371
-    4        4.444928  0.688761
-    5        7.530435  0.873755
+       subject       lbc       arc
+    0        1  3.657971  0.614545
+    1        2  2.953623  0.407839
+    2        3  3.363768  0.627371
+    3        4  4.444928  0.688761
+    4        5  7.530435  0.873755
     """
     # these analyses are undefined when there are repeats and
     # intrusions, so strip them out
