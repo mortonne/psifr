@@ -873,7 +873,8 @@ def spc(df):
     """
     clean = df.query('study')
     recall = clean.groupby(['subject', 'input'])['recall'].mean()
-    return pd.DataFrame(recall)
+    recall = pd.DataFrame(recall).reset_index()
+    return recall
 
 
 def pnr(df, item_query=None, test_key=None, test=None):
