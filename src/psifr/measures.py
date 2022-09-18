@@ -119,7 +119,7 @@ class TransitionMeasure(object):
             recall_lists = self.split_lists(subject_data, 'recall')
             results = self.analyze_subject(subject, pool_lists, recall_lists)
             subj_results.append(results)
-        stat = pd.concat(subj_results, axis=0)
+        stat = pd.concat(subj_results, axis=0).reset_index()
         return stat
 
 
