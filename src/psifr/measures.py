@@ -219,9 +219,9 @@ class TransitionLag(TransitionMeasure):
 class TransitionLagRank(TransitionMeasure):
     """Measure lag rank of transitions."""
 
-    def __init__(self, item_query=None, test_key=None, test=None):
+    def __init__(self, lag_key='input', item_query=None, test_key=None, test=None):
         super().__init__(
-            'input', 'input', item_query=item_query, test_key=test_key, test=test
+            'input', lag_key, item_query=item_query, test_key=test_key, test=test
         )
 
     def analyze_subject(self, subject, pool, recall):

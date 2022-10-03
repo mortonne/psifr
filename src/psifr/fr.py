@@ -1212,7 +1212,7 @@ def lag_crp_compound(
     return crp
 
 
-def lag_rank(df, item_query=None, test_key=None, test=None):
+def lag_rank(df, lag_key='input', item_query=None, test_key=None, test=None):
     """
     Calculate rank of the absolute lags in free recall lists.
 
@@ -1224,6 +1224,10 @@ def lag_rank(df, item_query=None, test_key=None, test=None):
         Must have fields: subject, list, input, output, recalled.
         Input position must be defined such that the first serial
         position is 1, not 0.
+
+    lag_key : str, optional
+        Name of column to use when calculating lag between recalled
+        items. Default is to calculate lag based on input position.
 
     item_query : str, optional
         Query string to select items to include in the pool of possible
@@ -1262,7 +1266,7 @@ def lag_rank(df, item_query=None, test_key=None, test=None):
     4        5  0.643923
     """
     measure = measures.TransitionLagRank(
-        item_query=item_query, test_key=test_key, test=test
+        lag_key=lag_key, item_query=item_query, test_key=test_key, test=test
     )
     rank = measure.analyze(df)
     return rank
