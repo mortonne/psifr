@@ -1389,7 +1389,7 @@ def distance_crp(
     )
     crp = measure.analyze(df)
     if drop_bin:
-        crp = crp.drop('bin')
+        crp = crp.drop(columns=['bin'])
     return crp
 
 
