@@ -1282,6 +1282,7 @@ def distance_crp(
     item_query=None,
     test_key=None,
     test=None,
+    drop_bin=False,
 ):
     """
     Conditional response probability by distance bin.
@@ -1387,6 +1388,8 @@ def distance_crp(
         test=test,
     )
     crp = measure.analyze(df)
+    if drop_bin:
+        crp = crp.drop('bin')
     return crp
 
 
