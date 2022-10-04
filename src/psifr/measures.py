@@ -331,7 +331,7 @@ class TransitionDistanceRankShifted(TransitionMeasure):
             index_key, index_key, item_query=item_query, test_key=test_key, test=test
         )
         self.distances = distances
-        self.max_shift = max_shift
+        self.max_shift = int(max_shift)
 
     def analyze_subject(self, subject, pool, recall):
         ranks = transitions.rank_distance_shifted(
