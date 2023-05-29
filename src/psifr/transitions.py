@@ -1179,8 +1179,11 @@ def rank_distance_window(
             test,
         )
         for output, w_prev, curr, poss in masker:
+            curr = int(curr)
             rank_lag = []
             for prev in w_prev:
+                prev = int(prev)
+                poss = poss.astype(int)
                 actual = distances[prev, curr]
                 possible = distances[prev, poss]
                 rank_lag.append(1 - percentile_rank(actual, possible))
