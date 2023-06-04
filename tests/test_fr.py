@@ -491,8 +491,8 @@ def test_category_clustering():
 
     # test ARC and LBC stats
     stats = fr.category_clustering(data, 'category')
-    np.testing.assert_allclose(stats.loc[1, 'arc'], 0.667, rtol=0.011)
-    np.testing.assert_allclose(stats.loc[1, 'lbc'], 3.2, rtol=0.011)
+    np.testing.assert_allclose(stats.loc[0, 'arc'], 0.667, rtol=0.011)
+    np.testing.assert_allclose(stats.loc[0, 'lbc'], 3.2, rtol=0.011)
 
 
 def test_lag_rank(data):
