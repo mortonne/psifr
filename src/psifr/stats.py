@@ -1,9 +1,10 @@
-"""Module to analyze transitions during free recall."""
-
+"""Calculate statistics of list recall."""
 import itertools
+
+import numpy
 import numpy as np
-from scipy import stats
 import pandas as pd
+import scipy.stats
 
 from psifr import maskers
 
@@ -27,19 +28,134 @@ def percentile_rank(actual, possible):
 
     Examples
     --------
-    >>> from psifr import transitions
+    >>> from psifr import stats
     >>> actual = 3
     >>> possible = [1, 2, 2, 2, 3]
-    >>> transitions.percentile_rank(actual, possible)
+    >>> stats.percentile_rank(actual, possible)
     1.0
     """
-    possible_rank = stats.rankdata(possible)
+    possible_rank = scipy.stats.rankdata(possible)
     actual_rank = possible_rank[actual == np.asarray(possible)]
     possible_count = np.count_nonzero(~np.isnan(possible))
     if possible_count == 1:
         return np.nan
     rank = (actual_rank - 1) / (possible_count - 1)
     return rank[0]
+
+
+def count_outputs(
+    list_length,
+    pool_items,
+    recall_items,
+    pool_label,
+    recall_label,
+    pool_test=None,
+    recall_test=None,
+    test=None,
+    count_unique=False,
+):
+    """
+    Count actual and possible recalls for each output position.
+
+    Parameters
+    ----------
+    list_length : int
+        Number of items in each list.
+
+    pool_items : list
+        List of the serial positions available for recall in each list.
+        Must match the serial position codes used in `recall_items`.
+
+    recall_items : list
+        List indicating the serial position of each recall in output
+        order (NaN for intrusions).
+
+    pool_label : list
+        List of the positions to use for calculating lag. Default is to
+        use `pool_items`.
+
+    recall_label : list
+        List of position labels in recall order. Default is to use
+        `recall_items`.
+
+    pool_test : list, optional
+         List of some test value for each item in the pool.
+
+    recall_test : list, optional
+        List of some test value for each recall attempt by output
+        position.
+
+    test : callable
+        Callable that evaluates each transition between items n and
+        n+1. Must take test values for items n and n+1 and return True
+        if a given transition should be included.
+
+    count_unique : bool
+        If true, possible recalls with the same label will only be
+        counted once.
+
+    Returns
+    -------
+    actual : numpy.ndarray
+        [outputs x inputs] array of actual recall counts.
+
+    possible : numpy.ndarray
+        [outputs x inputs] array of possible recall counts.
+
+    Examples
+    --------
+    >>> from psifr import stats
+    >>> pool_items = [[1, 2, 3, 4]]
+    >>> recall_items = [[4, 2, 3, 1]]
+    >>> actual, possible = stats.count_outputs(
+    ...     4, pool_items, recall_items, pool_items, recall_items
+    ... )
+    >>> actual
+    array([[0, 0, 0, 1],
+           [0, 1, 0, 0],
+           [0, 0, 1, 0],
+           [1, 0, 0, 0]])
+    >>> possible
+    array([[1, 1, 1, 1],
+           [1, 1, 1, 0],
+           [1, 0, 1, 0],
+           [1, 0, 0, 0]])
+    """
+    if pool_label is None:
+        pool_label = pool_items
+
+    if recall_label is None:
+        recall_label = recall_items
+
+    count_actual = np.zeros((list_length, list_length), dtype=int)
+    count_possible = np.zeros((list_length, list_length), dtype=int)
+    for i, recall_items_list in enumerate(recall_items):
+        # set up masker to filter outputs
+        pool_test_list = None if pool_test is None else pool_test[i]
+        recall_test_list = None if recall_test is None else recall_test[i]
+        masker = maskers.outputs_masker(
+            pool_items[i],
+            recall_items_list,
+            pool_label[i],
+            recall_label[i],
+            pool_test_list,
+            recall_test_list,
+            test,
+        )
+
+        for curr, poss, op in masker:
+            curr = int(curr)
+            poss = poss.astype(int)
+
+            # for this step, calculate actual input position and
+            # possible input positions
+            count_actual[op - 1, curr - 1] += 1
+            if count_unique:
+                for j in poss:
+                    count_possible[op - 1, j - 1] += 1
+            else:
+                count_possible[op - 1, poss - 1] += 1
+    return count_actual, count_possible
 
 
 def count_lags(
@@ -110,10 +226,10 @@ def count_lags(
 
     Examples
     --------
-    >>> from psifr import transitions
+    >>> from psifr import stats
     >>> pool_items = [[1, 2, 3, 4]]
     >>> recall_items = [[4, 2, 3, 1]]
-    >>> actual, possible = transitions.count_lags(4, pool_items, recall_items)
+    >>> actual, possible = stats.count_lags(4, pool_items, recall_items)
     >>> actual
     lag
     -3    0
@@ -242,10 +358,10 @@ def count_lags_compound(
 
     Examples
     --------
-    >>> from psifr import transitions
+    >>> from psifr import stats
     >>> pool_items = [[1, 2, 3]]
     >>> recall_items = [[3, 1, 2]]
-    >>> actual, possible = transitions.count_lags_compound(3, pool_items, recall_items)
+    >>> actual, possible = stats.count_lags_compound(3, pool_items, recall_items)
     >>> (actual == possible).all()
     True
     >>> actual
@@ -390,10 +506,10 @@ def rank_lags(
 
     Examples
     --------
-    >>> from psifr import transitions
+    >>> from psifr import stats
     >>> pool_items = [[1, 2, 3, 4]]
     >>> recall_items = [[4, 2, 3, 1]]
-    >>> transitions.rank_lags(pool_items, recall_items)
+    >>> stats.rank_lags(pool_items, recall_items)
     [0.5, 0.5, nan]
     """
     if pool_label is None:
@@ -491,14 +607,14 @@ def count_distance(
     Examples
     --------
     >>> import numpy as np
-    >>> from psifr import transitions
+    >>> from psifr import stats
     >>> distances = np.array([[0, 1, 2, 2], [1, 0, 2, 2], [2, 2, 0, 3], [2, 2, 3, 0]])
     >>> edges = np.array([0.5, 1.5, 2.5, 3.5])
     >>> pool_items = [[1, 2, 3, 4]]
     >>> recall_items = [[4, 2, 3, 1]]
     >>> pool_index = [[0, 1, 2, 3]]
     >>> recall_index = [[3, 1, 2, 0]]
-    >>> actual, possible = transitions.count_distance(
+    >>> actual, possible = stats.count_distance(
     ...     distances, edges, pool_items, recall_items, pool_index, recall_index
     ... )
     >>> actual
@@ -603,13 +719,13 @@ def rank_distance(
     Examples
     --------
     >>> import numpy as np
-    >>> from psifr import transitions
+    >>> from psifr import stats
     >>> distances = np.array([[0, 1, 2, 2], [1, 0, 2, 2], [2, 2, 0, 3], [2, 2, 3, 0]])
     >>> pool_items = [[1, 2, 3, 4]]
     >>> recall_items = [[4, 2, 3, 1]]
     >>> pool_index = [[0, 1, 2, 3]]
     >>> recall_index = [[3, 1, 2, 0]]
-    >>> transitions.rank_distance(
+    >>> stats.rank_distance(
     ...     distances, pool_items, recall_items, pool_index, recall_index
     ... )
     [0.75, 0.0, nan]
@@ -697,7 +813,7 @@ def rank_distance_shifted(
     Examples
     --------
     >>> import numpy as np
-    >>> from psifr import transitions
+    >>> from psifr import stats
     >>> distances = np.array(
     ...     [
     ...         [0, 1, 2, 2, 2],
@@ -711,7 +827,7 @@ def rank_distance_shifted(
     >>> recall_items = [[4, 2, 3, 1]]
     >>> pool_index = [[0, 1, 2, 3, 4]]
     >>> recall_index = [[3, 1, 2, 0]]
-    >>> transitions.rank_distance_shifted(
+    >>> stats.rank_distance_shifted(
     ...     distances, 2, pool_items, recall_items, pool_index, recall_index
     ... )
     array([[0.  , 0.25],
@@ -881,12 +997,12 @@ def count_category(
 
     Examples
     --------
-    >>> from psifr import transitions
+    >>> from psifr import stats
     >>> pool_items = [[1, 2, 3, 4]]
     >>> recall_items = [[4, 3, 1, 2]]
     >>> pool_category = [[1, 1, 2, 2]]
     >>> recall_category = [[2, 2, 1, 1]]
-    >>> transitions.count_category(
+    >>> stats.count_category(
     ...     pool_items, recall_items, pool_category, recall_category
     ... )
     (2, 2)
@@ -939,3 +1055,58 @@ def count_pairs(
             actual[prev, curr] += 1
             possible[prev, poss] += 1
     return actual, possible
+
+
+def lbc(study_category, recall_category):
+    """Calculate list-based clustering (LBC) for a set of lists."""
+    lbc_scores = np.zeros(len(study_category))
+    for i, (study, recall) in enumerate(zip(study_category, recall_category)):
+        study = np.asarray(study)
+        recall = np.asarray(recall)
+        if np.any(pd.isna(study)):
+            raise ValueError('Study category contains N/A values.')
+        if np.any(pd.isna(recall)):
+            raise ValueError('Recall category contains N/A values.')
+
+        # number of correct recalls
+        r = len(recall)
+
+        # number of items per category
+        m = len(study) / len(np.unique(study))
+
+        # list length
+        nl = len(study)
+
+        # observed and expected clustering
+        observed = np.count_nonzero(recall[:-1] == recall[1:])
+        expected = ((r - 1) * (m - 1)) / (nl - 1)
+        lbc_scores[i] = observed - expected
+    return lbc_scores
+
+
+def arc(recall_category):
+    """Calculate adjusted ratio of clustering for a set of lists."""
+    arc_scores = np.zeros(len(recall_category))
+    for i, recall in enumerate(recall_category):
+        recall = np.asarray(recall)
+        if np.any(pd.isna(recall)):
+            raise ValueError('Recall category contains N/A values.')
+
+        # number of categories and correct recalls from each category
+        categories = np.unique(recall)
+        n = np.array([np.count_nonzero(recall == c) for c in categories])
+        c = len(categories)
+
+        # number of correct recalls
+        r = len(recall)
+
+        # observed, expected, and maximum clustering
+        expected = np.sum((n * (n - 1)) / r)
+        observed = np.count_nonzero(recall[:-1] == recall[1:])
+        maximum = r - c
+        if maximum == expected:
+            # when maximum is the same as expected, ARC is undefined
+            arc_scores[i] = np.nan
+            continue
+        arc_scores[i] = (observed - expected) / (maximum - expected)
+    return arc_scores

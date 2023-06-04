@@ -5,9 +5,8 @@ import abc
 import numpy as np
 import pandas as pd
 
+from psifr import stats
 from psifr import fr
-from psifr import transitions
-from psifr import outputs
 
 
 class TransitionMeasure(object):
@@ -133,7 +132,7 @@ class TransitionOutputs(TransitionMeasure):
         self.list_length = list_length
 
     def analyze_subject(self, subject, pool, recall):
-        actual, possible = outputs.count_outputs(
+        actual, possible = stats.count_outputs(
             self.list_length,
             pool['items'],
             recall['items'],
@@ -184,9 +183,9 @@ class TransitionLag(TransitionMeasure):
     def analyze_subject(self, subject, pool, recall):
 
         if self.compound:
-            counter = transitions.count_lags_compound
+            counter = stats.count_lags_compound
         else:
-            counter = transitions.count_lags
+            counter = stats.count_lags
 
         actual, possible = counter(
             self.list_length,
@@ -225,7 +224,7 @@ class TransitionLagRank(TransitionMeasure):
         )
 
     def analyze_subject(self, subject, pool, recall):
-        ranks = transitions.rank_lags(
+        ranks = stats.rank_lags(
             pool['items'],
             recall['items'],
             pool['label'],
@@ -268,7 +267,7 @@ class TransitionDistance(TransitionMeasure):
 
     def analyze_subject(self, subject, pool, recall):
 
-        actual, possible = transitions.count_distance(
+        actual, possible = stats.count_distance(
             self.distances,
             self.edges,
             pool['items'],
@@ -304,7 +303,7 @@ class TransitionDistanceRank(TransitionMeasure):
         self.distances = distances
 
     def analyze_subject(self, subject, pool, recall):
-        ranks = transitions.rank_distance(
+        ranks = stats.rank_distance(
             self.distances,
             pool['items'],
             recall['items'],
@@ -334,7 +333,7 @@ class TransitionDistanceRankShifted(TransitionMeasure):
         self.max_shift = int(max_shift)
 
     def analyze_subject(self, subject, pool, recall):
-        ranks = transitions.rank_distance_shifted(
+        ranks = stats.rank_distance_shifted(
             self.distances,
             self.max_shift,
             pool['items'],
@@ -374,7 +373,7 @@ class TransitionDistanceRankWindow(TransitionMeasure):
         self.window_lags = window_lags
 
     def analyze_subject(self, subject, pool, recall):
-        ranks = transitions.rank_distance_window(
+        ranks = stats.rank_distance_window(
             self.distances,
             self.list_length,
             self.window_lags,
@@ -403,7 +402,7 @@ class TransitionCategory(TransitionMeasure):
         )
 
     def analyze_subject(self, subject, pool, recall):
-        actual, possible = transitions.count_category(
+        actual, possible = stats.count_category(
             pool['items'],
             recall['items'],
             pool['label'],

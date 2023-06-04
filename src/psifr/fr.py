@@ -6,8 +6,8 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
+from psifr import stats
 from psifr import measures
-from psifr import clustering
 
 
 def sample_data(study):
@@ -1673,10 +1673,10 @@ def _subject_category_clustering(df, category_key):
     """Subject category clustering."""
     study = split_lists(df, 'study', keys=[category_key])
     recall = split_lists(df, 'recall', keys=[category_key])
-    lbc = clustering.lbc(study[category_key], recall[category_key])
-    arc = clustering.arc(recall[category_key])
-    stats = pd.Series({'lbc': np.nanmean(lbc), 'arc': np.nanmean(arc)})
-    return stats
+    lbc = stats.lbc(study[category_key], recall[category_key])
+    arc = stats.arc(recall[category_key])
+    clust = pd.Series({'lbc': np.nanmean(lbc), 'arc': np.nanmean(arc)})
+    return clust
 
 
 def category_clustering(df, category_key):

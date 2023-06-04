@@ -1,2 +1,2 @@
 import psifr.fr
-import psifr.transitions
+import psifr.stats
