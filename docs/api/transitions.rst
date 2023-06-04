@@ -25,12 +25,3 @@ Ranking transitions
     rank_lags
     rank_distance
     rank_distance_shifted
-
-Iterating over transitions
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. autosummary::
-    :toctree: api/
-
-    transitions_masker
-    sequences_masker

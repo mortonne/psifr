@@ -33,7 +33,7 @@ the actual count divided by the possible count.
 The transitions masker
 ~~~~~~~~~~~~~~~~~~~~~~
 
-The :py:func:`~psifr.transitions.transitions_masker` is a generator that makes
+The :py:func:`~psifr.maskers.transitions_masker` is a generator that makes
 it simple to iterate over transitions while "masking" out events such as
 intrusions of items not on the list and repeats of items that have already
 been recalled.
@@ -48,7 +48,7 @@ including the current item).
 
 .. ipython:: python
 
-    from psifr.transitions import transitions_masker
+    from psifr.maskers import transitions_masker
     pool = [1, 2, 3, 4, 5, 6]
     recs = [6, 2, 3, 6, 1, 4]
     masker = transitions_masker(
@@ -93,7 +93,7 @@ The sequences masker
 Some analyses, such as :py:func:`~psifr.fr.lag_crp_compound` and
 :py:func:`~psifr.fr.distance_rank_shifted`, require examining
 longer sequences rather than individual one-step transitions.
-These analyses are implemented using the :py:func:`~psifr.transitions.sequences_masker`,
+These analyses are implemented using the :py:func:`~psifr.maskers.sequences_masker`,
 which allows analysis code to iterate over sequences of a specified length.
 Only contiguous sequences are yielded; repeats or intrusions will interrupt
 the sequence and start it over at the next recall.
@@ -106,7 +106,7 @@ examines sequences of within-category transitions. See the
 of conditionalizing a sequence analysis.
 
 Similarly to the
-:py:func:`~psifr.transitions.transitions_masker`, the sequences masker will
+:py:func:`~psifr.maskers.transitions_masker`, the sequences masker will
 yield the output position, previous item, current item, and possible items
 for each transition. Here, however, there is a list of values corresponding
 to positions within the sequence. For example, :code:`curr[-1]` is the
@@ -115,7 +115,7 @@ to positions within the sequence. For example, :code:`curr[-1]` is the
 
 .. ipython:: python
 
-    from psifr.transitions import sequences_masker
+    from psifr.maskers import sequences_masker
     pool = [1, 2, 3, 4, 5, 6]
     recs = [6, 2, 3, 6, 1, 4, 5]
     masker = sequences_masker(

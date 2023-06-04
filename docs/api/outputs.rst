@@ -11,11 +11,3 @@ Counting recalls by serial position and output position
     :toctree: api/
 
     count_outputs
-
-Iterating over output positions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. autosummary::
-    :toctree: api/
-
-    outputs_masker

@@ -8,3 +8,4 @@ API reference
     /api/measures
     /api/transitions
     /api/outputs
+    /api/maskers
