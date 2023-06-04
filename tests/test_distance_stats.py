@@ -1,9 +1,19 @@
-"""Test rank distance."""
+"""Test distance clustering statistics."""
 
 import numpy as np
 import pytest
 
 from psifr import stats
+
+
+@pytest.fixture()
+def data():
+    """Create position data for a list."""
+    list_data = {
+        'pool_position': [0, 1, 2, 3, 4, 5, 6, 7],
+        'recall_position': [3, 2, 1, 7, 0, 6, 5],
+    }
+    return list_data
 
 
 @pytest.fixture()
@@ -19,8 +29,8 @@ def list_data():
 
 
 @pytest.fixture()
-def distances():
-    """Create distance matrix."""
+def distance():
+    """Create a distance matrix."""
     mat = np.array(
         [
             [0, 1, 1, 1, 2, 2, 2, 2],
@@ -36,10 +46,61 @@ def distances():
     return mat
 
 
-def test_rank_distance(list_data, distances):
+def test_distance_count(data, distance):
+    """Test distance bin count."""
+    edges = [0.5, 1.5, 2.5, 3.5]
+    actual, possible = stats.count_distance(
+        distance,
+        edges,
+        [data['pool_position']],
+        [data['recall_position']],
+        [data['pool_position']],
+        [data['recall_position']],
+        count_unique=False,
+    )
+    # recalls: [3, 2, 1, 7, 0, 6, 5]
+    # actual: [1, 1, 2, 2, 2, 3]
+    # possible: [
+    #     [1, 1, 1, 2, 2, 2, 2],
+    #     [1, 1, 2, 2, 2, 2],
+    #     [1, 2, 2, 2, 2],
+    #     [2, 3, 3, 3],
+    #     [2, 2, 2],
+    #     [3, 3]
+    # ]
+    expected_actual = np.array([2, 3, 1])
+    expected_possible = np.array([6, 16, 5])
+    np.testing.assert_array_equal(actual.to_numpy(), expected_actual)
+    np.testing.assert_array_equal(possible.to_numpy(), expected_possible)
+
+
+def test_distance_count_unique(data, distance):
+    """Test distance bin count by transition."""
+    edges = [0.5, 2.5, 3.5]
+    inputs = [
+        distance,
+        edges,
+        [data['pool_position']],
+        [data['recall_position']],
+        [data['pool_position']],
+        [data['recall_position']],
+    ]
+
+    # first check these bins with count_unique=False
+    actual, possible = stats.count_distance(*inputs, count_unique=False)
+    np.testing.assert_array_equal(actual.to_numpy(), np.array([5, 1]))
+    np.testing.assert_array_equal(possible.to_numpy(), np.array([22, 5]))
+
+    # now test with only one bin increment per transition
+    actual, possible = stats.count_distance(*inputs, count_unique=True)
+    np.testing.assert_array_equal(actual.to_numpy(), np.array([5, 1]))
+    np.testing.assert_array_equal(possible.to_numpy(), np.array([5, 2]))
+
+
+def test_rank_distance(list_data, distance):
     """Test rank distance measure."""
     ranks = stats.rank_distance(
-        distances,
+        distance,
         list_data['pool_items'],
         list_data['recall_items'],
         list_data['pool_items'],
@@ -77,10 +138,10 @@ def test_rank_distance(list_data, distances):
     np.testing.assert_allclose(ranks, expected)
 
 
-def test_rank_distance_within(list_data, distances):
+def test_rank_distance_within(list_data, distance):
     """Test rank distance for within-category transitions."""
     ranks = stats.rank_distance(
-        distances,
+        distance,
         list_data['pool_items'],
         list_data['recall_items'],
         list_data['pool_items'],
@@ -93,10 +154,10 @@ def test_rank_distance_within(list_data, distances):
     np.testing.assert_allclose(ranks, expected)
 
 
-def test_rank_distance_across(list_data, distances):
+def test_rank_distance_across(list_data, distance):
     """Test rank distance for across-category transitions."""
     ranks = stats.rank_distance(
-        distances,
+        distance,
         list_data['pool_items'],
         list_data['recall_items'],
         list_data['pool_items'],
@@ -109,11 +170,11 @@ def test_rank_distance_across(list_data, distances):
     np.testing.assert_allclose(ranks, expected)
 
 
-def test_rank_distance_shifted(list_data, distances):
+def test_rank_distance_shifted(list_data, distance):
     """Test rank distance based on shifted recalls."""
     list_data['recall_items'] = [[4, 3, 1, 7, 3, 0, 6, 2]]
-    distances[3, 1] = 4
-    distances[1, 3] = 4
+    distance[3, 1] = 4
+    distance[1, 3] = 4
     # sequences: [[4, 3, 1], [3, 1, 7], [0, 6, 5]]
     # -1
     # actual: [4, 2, 2]
@@ -132,7 +193,7 @@ def test_rank_distance_shifted(list_data, distances):
     # ]
     # rank: [0.8, 0.25, 1.0]
     ranks = stats.rank_distance_shifted(
-        distances,
+        distance,
         2,
         list_data['pool_items'],
         list_data['recall_items'],
@@ -145,7 +206,7 @@ def test_rank_distance_shifted(list_data, distances):
 
 def test_rank_distance_window():
     """Test rank distance relative to items in a window."""
-    distances = np.array(
+    distance = np.array(
         [
             [0, 3, 1, 1, 2, 2, 2, 2],
             [3, 0, 1, 1, 2, 2, 2, 2],
@@ -188,7 +249,7 @@ def test_rank_distance_window():
     # possible: [[2, 2, 3, 1, 1], [2, 1], [2, 1]]
     # rank: [0.375, 1.0, 0.0]
     ranks = stats.rank_distance_window(
-        distances, list_length, window_lags, pool, outputs, pool_index, outputs_index
+        distance, list_length, window_lags, pool, outputs, pool_index, outputs_index
     )
     expected = np.array([[0.125, 0.125, 0.375], [0, 1, 1], [0, 0, 0]])
     np.testing.assert_allclose(ranks, expected)

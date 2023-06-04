@@ -1,7 +1,7 @@
-"""Test counting serial position transition lag."""
+"""Test lag clustering statistics."""
 
-import pytest
 import numpy as np
+import pytest
 
 from psifr import stats
 
@@ -20,6 +20,18 @@ def data():
         'output_block': [1, 2, 2, 4, 3, 2, 4, 3],
     }
     return test_list
+
+
+@pytest.fixture()
+def list_data():
+    """Create list data with item and category information."""
+    data = {
+        'pool_items': [[1, 2, 3, 4, 5, 6]],
+        'recall_items': [[6, 2, 1, 5, 4]],
+        'pool_test': [[1, 1, 1, 2, 2, 2]],
+        'recall_test': [[2, 1, 1, 2, 2]],
+    }
+    return data
 
 
 def test_lag_count(data):
@@ -126,3 +138,60 @@ def test_compound_lag_count():
     )
     np.testing.assert_array_equal(actual, expected_actual)
     np.testing.assert_array_equal(possible, expected_possible)
+
+
+def test_percentile_rank():
+    """Test calculation of percentile rank."""
+    possible = [1, 2, 3, 4]
+    rank = []
+    for actual in possible:
+        rank.append(stats.percentile_rank(actual, possible))
+    np.testing.assert_array_equal(np.array(rank), np.array([0, 1 / 3, 2 / 3, 1]))
+
+
+def test_rank_lag(list_data):
+    """Test temporal lag rank."""
+    ranks = stats.rank_lags(
+        list_data['pool_items'],
+        list_data['recall_items'],
+        list_data['pool_items'],
+        list_data['recall_items'],
+    )
+    expected = np.array([1 / 4, 5 / 6, 0, 1])
+    np.testing.assert_allclose(ranks, expected)
+
+
+def test_rank_lag_short(list_data):
+    """Test temporal lag rank without label inputs."""
+    ranks = stats.rank_lags(
+        list_data['pool_items'],
+        list_data['recall_items'],
+    )
+    expected = np.array([1 / 4, 5 / 6, 0, 1])
+    np.testing.assert_allclose(ranks, expected)
+
+
+def test_rank_lag_within(list_data):
+    """Test temporal lag rank for within-category transitions."""
+    ranks = stats.rank_lags(
+        list_data['pool_items'],
+        list_data['recall_items'],
+        pool_test=list_data['pool_test'],
+        recall_test=list_data['recall_test'],
+        test=lambda x, y: x == y,
+    )
+    expected = np.array([0.5, np.nan])
+    np.testing.assert_array_equal(ranks, expected)
+
+
+def test_rank_lag_across(list_data):
+    """Test temporal lag rank for across-category transitions."""
+    ranks = stats.rank_lags(
+        list_data['pool_items'],
+        list_data['recall_items'],
+        pool_test=list_data['pool_test'],
+        recall_test=list_data['recall_test'],
+        test=lambda x, y: x != y,
+    )
+    expected = np.array([0.5, 0])
+    np.testing.assert_array_equal(ranks, expected)
