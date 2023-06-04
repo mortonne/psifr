@@ -18,6 +18,27 @@ def list_data():
     return list_data
 
 
+def test_output(list_data):
+    """Test serial position by output position."""
+    masker = maskers.outputs_masker(
+        list_data['pool_position'],
+        list_data['output_position'],
+        list_data['pool_position'],
+        list_data['output_position'],
+    )
+    steps = [[z, x, y.tolist()] for x, y, z in masker]
+    expected = [
+        [1, 1, [1, 2, 3, 4, 5, 6, 7, 8]],
+        [2, 3, [2, 3, 4, 5, 6, 7, 8]],
+        [3, 4, [2, 4, 5, 6, 7, 8]],
+        [4, 8, [2, 5, 6, 7, 8]],
+        [5, 5, [2, 5, 6, 7]],
+        [6, 7, [2, 6, 7]],
+        [7, 6, [2, 6]],
+    ]
+    assert steps == expected
+
+
 def test_position(list_data):
     """Test serial position output."""
     masker = maskers.transitions_masker(
