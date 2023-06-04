@@ -4,6 +4,8 @@ Statistics
 
 .. currentmodule:: psifr.stats
 
+The :py:mod:`~psifr.stats` module provides a set of functions for calculating statistics of study and recall sequences of individual participants.
+
 Counting recalls by serial position and output position
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

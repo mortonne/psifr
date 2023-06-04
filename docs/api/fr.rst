@@ -4,6 +4,8 @@ Free recall analysis
 
 .. currentmodule:: psifr.fr
 
+The :py:mod:`~psifr.fr` module provides access to a set of high-level functions for working with free-recall datasets.
+
 Managing data
 ~~~~~~~~~~~~~
 
