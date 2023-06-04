@@ -119,7 +119,7 @@ class TransitionMeasure(object):
             recall_lists = self.split_lists(subject_data, 'recall')
             results = self.analyze_subject(subject, pool_lists, recall_lists)
             subj_results.append(results)
-        stat = pd.concat(subj_results, axis=0)
+        stat = pd.concat(subj_results, axis=0).reset_index()
         return stat
 
 
@@ -219,9 +219,9 @@ class TransitionLag(TransitionMeasure):
 class TransitionLagRank(TransitionMeasure):
     """Measure lag rank of transitions."""
 
-    def __init__(self, item_query=None, test_key=None, test=None):
+    def __init__(self, lag_key='input', item_query=None, test_key=None, test=None):
         super().__init__(
-            'input', 'input', item_query=item_query, test_key=test_key, test=test
+            'input', lag_key, item_query=item_query, test_key=test_key, test=test
         )
 
     def analyze_subject(self, subject, pool, recall):
@@ -331,7 +331,7 @@ class TransitionDistanceRankShifted(TransitionMeasure):
             index_key, index_key, item_query=item_query, test_key=test_key, test=test
         )
         self.distances = distances
-        self.max_shift = max_shift
+        self.max_shift = int(max_shift)
 
     def analyze_subject(self, subject, pool, recall):
         ranks = transitions.rank_distance_shifted(
