@@ -204,7 +204,8 @@ class TransitionLag(TransitionMeasure):
                 'prob': actual / possible,
                 'actual': actual,
                 'possible': possible,
-            }, index=actual.index
+            },
+            index=actual.index,
         )
         if self.compound:
             crp = crp.set_index('subject', append=True)

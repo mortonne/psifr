@@ -1206,7 +1206,7 @@ def lag_crp_compound(
         item_query=item_query,
         test_key=test_key,
         test=test,
-        compound=True
+        compound=True,
     )
     crp = measure.analyze(df)
     return crp
@@ -1537,7 +1537,12 @@ def distance_rank_shifted(
     [120 rows x 3 columns]
     """
     measure = measures.TransitionDistanceRankShifted(
-        index_key, distances, max_shift, item_query=item_query, test_key=test_key, test=test
+        index_key,
+        distances,
+        max_shift,
+        item_query=item_query,
+        test_key=test_key,
+        test=test,
     )
     rank = measure.analyze(df)
     return rank
@@ -1863,9 +1868,7 @@ def plot_swarm_error(
     g.map_dataframe(
         sns.swarmplot, x=x, y=y, color=swarm_color, size=swarm_size, zorder=1
     )
-    g.map_dataframe(
-        sns.pointplot, x=x, y=y, color=point_color, join=False, capsize=0.5
-    )
+    g.map_dataframe(sns.pointplot, x=x, y=y, color=point_color, join=False, capsize=0.5)
     return g
 
 
