@@ -2,7 +2,8 @@
 
 import pytest
 import numpy as np
-from psifr import transitions
+
+from psifr import maskers
 
 
 @pytest.fixture()
@@ -19,7 +20,7 @@ def list_data():
 
 def test_position(list_data):
     """Test serial position output."""
-    masker = transitions.transitions_masker(
+    masker = maskers.transitions_masker(
         list_data['pool_position'],
         list_data['output_position'],
         list_data['pool_position'],
@@ -38,7 +39,7 @@ def test_position(list_data):
 
 def test_category(list_data):
     """Test category output."""
-    masker = transitions.transitions_masker(
+    masker = maskers.transitions_masker(
         list_data['pool_position'],
         list_data['output_position'],
         list_data['pool_category'],
@@ -57,7 +58,7 @@ def test_category(list_data):
 
 def test_position_cond_category(list_data):
     """Test position output for within-category transitions."""
-    masker = transitions.transitions_masker(
+    masker = maskers.transitions_masker(
         list_data['pool_position'],
         list_data['output_position'],
         list_data['pool_position'],
@@ -78,7 +79,7 @@ def test_position_cond_category(list_data):
 
 def test_category_cond_position(list_data):
     """Test category output for short-lag transitions."""
-    masker = transitions.transitions_masker(
+    masker = maskers.transitions_masker(
         list_data['pool_position'],
         list_data['output_position'],
         list_data['pool_category'],
@@ -99,7 +100,7 @@ def test_category_cond_position(list_data):
 
 def test_sequences_position(list_data):
     """Test position masked within a window."""
-    masker = transitions.sequences_masker(
+    masker = maskers.sequences_masker(
         2,
         list_data['pool_position'],
         list_data['output_position'],
@@ -139,7 +140,7 @@ def test_windows_position():
     ]
 
     # test the yielded values at each included output position
-    masker = transitions.windows_masker(
+    masker = maskers.windows_masker(
         list_length, window_lags, pool, outputs, pool, outputs
     )
     for i, (a_output, a_prev, a_curr, a_poss) in enumerate(masker):
@@ -167,7 +168,7 @@ def test_windows_position_cond_category():
     poss = [[9, 10, 11, 12, 13], [2, 6, 7, 8], [2, 3, 5]]
 
     # test the yielded values at each included output position
-    masker = transitions.windows_masker(
+    masker = maskers.windows_masker(
         list_length,
         window_lags,
         pool,

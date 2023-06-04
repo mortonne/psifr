@@ -2,106 +2,7 @@
 
 import numpy as np
 
-
-def outputs_masker(
-    pool_items,
-    recall_items,
-    pool_output,
-    recall_output,
-    pool_test=None,
-    recall_test=None,
-    test=None,
-):
-    """
-    Iterate over valid outputs.
-
-    Parameters
-    ----------
-    pool_items : list
-        Items available for recall. Order does not matter. May contain
-        repeated values. Item identifiers must be unique within pool.
-
-    recall_items : list
-        Recalled items in output position order.
-
-    pool_output : list
-        Output values for pool items. Must be the same order as pool.
-
-    recall_output : list
-        Output values in output position order.
-
-    pool_test : list, optional
-        Test values for items available for recall. Must be the same
-        order as pool.
-
-    recall_test : list, optional
-        Test values for items in output position order.
-
-    test : callable, optional
-        Used to test whether output recalls and possible recalls should
-        be included, based on their test values.
-
-    Yields
-    ------
-    curr : object
-        Output value for the item at this valid output position.
-
-    poss : numpy.array
-        Output values for all possible items that could be recalled at
-        this output position.
-
-    output : int
-        Current output position.
-
-    Examples
-    --------
-    >>> from psifr import outputs
-    >>> pool_items = [1, 2, 3, 4]
-    >>> recall_items = [4, 2, 3, 1]
-    >>> masker = outputs.outputs_masker(
-    ...     pool_items, recall_items, pool_items, recall_items
-    ... )
-    >>> for curr, poss, output in masker:
-    ...     print(curr, poss, output)
-    4 [1 2 3 4] 1
-    2 [1 2 3] 2
-    3 [1 3] 3
-    1 [1] 4
-    """
-    pool_items = pool_items.copy()
-    pool_output = pool_output.copy()
-    if test is not None:
-        pool_test = pool_test.copy()
-
-    n = 0
-    output = 0
-    while n < len(recall_items):
-        # test if the current item is in the pool
-        if recall_items[n] not in pool_items:
-            n += 1
-            continue
-        output += 1
-
-        curr = recall_output[n]
-        poss = np.array(pool_output)
-
-        # remove the item from the pool
-        ind = pool_items.index(recall_items[n])
-        del pool_items[ind]
-        del pool_output[ind]
-        if test is not None:
-            del pool_test[ind]
-
-        if test is not None:
-            # test if this recall is included
-            if not test(recall_test[n]):
-                n += 1
-                continue
-
-            # get included possible items
-            poss = poss[test(np.array(pool_test))]
-        n += 1
-        yield curr, poss, output
+from psifr import maskers
 
 
 def count_outputs(
@@ -194,7 +95,7 @@ def count_outputs(
         # set up masker to filter outputs
         pool_test_list = None if pool_test is None else pool_test[i]
         recall_test_list = None if recall_test is None else recall_test[i]
-        masker = outputs_masker(
+        masker = maskers.outputs_masker(
             pool_items[i],
             recall_items_list,
             pool_label[i],
