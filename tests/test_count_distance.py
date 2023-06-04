@@ -2,7 +2,8 @@
 
 import pytest
 import numpy as np
-from psifr import transitions
+
+from psifr import stats
 
 
 @pytest.fixture()
@@ -36,7 +37,7 @@ def distance():
 def test_distance_count(data, distance):
     """Test distance bin count."""
     edges = [0.5, 1.5, 2.5, 3.5]
-    actual, possible = transitions.count_distance(
+    actual, possible = stats.count_distance(
         distance,
         edges,
         [data['pool_position']],
@@ -74,11 +75,11 @@ def test_distance_count_unique(data, distance):
     ]
 
     # first check these bins with count_unique=False
-    actual, possible = transitions.count_distance(*inputs, count_unique=False)
+    actual, possible = stats.count_distance(*inputs, count_unique=False)
     np.testing.assert_array_equal(actual.to_numpy(), np.array([5, 1]))
     np.testing.assert_array_equal(possible.to_numpy(), np.array([22, 5]))
 
     # now test with only one bin increment per transition
-    actual, possible = transitions.count_distance(*inputs, count_unique=True)
+    actual, possible = stats.count_distance(*inputs, count_unique=True)
     np.testing.assert_array_equal(actual.to_numpy(), np.array([5, 1]))
     np.testing.assert_array_equal(possible.to_numpy(), np.array([5, 2]))

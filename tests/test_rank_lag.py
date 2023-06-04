@@ -2,7 +2,8 @@
 
 import numpy as np
 import pytest
-from psifr import transitions
+
+from psifr import stats
 
 
 def test_percentile_rank():
@@ -10,7 +11,7 @@ def test_percentile_rank():
     possible = [1, 2, 3, 4]
     rank = []
     for actual in possible:
-        rank.append(transitions.percentile_rank(actual, possible))
+        rank.append(stats.percentile_rank(actual, possible))
     np.testing.assert_array_equal(np.array(rank), np.array([0, 1 / 3, 2 / 3, 1]))
 
 
@@ -28,7 +29,7 @@ def list_data():
 
 def test_rank_lag(list_data):
     """Test temporal lag rank."""
-    ranks = transitions.rank_lags(
+    ranks = stats.rank_lags(
         list_data['pool_items'],
         list_data['recall_items'],
         list_data['pool_items'],
@@ -40,7 +41,7 @@ def test_rank_lag(list_data):
 
 def test_rank_lag_short(list_data):
     """Test temporal lag rank without label inputs."""
-    ranks = transitions.rank_lags(
+    ranks = stats.rank_lags(
         list_data['pool_items'],
         list_data['recall_items'],
     )
@@ -50,7 +51,7 @@ def test_rank_lag_short(list_data):
 
 def test_rank_lag_within(list_data):
     """Test temporal lag rank for within-category transitions."""
-    ranks = transitions.rank_lags(
+    ranks = stats.rank_lags(
         list_data['pool_items'],
         list_data['recall_items'],
         pool_test=list_data['pool_test'],
@@ -63,7 +64,7 @@ def test_rank_lag_within(list_data):
 
 def test_rank_lag_across(list_data):
     """Test temporal lag rank for across-category transitions."""
-    ranks = transitions.rank_lags(
+    ranks = stats.rank_lags(
         list_data['pool_items'],
         list_data['recall_items'],
         pool_test=list_data['pool_test'],

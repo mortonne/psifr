@@ -2,7 +2,8 @@
 
 import pytest
 import numpy as np
-from psifr import transitions
+
+from psifr import stats
 
 
 @pytest.fixture()
@@ -23,7 +24,7 @@ def data():
 
 def test_lag_count(data):
     """Test transition counts by serial position lag."""
-    actual, possible = transitions.count_lags(
+    actual, possible = stats.count_lags(
         data['list_length'], [data['pool_position']], [data['output_position']]
     )
     np.testing.assert_array_equal(
@@ -37,7 +38,7 @@ def test_lag_count(data):
 def test_lag_count_category(data):
     """Test transition counts by lag for within-category transitions."""
     # within category
-    actual, possible = transitions.count_lags(
+    actual, possible = stats.count_lags(
         data['list_length'],
         [data['pool_position']],
         [data['output_position']],
@@ -53,7 +54,7 @@ def test_lag_count_category(data):
     )
 
     # across category
-    actual, possible = transitions.count_lags(
+    actual, possible = stats.count_lags(
         data['list_length'],
         [data['pool_position']],
         [data['output_position']],
@@ -71,7 +72,7 @@ def test_lag_count_category(data):
 
 def test_lag_count_block(data):
     """Test transition counts by block lag."""
-    actual, possible = transitions.count_lags(
+    actual, possible = stats.count_lags(
         data['n_block'],
         [data['pool_block']],
         [data['output_block']],
@@ -83,7 +84,7 @@ def test_lag_count_block(data):
 
 def test_lag_count_block_unique(data):
     """Test transition counts by unique block lag."""
-    actual, possible = transitions.count_lags(
+    actual, possible = stats.count_lags(
         data['n_block'], [data['pool_block']], [data['output_block']], count_unique=True
     )
     np.testing.assert_array_equal(actual.to_numpy(), np.array([0, 0, 2, 1, 1, 1, 0]))
@@ -120,7 +121,7 @@ def test_compound_lag_count():
             [0, 0, 0, 0, 0, 0, 0],
         )
     )
-    actual, possible = transitions.count_lags_compound(
+    actual, possible = stats.count_lags_compound(
         list_length, pool_position, output_position
     )
     np.testing.assert_array_equal(actual, expected_actual)

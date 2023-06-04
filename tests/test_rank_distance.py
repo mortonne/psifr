@@ -2,7 +2,8 @@
 
 import numpy as np
 import pytest
-from psifr import transitions
+
+from psifr import stats
 
 
 @pytest.fixture()
@@ -37,7 +38,7 @@ def distances():
 
 def test_rank_distance(list_data, distances):
     """Test rank distance measure."""
-    ranks = transitions.rank_distance(
+    ranks = stats.rank_distance(
         distances,
         list_data['pool_items'],
         list_data['recall_items'],
@@ -78,7 +79,7 @@ def test_rank_distance(list_data, distances):
 
 def test_rank_distance_within(list_data, distances):
     """Test rank distance for within-category transitions."""
-    ranks = transitions.rank_distance(
+    ranks = stats.rank_distance(
         distances,
         list_data['pool_items'],
         list_data['recall_items'],
@@ -94,7 +95,7 @@ def test_rank_distance_within(list_data, distances):
 
 def test_rank_distance_across(list_data, distances):
     """Test rank distance for across-category transitions."""
-    ranks = transitions.rank_distance(
+    ranks = stats.rank_distance(
         distances,
         list_data['pool_items'],
         list_data['recall_items'],
@@ -130,7 +131,7 @@ def test_rank_distance_shifted(list_data, distances):
     #     [1, 2],
     # ]
     # rank: [0.8, 0.25, 1.0]
-    ranks = transitions.rank_distance_shifted(
+    ranks = stats.rank_distance_shifted(
         distances,
         2,
         list_data['pool_items'],
@@ -186,7 +187,7 @@ def test_rank_distance_window():
     # actual: [2, 1, 2]
     # possible: [[2, 2, 3, 1, 1], [2, 1], [2, 1]]
     # rank: [0.375, 1.0, 0.0]
-    ranks = transitions.rank_distance_window(
+    ranks = stats.rank_distance_window(
         distances, list_length, window_lags, pool, outputs, pool_index, outputs_index
     )
     expected = np.array([[0.125, 0.125, 0.375], [0, 1, 1], [0, 0, 0]])

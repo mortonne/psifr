@@ -2,7 +2,8 @@
 
 import pytest
 import numpy as np
-from psifr import transitions
+
+from psifr import stats
 
 
 @pytest.fixture()
@@ -18,7 +19,7 @@ def data():
 
 def test_pair_count(data):
     """Test transition counts by item pairs."""
-    actual, possible = transitions.count_pairs(
+    actual, possible = stats.count_pairs(
         data['n_item'], data['pool_items'], data['recall_items']
     )
     actual_expected = np.array(
