@@ -1,8 +1,16 @@
-===========
-Transitions
-===========
+==========
+Statistics
+==========
 
-.. currentmodule:: psifr.transitions
+.. currentmodule:: psifr.stats
+
+Counting recalls by serial position and output position
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autosummary::
+    :toctree: api/
+
+    count_outputs
 
 Counting transitions
 ~~~~~~~~~~~~~~~~~~~~

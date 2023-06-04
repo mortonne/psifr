@@ -5,7 +5,6 @@ API reference
     :maxdepth: 2
 
     /api/fr
+    /api/stats
     /api/measures
-    /api/transitions
-    /api/outputs
     /api/maskers
