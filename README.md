@@ -8,7 +8,13 @@
 
 Advanced analysis and visualization of free recall data in Python.
 
-Psifr has tools to visualize recall sequences, to make it easier to see general trends in the data. Psifr also provides targeted analyses to examine factors that may affect recall, such as recency, primacy, temporal contiguity, stimulus category, and semantic relatedness. Analyses are customizable, allowing flexible filtering of included data to help answer precise questions. Extensive automated testing is used to ensure the consistency and correctness of analysis results. 
+Features:
+* A large library of advanced analyses, tested against published benchmarks
+* Flexible analysis customization and plotting
+* Tools for exploratory analysis of large datasets
+* Extensive automated testing to ensure analysis correctness
+* Based around a simple and flexible table-based data format
+* Comprehensive [documentation](https://psifr.readthedocs.io/en/stable/api/overview.html) and [user guide](https://psifr.readthedocs.io/en/stable/guide/overview.html)
 
 The name Psifr is pronounced "cipher". It's taken from Psi, in reference to the field of psychology, and FR for free recall.
 
