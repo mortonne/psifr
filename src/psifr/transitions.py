@@ -505,12 +505,12 @@ def count_distance(
     (0.5, 1.5]    0
     (1.5, 2.5]    3
     (2.5, 3.5]    0
-    dtype: int64
+    Name: count, dtype: int64
     >>> possible
     (0.5, 1.5]    1
     (1.5, 2.5]    4
     (2.5, 3.5]    1
-    dtype: int64
+    Name: count, dtype: int64
     """
     list_actual = []
     list_possible = []
