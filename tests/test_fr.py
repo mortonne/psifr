@@ -313,9 +313,7 @@ def test_pli_list_lag():
     # max lag 2 (exclude first two lists)
     stat = fr.pli_list_lag(data, max_lag=2)
     np.testing.assert_array_equal(stat['count'].to_numpy(), np.array([2, 1, 0, 0]))
-    np.testing.assert_array_equal(
-        stat['per_list'].to_numpy(), np.array([1, 0.5, 0, 0])
-    )
+    np.testing.assert_array_equal(stat['per_list'].to_numpy(), np.array([1, 0.5, 0, 0]))
     np.testing.assert_array_equal(
         stat['prob'].to_numpy(), np.array([0.5, 0.25, np.nan, np.nan])
     )
@@ -329,7 +327,7 @@ def test_pli_list_lag():
         stat['per_list'].to_numpy(), np.array([1, 1, 1, 0, 0, 0])
     )
     np.testing.assert_array_equal(
-        stat['prob'].to_numpy(), np.array([1/3, 1/3, 1/3, np.nan, np.nan, np.nan])
+        stat['prob'].to_numpy(), np.array([1 / 3, 1 / 3, 1 / 3, np.nan, np.nan, np.nan])
     )
 
 
@@ -394,10 +392,12 @@ def test_lag_crp_compound():
     """Test compound lag-CRP analysis."""
     subjects = [1, 1]
     study = [
-        ['absence', 'hollow', 'pupil', 'fountain'], ['tree', 'cat', 'house', 'dog']
+        ['absence', 'hollow', 'pupil', 'fountain'],
+        ['tree', 'cat', 'house', 'dog'],
     ]
     recall = [
-        ['fountain', 'hollow', 'absence'], ['mouse', 'cat', 'tree', 'house', 'dog']
+        ['fountain', 'hollow', 'absence'],
+        ['mouse', 'cat', 'tree', 'house', 'dog'],
     ]
     raw = fr.table_from_lists(subjects, study, recall)
     data = fr.merge_free_recall(raw)
@@ -559,9 +559,7 @@ def test_distance_rank_window():
     study = [
         ['absence', 'hollow', 'pupil', 'fountain', 'piano', 'pillow', 'cat', 'tree']
     ]
-    recall = [
-        ['fountain', 'hollow', 'absence', 'cat', 'piano', 'pupil', 'fountain']
-    ]
+    recall = [['fountain', 'hollow', 'absence', 'cat', 'piano', 'pupil', 'fountain']]
     item_index = ([[0, 1, 2, 3, 4, 5, 6, 7]], [[3, 1, 0, 6, 4, 2, 3]])
     raw = fr.table_from_lists(subjects, study, recall, item_index=item_index)
     data = fr.merge_free_recall(raw, list_keys=['item_index'])

@@ -187,13 +187,7 @@ def test_rank_distance_window():
     # possible: [[2, 2, 3, 1, 1], [2, 1], [2, 1]]
     # rank: [0.375, 1.0, 0.0]
     ranks = transitions.rank_distance_window(
-        distances,
-        list_length,
-        window_lags,
-        pool,
-        outputs,
-        pool_index,
-        outputs_index
+        distances, list_length, window_lags, pool, outputs, pool_index, outputs_index
     )
     expected = np.array([[0.125, 0.125, 0.375], [0, 1, 1], [0, 0, 0]])
     np.testing.assert_allclose(ranks, expected)
