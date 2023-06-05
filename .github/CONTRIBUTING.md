@@ -1,7 +1,7 @@
 # Contributing to Psifr
 
 Whether you are a novice or experienced software developer, 
-all contributions and suggestions are welcome!
+all contributions and suggestions are welcome! This file goes over the basic mechanics of contributing changes. If you want to contribute to the codebase, please also read the [Contributor Guide](https://psifr.readthedocs.io/en/latest/development/overview.html), which explains how the codebase is organized and walks through how to add a new analysis function.
 
 ## Getting Started
 
