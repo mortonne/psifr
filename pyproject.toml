@@ -1,3 +1,32 @@
+[project]
+name = "psifr"
+version = "0.8.2"
+authors = [
+    {name = "Neal W Morton", email = "mortonne@gmail.com"}
+]
+description = "Psifr: Analysis and visualization of free recall data"
+readme = "README.md"
+requires-python = ">=3.8"
+keywords = ["psychology", "memory", "free recall"]
+license = {text = "GPL-3.0-or-later"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Operating System :: OS Independent"
+]
+dependencies = [
+    "numpy",
+    "scipy",
+    "pandas>=1.0.0",
+    "matplotlib!=3.3.1",
+    "seaborn>=0.9.1",
+]
+
+[project.optional-dependencies]
+docs = ["sphinx", "pydata-sphinx-theme", "ipython", "sphinxcontrib-bibtex"]
+test = ["pytest", "codecov", "pytest-cov"]
+perf = ["snakeviz", "asv"]
+
 [build-system]
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
