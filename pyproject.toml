@@ -36,3 +36,4 @@ include-package-data = true
 
 [tool.setuptools.packages.find]
 namespaces = true
+where = ["src"]
