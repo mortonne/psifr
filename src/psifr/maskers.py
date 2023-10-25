@@ -361,6 +361,7 @@ def windows_masker(
     pool_test=None,
     recall_test=None,
     test=None,
+    exclude_prev_window=False,
 ):
     """
     Yield windows around previous items in the input list.
@@ -399,6 +400,10 @@ def windows_masker(
             test(prev, curr) - test for included transition
 
             test(prev, poss) - test for included possible transition
+
+    exclude_prev_window : bool, optional
+        If true, transitions preceded by items in the window around the
+        previous item in the list will be excluded.
 
     Yields
     ------
@@ -448,6 +453,11 @@ def windows_masker(
         # exclude if any windowed items do not exist or fail test
         if np.any(prev < 1) or np.any(prev > list_length):
             continue
+
+        # exclude current transition if prior transition was from the window
+        if exclude_prev_window and n > 0:
+            if recall_items[n - 1] in prev:
+                continue
 
         # exclude current/possible items in the window
         curr = int(recall_items[n + 1])
