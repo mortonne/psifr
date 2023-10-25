@@ -253,3 +253,71 @@ def test_rank_distance_window():
     )
     expected = np.array([[0.125, 0.125, 0.375], [0, 1, 1], [0, 0, 0]])
     np.testing.assert_allclose(ranks, expected)
+
+
+def test_rank_distance_window_exclude_prev():
+    """Test rank distance window with previous window transitions excluded."""
+    distance = np.array(
+        [
+            [0, 3, 1, 1, 2, 2, 2, 2],
+            [3, 0, 1, 1, 2, 2, 2, 2],
+            [1, 1, 0, 4, 2, 2, 2, 2],
+            [1, 1, 4, 0, 2, 2, 2, 2],
+            [2, 2, 2, 2, 0, 5, 3, 3],
+            [2, 2, 2, 2, 5, 0, 3, 3],
+            [2, 2, 2, 2, 3, 3, 0, 6],
+            [2, 2, 2, 2, 3, 3, 6, 0],
+        ]
+    )
+    pool = [[1, 2, 3, 4, 5, 6, 7, 8]]
+    outputs = [[4, 2, 1, 7, 5, 6, 8]]
+    pool_index = [[4, 5, 6, 7, 0, 1, 2, 3]]
+    outputs_index = [[3, 1, 0, 6, 4, 5, 7]]
+    list_length = 8
+    window_lags = [-1, 0, 1]
+
+    # included: [(4, 2), (7, 5), (6, 8)]
+    # included with exclude_prev_window=True:
+    #           [(4, 2), (7, 5)]
+
+    # prev: [[3, 4, 5], [6, 7, 8], [5, 6, 7]]
+    # curr: [2, 5, 8]
+    # poss: [[1, 2, 6, 7, 8], [3, 5], [3, 8]]
+
+    # prev: [[6, 7, 0], [1, 2, 3], [0, 1, 2]]
+    # curr: [5, 0, 3]
+    # poss: [[4, 5, 1, 2, 3], [6, 0], [6, 3]]
+
+    # -1
+    # actual: [3, 3, 1]
+    # possible: [[3, 3, 2, 2, 2], [2, 3], [2, 1]]
+    # rank: [0.125, 0.0, 1.0]
+
+    # 0
+    # actual: [3, 1, 1]
+    # possible: [[3, 3, 2, 2, 2], [2, 1], [2, 1]]
+    # rank: [0.125, 1.0, 1.0]
+
+    # +1
+    # actual: [2, 1, 4]
+    # possible: [[2, 2, 3, 1, 1], [2, 1], [2, 4]]
+    # rank: [0.375, 1.0, 0.0]
+    ranks = stats.rank_distance_window(
+        distance, list_length, window_lags, pool, outputs, pool_index, outputs_index
+    )
+    expected = np.array([[0.125, 0.125, 0.375], [0, 1, 1], [1, 1, 0]])
+    np.testing.assert_allclose(ranks, expected)
+
+    # exclude transitions that immediately follow recall of an item in the window
+    ranks = stats.rank_distance_window(
+        distance,
+        list_length,
+        window_lags,
+        pool,
+        outputs,
+        pool_index,
+        outputs_index,
+        exclude_prev_window=True,
+    )
+    expected = np.array([[0.125, 0.125, 0.375], [0, 1, 1]])
+    np.testing.assert_allclose(ranks, expected)
