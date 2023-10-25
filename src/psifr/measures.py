@@ -362,6 +362,7 @@ class TransitionDistanceRankWindow(TransitionMeasure):
         item_query=None,
         test_key=None,
         test=None,
+        exclude_prev_window=False,
     ):
         super().__init__(
             'input', index_key, item_query=item_query, test_key=test_key, test=test
@@ -369,6 +370,7 @@ class TransitionDistanceRankWindow(TransitionMeasure):
         self.distances = distances
         self.list_length = list_length
         self.window_lags = window_lags
+        self.exclude_prev_window = exclude_prev_window
 
     def analyze_subject(self, subject, pool, recall):
         ranks = stats.rank_distance_window(
@@ -382,6 +384,7 @@ class TransitionDistanceRankWindow(TransitionMeasure):
             pool['test'],
             recall['test'],
             self.test,
+            self.exclude_prev_window,
         )
         index = pd.MultiIndex.from_arrays(
             [[subject] * len(self.window_lags), self.window_lags],

@@ -1549,7 +1549,14 @@ def distance_rank_shifted(
 
 
 def distance_rank_window(
-    df, index_key, distances, window_lags, item_query=None, test_key=None, test=None
+    df,
+    index_key,
+    distances,
+    window_lags,
+    item_query=None,
+    test_key=None,
+    test=None,
+    exclude_prev_window=False,
 ):
     """
     Rank of transition distances relative to items in a window.
@@ -1589,6 +1596,10 @@ def distance_rank_window(
         Callable that takes in previous and current item values and
         returns True for transitions that should be included.
 
+    exclude_prev_window : bool, optional
+        If true, transitions preceded by items in the window around the
+        previous item in the list will be excluded.
+
     Returns
     -------
     stat : pandas.DataFrame
@@ -1603,6 +1614,7 @@ def distance_rank_window(
         item_query=item_query,
         test_key=test_key,
         test=test,
+        exclude_prev_window=exclude_prev_window,
     )
     rank = measure.analyze(df)
     return rank
