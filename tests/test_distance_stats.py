@@ -204,8 +204,8 @@ def test_rank_distance_shifted(list_data, distance):
     np.testing.assert_allclose(ranks, expected)
 
 
-def test_rank_distance_window():
-    """Test rank distance relative to items in a window."""
+@pytest.fixture()
+def distance_window_data():
     distance = np.array(
         [
             [0, 3, 1, 1, 2, 2, 2, 2],
@@ -219,6 +219,12 @@ def test_rank_distance_window():
         ]
     )
     pool = [[1, 2, 3, 4, 5, 6, 7, 8]]
+    return distance, pool
+
+
+def test_rank_distance_window(distance_window_data):
+    """Test rank distance relative to items in a window."""
+    distance, pool = distance_window_data
     outputs = [[4, 2, 1, 7, 5, 3, 4]]
     pool_index = [[4, 5, 6, 7, 0, 1, 2, 3]]
     outputs_index = [[3, 1, 0, 6, 4, 2, 3]]
@@ -255,21 +261,9 @@ def test_rank_distance_window():
     np.testing.assert_allclose(ranks, expected)
 
 
-def test_rank_distance_window_exclude_prev():
+def test_rank_distance_window_exclude_prev(distance_window_data):
     """Test rank distance window with previous window transitions excluded."""
-    distance = np.array(
-        [
-            [0, 3, 1, 1, 2, 2, 2, 2],
-            [3, 0, 1, 1, 2, 2, 2, 2],
-            [1, 1, 0, 4, 2, 2, 2, 2],
-            [1, 1, 4, 0, 2, 2, 2, 2],
-            [2, 2, 2, 2, 0, 5, 3, 3],
-            [2, 2, 2, 2, 5, 0, 3, 3],
-            [2, 2, 2, 2, 3, 3, 0, 6],
-            [2, 2, 2, 2, 3, 3, 6, 0],
-        ]
-    )
-    pool = [[1, 2, 3, 4, 5, 6, 7, 8]]
+    distance, pool = distance_window_data
     outputs = [[4, 2, 1, 7, 5, 6, 8]]
     pool_index = [[4, 5, 6, 7, 0, 1, 2, 3]]
     outputs_index = [[3, 1, 0, 6, 4, 5, 7]]
