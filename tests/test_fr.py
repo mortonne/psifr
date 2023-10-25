@@ -566,3 +566,36 @@ def test_distance_rank_window():
     stat = fr.distance_rank_window(data, 'item_index', distances, [-1, 0, 1])
     expected = np.array([[0.875, 0.875, 0.375], [0, 1, 1], [0, 0, 0]])
     np.testing.assert_allclose(np.mean(expected, 0), stat['rank'].to_numpy())
+
+    # example from stats function test
+    distances = np.array(
+        [
+            [0, 3, 1, 1, 2, 2, 2, 2],
+            [3, 0, 1, 1, 2, 2, 2, 2],
+            [1, 1, 0, 4, 2, 2, 2, 2],
+            [1, 1, 4, 0, 2, 2, 2, 2],
+            [2, 2, 2, 2, 0, 5, 3, 3],
+            [2, 2, 2, 2, 5, 0, 3, 3],
+            [2, 2, 2, 2, 3, 3, 0, 6],
+            [2, 2, 2, 2, 3, 3, 6, 0],
+        ]
+    )
+    pool = ['piano', 'pillow', 'cat', 'tree', 'absence', 'hollow', 'pupil', 'fountain']
+    recall = [['fountain', 'hollow', 'absence', 'cat', 'piano', 'pillow', 'tree']]
+    raw = fr.table_from_lists(subjects, study, recall)
+    raw['item_index'] = fr.pool_index(raw['item'], pool)
+    data = fr.merge_free_recall(raw, list_keys=['item_index'])
+
+    # including all transitions outside the window
+    stat = fr.distance_rank_window(
+        data, 'item_index', distances, [-1, 0, 1]
+    )
+    expected = np.array([[0.125, 0.125, 0.375], [0, 1, 1], [1, 1, 0]])
+    np.testing.assert_allclose(np.mean(expected, 0), stat['rank'].to_numpy())
+
+    # excluding transitions when the prior transition was from the window
+    stat = fr.distance_rank_window(
+        data, 'item_index', distances, [-1, 0, 1], exclude_prev_window=True
+    )
+    expected = np.array([[0.125, 0.125, 0.375], [0, 1, 1]])
+    np.testing.assert_allclose(np.mean(expected, 0), stat['rank'].to_numpy())
