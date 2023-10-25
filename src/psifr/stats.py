@@ -873,6 +873,7 @@ def rank_distance_window(
     pool_test=None,
     recall_test=None,
     test=None,
+    exclude_prev_window=False,
 ):
     """
     Calculate percentile rank of distances relative to items in a window.
@@ -910,6 +911,10 @@ def rank_distance_window(
         Called as test(prev, curr) or test(prev, poss) to screen
         actual and possible transitions, respectively.
 
+    exclude_prev_window : bool, optional
+        If true, transitions preceded by items in the window around the
+        previous item in the list will be excluded.
+
     Returns
     -------
     rank : numpy.ndarray
@@ -932,6 +937,7 @@ def rank_distance_window(
             pool_test_list,
             recall_test_list,
             test,
+            exclude_prev_window,
         )
         for output, w_prev, curr, poss in masker:
             curr = int(curr)
