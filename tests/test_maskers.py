@@ -140,13 +140,20 @@ def test_sequences_position(list_data):
     assert steps == list(zip(output, prev, curr, poss))
 
 
-def test_windows_position():
-    """Test study position within a window."""
+@pytest.fixture()
+def window_data():
     pool = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
     outputs = [16, 15, 9, 1, 4, 8, 13, 14, 4, 7, 5]
-    window_lags = [-1, 0, 1]
     list_length = 16
+    return pool, outputs, list_length
 
+
+def test_windows_position(window_data):
+    """Test study position within a window."""
+    pool, outputs, list_length = window_data
+    window_lags = [-1, 0, 1]
+
+    # outputs: [16, 15, 9, 1, 4, 8, 13, 14, 4, 7, 5]
     # included: [(15, 9), (9, 1), (4, 8), (8, 13), (7, 5)]
     # excluded: [(16, 15), (1, 4), (13, 14), (14, 4)]
     output = [2, 3, 5, 6, 10]
@@ -171,16 +178,15 @@ def test_windows_position():
         assert a_poss.tolist() == poss[i]
 
 
-def test_windows_position_cond_category():
+def test_windows_position_cond_category(window_data):
     """Test study position within a window conditional on category."""
-    pool = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+    pool, outputs, list_length = window_data
     pool_category = [1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2]
-    outputs = [16, 15, 9, 1, 4, 8, 13, 14, 4, 7, 5]
     outputs_category = [2, 2, 2, 1, 1, 1, 2, 2, 1, 1, 1]
     window_lags = [-1, 0, 1]
-    list_length = 16
     test = lambda x, y: x == y
 
+    # outputs: [16, 15, 9, 1, 4, 8, 13, 14, 4, 7, 5]
     # included: [(15, 9), (4, 8), (7, 5)]
     # excluded: [(16, 15), (9, 1), (1, 4), (8, 13), (13, 14), (14, 4), (4, 7)]
     output = [2, 5, 10]
