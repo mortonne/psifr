@@ -178,6 +178,35 @@ def test_windows_position(window_data):
         assert a_poss.tolist() == poss[i]
 
 
+def test_windows_position_exclude_prev(window_data):
+    """Test excluding previous recalls within the window."""
+    pool, outputs, list_length = window_data
+    window_lags = [-1, 0, 1]
+
+    # outputs: [16, 15, 9, 1, 4, 8, 13, 14, 4, 7, 5]
+    # included: [(9, 1), (4, 8), (8, 13), (7, 5)]
+    # excluded: [(16, 15), (15, 9), (1, 4), (13, 14), (14, 4), (4, 7)]
+    # excluded due to previous transition: [(15, 9), (14, 4)]
+    output = [3, 5, 6, 10]
+    prev = [[8, 9, 10], [3, 4, 5], [7, 8, 9], [6, 7, 8]]
+    curr = [1, 8, 13, 5]
+    poss = [
+        [1, 2, 3, 4, 5, 6, 7, 11, 12, 13, 14],
+        [2, 6, 7, 8, 10, 11, 12, 13, 14],
+        [2, 3, 5, 6, 10, 11, 12, 13, 14],
+        [2, 3, 5, 10, 11, 12],
+    ]
+    # test the yielded values at each included output position
+    masker = maskers.windows_masker(
+        list_length, window_lags, pool, outputs, pool, outputs, exclude_prev_window=True
+    )
+    for i, (a_output, a_prev, a_curr, a_poss) in enumerate(masker):
+        assert a_output == output[i]
+        assert a_prev.tolist() == prev[i]
+        assert a_curr == curr[i]
+        assert a_poss.tolist() == poss[i]
+
+
 def test_windows_position_cond_category(window_data):
     """Test study position within a window conditional on category."""
     pool, outputs, list_length = window_data
