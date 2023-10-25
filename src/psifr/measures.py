@@ -44,7 +44,6 @@ class TransitionMeasure(object):
     """
 
     def __init__(self, items_key, label_key, item_query=None, test_key=None, test=None):
-
         self.keys = {'items': items_key, 'label': label_key, 'test': test_key}
         self.item_query = item_query
         self.test = test
@@ -181,7 +180,6 @@ class TransitionLag(TransitionMeasure):
         self.compound = compound
 
     def analyze_subject(self, subject, pool, recall):
-
         if self.compound:
             counter = stats.count_lags_compound
         else:
@@ -267,7 +265,6 @@ class TransitionDistance(TransitionMeasure):
         self.count_unique = count_unique
 
     def analyze_subject(self, subject, pool, recall):
-
         actual, possible = stats.count_distance(
             self.distances,
             self.edges,

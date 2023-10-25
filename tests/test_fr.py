@@ -587,9 +587,7 @@ def test_distance_rank_window():
     data = fr.merge_free_recall(raw, list_keys=['item_index'])
 
     # including all transitions outside the window
-    stat = fr.distance_rank_window(
-        data, 'item_index', distances, [-1, 0, 1]
-    )
+    stat = fr.distance_rank_window(data, 'item_index', distances, [-1, 0, 1])
     expected = np.array([[0.125, 0.125, 0.375], [0, 1, 1], [1, 1, 0]])
     np.testing.assert_allclose(np.mean(expected, 0), stat['rank'].to_numpy())
 
