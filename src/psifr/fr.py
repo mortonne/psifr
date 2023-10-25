@@ -1868,7 +1868,9 @@ def plot_swarm_error(
     g.map_dataframe(
         sns.swarmplot, x=x, y=y, color=swarm_color, size=swarm_size, zorder=1
     )
-    g.map_dataframe(sns.pointplot, x=x, y=y, color=point_color, join=False, capsize=0.5)
+    g.map_dataframe(
+        sns.pointplot, x=x, y=y, color=point_color, linestyle='none', capsize=0.5
+    )
     return g
 
 
