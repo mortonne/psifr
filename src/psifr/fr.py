@@ -1,6 +1,6 @@
 """Utilities for working with free recall data."""
 
-from pkg_resources import resource_filename
+from importlib import resources
 import warnings
 import numpy as np
 import pandas as pd
@@ -12,14 +12,22 @@ from psifr import measures
 
 def sample_data(study):
     """Read sample data."""
-    data_file = resource_filename('psifr', f'data/{study}.csv')
+    if hasattr(resources, 'files'):
+        data_file = resources.files('psifr') / 'data' / f'{study}.csv'
+    else:
+        from pkg_resources import resource_filename
+        data_file = resource_filename('psifr', f'data/{study}.csv')
     df = pd.read_csv(data_file)
     return df
 
 
 def sample_distances(study):
     """Read sample distances."""
-    distance_file = resource_filename('psifr', f'distances/{study}.npz')
+    if hasattr(resources, 'files'):
+        distance_file = resources.files('psifr') / 'data' / f'{study}.npz'
+    else:
+        from pkg_resources import resource_filename
+        distance_file = resource_filename('psifr', f'distances/{study}.npz')
     f = np.load(distance_file)
     return f['items'], f['distances']
 
