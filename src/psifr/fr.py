@@ -24,7 +24,7 @@ def sample_data(study):
 def sample_distances(study):
     """Read sample distances."""
     if hasattr(resources, 'files'):
-        distance_file = resources.files('psifr') / 'data' / f'{study}.npz'
+        distance_file = resources.files('psifr') / 'distances' / f'{study}.npz'
     else:
         from pkg_resources import resource_filename
         distance_file = resource_filename('psifr', f'distances/{study}.npz')
