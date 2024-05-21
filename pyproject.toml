@@ -1,6 +1,6 @@
 [project]
 name = "psifr"
-version = "0.9.1"
+version = "0.9.2"
 authors = [
     {name = "Neal W Morton", email = "mortonne@gmail.com"}
 ]
@@ -19,7 +19,7 @@ dependencies = [
     "scipy",
     "pandas>=1.0.0, <2.2.0",
     "matplotlib!=3.3.1",
-    "seaborn>=0.9.1",
+    "seaborn>=0.9.2",
 ]
 
 [project.optional-dependencies]
