@@ -17,7 +17,7 @@ classifiers = [
 dependencies = [
     "numpy",
     "scipy",
-    "pandas>=1.0.0",
+    "pandas>=1.0.0, <2.2.0",
     "matplotlib!=3.3.1",
     "seaborn>=0.9.1",
 ]
