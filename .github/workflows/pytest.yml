@@ -28,6 +28,8 @@ jobs:
         pytest --cov-report=xml --cov=./ --junit-xml pytest.xml
     - name: Upload coverage report to codecov
       uses: codecov/codecov-action@v4
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       with:
         fail_ci_if_error: false
         verbose: true
