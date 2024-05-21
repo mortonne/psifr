@@ -13,9 +13,9 @@ jobs:
       PYTHON: ${{ matrix.python-version }}
     steps:
     - name: Check out repository code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
@@ -27,7 +27,7 @@ jobs:
       run: |
         pytest --cov-report=xml --cov=./ --junit-xml pytest.xml
     - name: Upload coverage report to codecov
-      uses: codecov/codecov-action@v2
+      uses: codecov/codecov-action@v4
       with:
         fail_ci_if_error: false
         verbose: true
@@ -35,7 +35,7 @@ jobs:
         flags: unittests
         files: ./coverage.xml
     - name: Publish unit test results
-      uses: mikepenz/action-junit-report@v2
+      uses: mikepenz/action-junit-report@v4
       if: always()
       with:
         report_paths: './pytest.xml'
