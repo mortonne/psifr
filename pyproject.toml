@@ -23,7 +23,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-docs = ["sphinx", "pydata-sphinx-theme", "ipython", "sphinxcontrib-bibtex"]
+docs = ["sphinx", "pydata-sphinx-theme", "ipython", "sphinxcontrib-bibtex", "pickleshare"]
 test = ["pytest", "codecov", "pytest-cov"]
 perf = ["snakeviz", "asv"]
 
