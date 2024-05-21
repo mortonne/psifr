@@ -1010,7 +1010,7 @@ def pli_list_lag(df, max_lag):
     <BLANKLINE>
     [120 rows x 5 columns]
     """
-    result = df.groupby('subject').apply(_subject_pli_list_lag, max_lag)
+    result = df.groupby('subject')[df.columns].apply(_subject_pli_list_lag, max_lag)
     result = result.reset_index()
     return result
 
@@ -1814,7 +1814,9 @@ def category_clustering(df, category_key):
     # these analyses are undefined when there are repeats and
     # intrusions, so strip them out
     clean = df.query('~intrusion and repeat == 0')
-    stats = clean.groupby('subject').apply(_subject_category_clustering, category_key)
+    stats = clean.groupby('subject')[clean.columns].apply(
+        _subject_category_clustering, category_key
+    )
     stats = stats.reset_index()
     return stats
 
