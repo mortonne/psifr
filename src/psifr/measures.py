@@ -390,7 +390,54 @@ class TransitionDistanceRankWindow(TransitionMeasure):
             [[subject] * len(self.window_lags), self.window_lags],
             names=['subject', 'lag'],
         )
-        stat = pd.DataFrame({'rank': np.nanmean(ranks, 0)}, index=index)
+        stat = pd.DataFrame(
+            {'n': np.count_nonzero(~np.isnan(ranks), 0), 'rank': np.nanmean(ranks, 0)},
+            index=index,
+        )
+        return stat
+
+
+class TransitionDistanceRankWindowAsym(TransitionMeasure):
+    """Measure asymmetry of transition distance rank in a window."""
+
+    def __init__(
+        self,
+        index_key,
+        distances,
+        list_length,
+        item_query=None,
+        test_key=None,
+        test=None,
+        exclude_prev_window=False,
+    ):
+        super().__init__(
+            'input', index_key, item_query=item_query, test_key=test_key, test=test
+        )
+        self.distances = distances
+        self.list_length = list_length
+        self.window_lags = [-1, 1]
+        self.exclude_prev_window = exclude_prev_window
+
+    def analyze_subject(self, subject, pool, recall):
+        ranks = stats.rank_distance_window(
+            self.distances,
+            self.list_length,
+            self.window_lags,
+            pool['items'],
+            recall['items'],
+            pool['label'],
+            recall['label'],
+            pool['test'],
+            recall['test'],
+            self.test,
+            self.exclude_prev_window,
+        )
+        asym = ranks[:, 1] - ranks[:, 0]
+        stat = pd.DataFrame(
+            {'n': np.count_nonzero(~np.isnan(asym)), 'asym': np.nanmean(asym)},
+            index=[subject],
+        )
+        stat.index.name = 'subject'
         return stat
 
 

@@ -597,3 +597,8 @@ def test_distance_rank_window():
     )
     expected = np.array([[0.125, 0.125, 0.375], [0, 1, 1]])
     np.testing.assert_allclose(np.mean(expected, 0), stat['rank'].to_numpy())
+
+    # just calculating asymmetry
+    stat = fr.distance_rank_window_asym(data, 'item_index', distances)
+    expected = np.array([[.25, 1, -1]])
+    np.testing.assert_allclose(np.mean(expected), stat['asym'].to_numpy())
