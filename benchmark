@@ -8,10 +8,10 @@ import cProfile
 from benchmarks import benchmarks
 
 
-def main(benchmark):
+def main(benchmark, study, engine, dtype_backend):
     class_name, method_name = benchmark.split('.')
     test = getattr(benchmarks, class_name)
-    m = test()
+    m = test(study, engine=engine, dtype_backend=dtype_backend)
     m.setup()
     sub_test = getattr(m, method_name)
     cProfile.runctx('sub_test()', globals(), locals(), filename='.profile')
@@ -20,7 +20,9 @@ def main(benchmark):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('Run and visualize a benchmark test.')
-    parser.add_argument('benchmark',
-                        help="benchmark to run (classname.methodname)")
+    parser.add_argument('--study', '-s', default='Morton2013')
+    parser.add_argument('--engine', '-e', default='python')
+    parser.add_argument('--dtype-backend', '-d', default='numpy_nullable')
+    parser.add_argument('benchmark', help="benchmark to run (classname.methodname)")
     args = parser.parse_args()
-    main(args.benchmark)
+    main(args.benchmark, args.study, args.engine, args.dtype_backend)
