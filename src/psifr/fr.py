@@ -16,6 +16,7 @@ def sample_data(study):
         data_file = resources.files('psifr') / 'data' / f'{study}.csv'
     else:
         from pkg_resources import resource_filename
+
         data_file = resource_filename('psifr', f'data/{study}.csv')
     df = pd.read_csv(data_file)
     return df
@@ -27,6 +28,7 @@ def sample_distances(study):
         distance_file = resources.files('psifr') / 'distances' / f'{study}.npz'
     else:
         from pkg_resources import resource_filename
+
         distance_file = resource_filename('psifr', f'distances/{study}.npz')
     f = np.load(distance_file)
     return f['items'], f['distances']
