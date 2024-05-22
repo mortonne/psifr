@@ -504,7 +504,12 @@ def split_lists(frame, phase, keys=None, names=None, item_query=None, as_list=Fa
         if key is None or key not in frame.columns:
             split[name] = None
             continue
-        all_values = phase_data[key].to_numpy()
+        d = phase_data[key]
+        if d.dtype == 'int64[pyarrow]':
+            all_values = d.to_numpy(dtype=float)
+        else:
+            all_values = d.to_numpy()
+
         split[name] = []
         for n in unique_lists:
             if n in frame_idx:
