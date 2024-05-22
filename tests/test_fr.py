@@ -181,7 +181,7 @@ def test_merge(raw):
     # intrusion
     intrusion = merged.query('item == "empty"')
     intrusion = intrusion.reset_index().loc[0]
-    assert np.isnan(intrusion['input'])
+    assert pd.isnull(intrusion['input'])
     assert not intrusion['study']
     assert intrusion['recall']
     assert intrusion['repeat'] == 0
@@ -214,8 +214,8 @@ def test_pli(raw):
 
     # check the FLI (future-list intrusion) in the first list
     fli = merged.query('item == "fountain" and output == 3')
-    assert np.isnan(fli['prior_list'].to_numpy()[0])
-    assert np.isnan(fli['prior_input'].to_numpy()[0])
+    assert pd.isnull(fli['prior_list'].to_numpy()[0])
+    assert pd.isnull(fli['prior_input'].to_numpy()[0])
 
 
 def test_filter_raw_data(raw):
