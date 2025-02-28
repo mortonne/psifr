@@ -52,7 +52,11 @@ if ~isempty(extra)
             names{i} = extra{i};
         end
         f = names{i};
-        extra_vectors.(f) = zeros(n_trial, 1);
+        if iscell(frdata.pres.(extra{i}))
+            extra_vectors.(f) = cell(n_trial, 1);
+        else
+            extra_vectors.(f) = zeros(n_trial, 1);
+        end
     end
 end
 
