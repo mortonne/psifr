@@ -101,7 +101,7 @@ We can also plot all combinations of two conditions:
 
 .. ipython:: python
 
-    spc_split = data.groupby(['list_type', 'category']).apply(fr.spc)
+    spc_split = data.set_index(['list_type', 'category']).groupby(['list_type', 'category']).apply(fr.spc)
     @savefig spc_split.svg
     g = fr.plot_spc(spc_split, col='list_type', row='category')
 
