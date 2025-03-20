@@ -146,3 +146,6 @@ docs/api/api
 
 # Jupyter test notebooks
 jupyter/
+
+# VSCode
+.vscode/
