@@ -58,8 +58,11 @@ use the serial position curve analysis as an example.
 
 .. ipython:: python
 
-    spc = data.groupby('list_type').apply(fr.spc)
+    spc = data.set_index('list_type').groupby('list_type').apply(fr.spc)
     spc.head()
+
+The call to `set_index` before `groupby` avoids a deprecation warning 
+(Pandas 2.2 changed the behavior of `apply` after `groupby`).
 
 The :code:`spc` DataFrame has separate groups with the results for each
 :code:`list_type`.
