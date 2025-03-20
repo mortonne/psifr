@@ -675,7 +675,7 @@ def merge_free_recall(data, **kwargs):
     include = ['subject', 'list', 'item', 'output', 'prior_list', 'prior_input']
     merged = pd.merge(
         merged, plis[include], on=['subject', 'list', 'item', 'output'], how='outer'
-    )
+    ).sort_values(['subject', 'list', 'input'])
 
     # reset concidental "future list intrusions"
     isfli = merged['list'] < merged['prior_list']
