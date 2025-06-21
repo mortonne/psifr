@@ -1953,7 +1953,7 @@ def plot_spc(recall, input_key='input', **facet_kws):
     return g
 
 
-def plot_input_crp(crp, **facet_kws):
+def plot_input_crp(crp, hue='current', **facet_kws):
     """
     Plot input CRP curves.
 
@@ -1964,8 +1964,12 @@ def plot_input_crp(crp, **facet_kws):
     crp : pandas.DataFrame
         Results from calling `input_crp`.
     """
+    if 'palette' in facet_kws.keys():
+        palette = facet_kws['palette']
     g = sns.FacetGrid(dropna=False, **facet_kws, data=crp.reset_index())
-    g.map_dataframe(sns.lineplot, x='previous', y='prob', hue='current')
+    g.map_dataframe(
+        sns.lineplot, x='previous', y='prob', hue=hue, palette=palette
+    )
     g.set_xlabels('Serial position')
     g.set_ylabels('CRP')
     g.set(ylim=(0, 1))
