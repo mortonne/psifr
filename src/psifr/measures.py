@@ -212,6 +212,50 @@ class TransitionLag(TransitionMeasure):
             crp = crp.set_index('subject', append=True)
             crp = crp.reorder_levels(['subject', 'lag'])
         return crp
+    
+
+class TransitionInput(TransitionMeasure):
+    """Measure conditional response probability by input position."""
+
+    def __init__(
+        self,
+        list_length,
+        input_key='input',
+        count_unique=False,
+        item_query=None,
+        test_key=None,
+        test=None,
+    ):
+        super().__init__(
+            'input', input_key, item_query=item_query, test_key=test_key, test=test
+        )
+        self.list_length = list_length
+        self.count_unique = count_unique
+
+    def analyze_subject(self, subject, pool, recall):
+        actual, possible = stats.count_input_pairs(
+            self.list_length,
+            pool['items'],
+            recall['items'],
+            pool['label'],
+            recall['label'],
+            pool['test'],
+            recall['test'],
+            self.test,
+            self.count_unique,
+        )
+        crp = pd.DataFrame(
+            {
+                'subject': subject,
+                'prob': actual / possible,
+                'actual': actual,
+                'possible': possible,
+            },
+            index=actual.index,
+        )
+        crp = crp.set_index('subject', append=True)
+        crp = crp.reorder_levels(['subject', 'previous', 'current'])
+        return crp
 
 
 class TransitionLagRank(TransitionMeasure):

@@ -1227,6 +1227,103 @@ def lag_crp_compound(
     return crp
 
 
+def input_crp(
+    df, input_key='input', count_unique=False, item_query=None, test_key=None, test=None
+):
+    """
+    Input-CRP for multiple subjects.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Merged study and recall data. See merge_lists. List length is
+        assumed to be the same for all lists. Must have fields:
+        subject, list, input, output, recalled. Input position must be
+        defined such that the first serial position is 1, not 0.
+
+    input_key : str, optional
+        Name of column to use for input position.
+
+    count_unique : bool, optional
+        If true, possible transitions of the same lag will only be
+        incremented once per transition.
+
+    item_query : str, optional
+        Query string to select items to include in the pool of possible
+        recalls to be examined. See `pandas.DataFrame.query` for
+        allowed format.
+
+    test_key : str, optional
+        Name of column with labels to use when testing transitions for
+        inclusion.
+
+    test : callable, optional
+        Callable that takes in previous and current item values and
+        returns True for transitions that should be included.
+
+    Returns
+    -------
+    results : pandas.DataFrame
+        Has fields:
+
+        subject : hashable
+            Results are separated by each subject.
+
+        previous : int
+            Input position of previous item.
+        
+        current : int
+            Input position of current item.
+
+        prob : float
+            Probability of each lag transition.
+
+        actual : int
+            Total of actual made transitions at each lag.
+
+        possible : int
+            Total of times each input position was possible, given the 
+            prior input position and the remaining items to be 
+            recalled.
+
+    See Also
+    --------
+    lag_rank : Rank of the absolute lags in recall sequences.
+
+    Examples
+    --------
+    >>> from psifr import fr
+    >>> raw = fr.sample_data('Morton2013')
+    >>> data = fr.merge_free_recall(raw)
+    >>> fr.input_crp(data)
+           subject  previous  current      prob  actual  possible
+    0            1         1        1       NaN       0         0
+    1            1         2        1  0.333333       4        12
+    2            1         3        1      0.25       4        16
+    3            1         4        1       0.0       0        19
+    4            1         5        1  0.066667       1        15
+    ...        ...       ...      ...       ...     ...       ...
+    23035       47        20       24       0.0       0        42
+    23036       47        21       24  0.119048       5        42
+    23037       47        22       24     0.225       9        40
+    23038       47        23       24     0.575      23        40
+    23039       47        24       24       NaN       0         0
+    <BLANKLINE>
+    [23040 rows x 6 columns]
+    """
+    list_length = int(df[input_key].max())
+    measure = measures.TransitionInput(
+        list_length,
+        input_key=input_key,
+        count_unique=count_unique,
+        item_query=item_query,
+        test_key=test_key,
+        test=test,
+    )
+    crp = measure.analyze(df)
+    return crp
+
+
 def lag_rank(df, lag_key='input', item_query=None, test_key=None, test=None):
     """
     Calculate rank of the absolute lags in free recall lists.
@@ -1836,7 +1933,7 @@ def category_clustering(df, category_key):
     return stats
 
 
-def plot_spc(recall, **facet_kws):
+def plot_spc(recall, input_key='input', **facet_kws):
     """
     Plot a serial position curve.
 
@@ -1849,7 +1946,7 @@ def plot_spc(recall, **facet_kws):
     """
     y = 'recall' if 'recall' in recall else 'prob'
     g = sns.FacetGrid(dropna=False, **facet_kws, data=recall.reset_index())
-    g.map_dataframe(sns.lineplot, x='input', y=y)
+    g.map_dataframe(sns.lineplot, x=input_key, y=y)
     g.set_xlabels('Serial position')
     g.set_ylabels('Recall probability')
     g.set(ylim=(0, 1))

@@ -430,6 +430,34 @@ def test_lag_crp_compound():
     np.testing.assert_array_equal(possible, crp['possible'].to_numpy())
 
 
+def test_input_crp():
+    """Test input-CRP analysis."""
+    subjects = [1]
+    study = [['absence', 'hollow', 'pupil', 'fountain']]
+    recall = [['fountain', 'absence', 'hollow', 'pupil']]
+    raw = fr.table_from_lists(subjects, study, recall)
+    data = fr.merge_free_recall(raw)
+    input_crp = fr.input_crp(data)
+    actual = np.hstack(
+        (
+            [0, 1, 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 0],
+            [1, 0, 0, 0],
+        )
+    )
+    possible = np.hstack(
+        (
+            [0, 1, 1, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 0],
+            [1, 1, 1, 0],
+        )
+    )
+    np.testing.assert_array_equal(actual.ravel(), input_crp['actual'].to_numpy())
+    np.testing.assert_array_equal(possible.ravel(), input_crp['possible'].to_numpy())
+
+
 def test_distance_crp(data, distances2):
     """Test distance CRP analysis."""
     edges = [0.5, 1.5, 2.5, 3.5]
