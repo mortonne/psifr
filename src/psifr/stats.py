@@ -450,6 +450,172 @@ def count_lags_compound(
     return actual, possible
 
 
+def count_input_pairs(
+    list_length,
+    pool_items,
+    recall_items,
+    pool_label=None,
+    recall_label=None,
+    pool_test=None,
+    recall_test=None,
+    test=None,
+    count_unique=False,
+):
+    """
+    Count actual and possible input position transitions.
+
+    Parameters
+    ----------
+    list_length : int
+        Number of items in each list.
+
+    pool_items : list
+        List of the serial positions available for recall in each list.
+        Must match the serial position codes used in `recall_items`.
+
+    recall_items : list
+        List indicating the serial position of each recall in output
+        order (NaN for intrusions).
+
+    pool_label : list, optional
+        List of the positions to use for calculating lag. Default is to
+        use `pool_items`.
+
+    recall_label : list, optional
+        List of position labels in recall order. Default is to use
+        `recall_items`.
+
+    pool_test : list, optional
+         List of some test value for each item in the pool.
+
+    recall_test : list, optional
+        List of some test value for each recall attempt by output
+        position.
+
+    test : callable
+        Callable that evaluates each transition between items n and
+        n+1. Must take test values for items n and n+1 and return True
+        if a given transition should be included.
+
+    count_unique : bool, optional
+        If true, only unique values will be counted toward the possible
+        transitions. If multiple items are avilable for recall for a
+        given transition and a given bin, that bin will only be
+        incremented once. If false, all possible transitions will add
+        to the count.
+
+    Returns
+    -------
+    actual : pandas.Series
+        Count of actual input transitions that occurred in the recall 
+        sequence.
+
+    possible : pandas.Series
+        Count of possible input transitions.
+
+    See Also
+    --------
+    count_lags : Count actual and possible lags.
+
+    Examples
+    --------
+    >>> from psifr import stats
+    >>> pool_items = [[1, 2, 3, 4]]
+    >>> recall_items = [[4, 2, 3, 1]]
+    >>> actual, possible = stats.count_input_pairs(4, pool_items, recall_items)
+    >>> actual
+    previous  current
+    1         1          0
+    2         1          0
+    3         1          0
+    4         1          0
+    1         2          0
+    2         2          0
+    3         2          1
+    4         2          0
+    1         3          1
+    2         3          0
+    3         3          0
+    4         3          0
+    1         4          0
+    2         4          1
+    3         4          0
+    4         4          0
+    dtype: UInt64
+    >>> possible
+    previous  current
+    1         1          0
+    2         1          0
+    3         1          0
+    4         1          0
+    1         2          1
+    2         2          0
+    3         2          1
+    4         2          0
+    1         3          1
+    2         3          0
+    3         3          0
+    4         3          0
+    1         4          1
+    2         4          1
+    3         4          1
+    4         4          0
+    dtype: UInt64
+    """
+    if pool_label is None:
+        pool_label = pool_items
+
+    if recall_label is None:
+        recall_label = recall_items
+
+    list_actual_prev = []
+    list_actual_curr = []
+    list_possible_prev = []
+    list_possible_curr = []
+    for i, recall_items_list in enumerate(recall_items):
+        # set up masker to filter transitions
+        pool_test_list = None if pool_test is None else pool_test[i]
+        recall_test_list = None if recall_test is None else recall_test[i]
+        masker = maskers.transitions_masker(
+            pool_items[i],
+            recall_items_list,
+            pool_label[i],
+            recall_label[i],
+            pool_test_list,
+            recall_test_list,
+            test,
+        )
+
+        for output, prev, curr, poss in masker:
+            # for this step, calculate actual lag and all possible lags
+            list_actual_prev.append(prev)
+            list_actual_curr.append(curr)
+            list_possible_prev.extend([prev] * len(poss))
+            if count_unique:
+                list_possible_curr.extend(np.unique(poss))
+            else:
+                list_possible_curr.extend(poss)
+
+    # count the actual and possible transitions for each lag
+    bins = np.arange(1, list_length + 2)
+    actual_count = np.histogram2d(
+        list_actual_prev, list_actual_curr, np.arange(1, list_length + 2)
+    )[0]
+    possible_count = np.histogram2d(
+        list_possible_prev, list_possible_curr, np.arange(1, list_length + 2)
+    )[0]
+
+    # package results
+    prev_input = np.tile(np.arange(1, list_length + 1), list_length)
+    curr_input = np.repeat(np.arange(1, list_length + 1), list_length)
+    index = pd.MultiIndex.from_arrays(
+        [prev_input, curr_input], names=['previous', 'current']
+    )
+    actual = pd.Series(actual_count.ravel(), index=index, dtype=pd.UInt64Dtype())
+    possible = pd.Series(possible_count.ravel(), index=index, dtype=pd.UInt64Dtype())
+    return actual, possible
+
+
 def rank_lags(
     pool_items,
     recall_items,

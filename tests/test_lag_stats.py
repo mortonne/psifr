@@ -140,6 +140,34 @@ def test_compound_lag_count():
     np.testing.assert_array_equal(possible, expected_possible)
 
 
+def test_input_pairs():
+    """Test probability of all input transitions."""
+    list_length = 4
+    pool_position = [[1, 2, 3, 4]]
+    output_position = [[4, 1, 2, 3]]
+    expected_actual = np.hstack(
+        (
+            [0, 1, 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 0],
+            [1, 0, 0, 0],
+        )
+    )
+    expected_possible = np.hstack(
+        (
+            [0, 1, 1, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 0],
+            [1, 1, 1, 0],
+        )
+    )
+    actual, possible = stats.count_input_pairs(
+        list_length, pool_position, output_position
+    )
+    np.testing.assert_array_equal(actual, expected_actual)
+    np.testing.assert_array_equal(possible, expected_possible)
+
+
 def test_percentile_rank():
     """Test calculation of percentile rank."""
     possible = [1, 2, 3, 4]
