@@ -1953,6 +1953,25 @@ def plot_spc(recall, input_key='input', **facet_kws):
     return g
 
 
+def plot_input_crp(crp, **facet_kws):
+    """
+    Plot input CRP curves.
+
+    Additional arguments are passed to seaborn.relplot.
+
+    Parameters
+    ----------
+    crp : pandas.DataFrame
+        Results from calling `input_crp`.
+    """
+    g = sns.FacetGrid(dropna=False, **facet_kws, data=crp.reset_index())
+    g.map_dataframe(sns.lineplot, x='previous', y='prob', hue='current')
+    g.set_xlabels('Serial position')
+    g.set_ylabels('CRP')
+    g.set(ylim=(0, 1))
+    return g
+
+
 def plot_lag_crp(recall, max_lag=5, lag_key='lag', split=True, **facet_kws):
     """
     Plot conditional response probability by lag.
