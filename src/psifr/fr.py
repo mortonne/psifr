@@ -1933,7 +1933,7 @@ def category_clustering(df, category_key):
     return stats
 
 
-def plot_spc(recall, input_key='input', **facet_kws):
+def plot_spc(recall, input_key='input', style=None, **facet_kws):
     """
     Plot a serial position curve.
 
@@ -1946,14 +1946,14 @@ def plot_spc(recall, input_key='input', **facet_kws):
     """
     y = 'recall' if 'recall' in recall else 'prob'
     g = sns.FacetGrid(dropna=False, **facet_kws, data=recall.reset_index())
-    g.map_dataframe(sns.lineplot, x=input_key, y=y)
+    g.map_dataframe(sns.lineplot, x=input_key, y=y, style=None)
     g.set_xlabels('Serial position')
     g.set_ylabels('Recall probability')
     g.set(ylim=(0, 1))
     return g
 
 
-def plot_input_crp(crp, hue='current', **facet_kws):
+def plot_input_crp(crp, hue='current', style=None, **facet_kws):
     """
     Plot input CRP curves.
 
@@ -1968,7 +1968,7 @@ def plot_input_crp(crp, hue='current', **facet_kws):
         palette = facet_kws['palette']
     g = sns.FacetGrid(dropna=False, **facet_kws, data=crp.reset_index())
     g.map_dataframe(
-        sns.lineplot, x='previous', y='prob', hue=hue, palette=palette
+        sns.lineplot, x='previous', y='prob', hue=hue, style=style, palette=palette
     )
     g.set_xlabels('Serial position')
     g.set_ylabels('CRP')
@@ -1976,7 +1976,7 @@ def plot_input_crp(crp, hue='current', **facet_kws):
     return g
 
 
-def plot_lag_crp(recall, max_lag=5, lag_key='lag', split=True, **facet_kws):
+def plot_lag_crp(recall, max_lag=5, lag_key='lag', split=True, style=None, **facet_kws):
     """
     Plot conditional response probability by lag.
 
@@ -2002,18 +2002,18 @@ def plot_lag_crp(recall, max_lag=5, lag_key='lag', split=True, **facet_kws):
         g = sns.FacetGrid(dropna=True, **facet_kws, data=recall.reset_index())
         g.map_dataframe(
             lambda data, **kws: sns.lineplot(
-                data=data.query(filt_neg), x=lag_key, y='prob', **kws
+                data=data.query(filt_neg), x=lag_key, y='prob', style=None, **kws
             )
         )
         g.map_dataframe(
             lambda data, **kws: sns.lineplot(
-                data=data.query(filt_pos), x=lag_key, y='prob', **kws
+                data=data.query(filt_pos), x=lag_key, y='prob', style=None, **kws
             )
         )
     else:
         data = recall.query(f'{-max_lag} <= {lag_key} <= {max_lag}')
         g = sns.FacetGrid(dropna=False, **facet_kws, data=data.reset_index())
-        g.map_dataframe(sns.lineplot, x=lag_key, y='prob')
+        g.map_dataframe(sns.lineplot, x=lag_key, y='prob', style=None)
 
     g.set_xlabels('Lag')
     g.set_ylabels('CRP')
@@ -2021,7 +2021,7 @@ def plot_lag_crp(recall, max_lag=5, lag_key='lag', split=True, **facet_kws):
     return g
 
 
-def plot_distance_crp(crp, min_samples=None, **facet_kws):
+def plot_distance_crp(crp, min_samples=None, style=None, **facet_kws):
     """
     Plot response probability by distance bin.
 
@@ -2043,7 +2043,7 @@ def plot_distance_crp(crp, min_samples=None, **facet_kws):
         include = min_n.loc[min_n >= min_samples].index.to_numpy()
         crp = crp.loc[crp['center'].isin(include)]
     g = sns.FacetGrid(dropna=False, **facet_kws, data=crp.reset_index())
-    g.map_dataframe(sns.lineplot, x='center', y='prob')
+    g.map_dataframe(sns.lineplot, x='center', y='prob', style=None)
     g.set_xlabels('Distance')
     g.set_ylabels('CRP')
     g.set(ylim=(0, 1))
