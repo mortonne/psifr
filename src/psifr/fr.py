@@ -2008,8 +2008,12 @@ def plot_lag_crp(
         If true, will plot as two separate lines with a gap at lag 0.
     """
     if split:
-        filt_neg = f'{-max_lag} <= {lag_key} < 0'
-        filt_pos = f'0 < {lag_key} <= {max_lag}'
+        if max_lag is not None:
+            filt_neg = f'{-max_lag} <= {lag_key} < 0'
+            filt_pos = f'0 < {lag_key} <= {max_lag}'
+        else:
+            filt_neg = f'{lag_key} < 0'
+            filt_pos = f'0 < {lag_key}'
         g = sns.FacetGrid(dropna=True, **facet_kws, data=recall.reset_index())
         g.map_dataframe(
             lambda data, **kws: sns.lineplot(
@@ -2034,7 +2038,10 @@ def plot_lag_crp(
             )
         )
     else:
-        data = recall.query(f'{-max_lag} <= {lag_key} <= {max_lag}')
+        if max_lag is not None:
+            data = recall.query(f'{-max_lag} <= {lag_key} <= {max_lag}')
+        else:
+            data = recall
         g = sns.FacetGrid(dropna=False, **facet_kws, data=data.reset_index())
         g.map_dataframe(
             sns.lineplot, x=lag_key, y='prob', hue=hue, style=style, palette=None
