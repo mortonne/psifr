@@ -1,6 +1,6 @@
 [project]
 name = "psifr"
-version = "0.9.3"
+version = "0.10.0"
 authors = [
     {name = "Neal W Morton", email = "mortonne@gmail.com"}
 ]
