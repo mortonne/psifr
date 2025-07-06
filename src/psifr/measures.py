@@ -476,11 +476,14 @@ class TransitionDistanceRankWindowAsym(TransitionMeasure):
             self.test,
             self.exclude_prev_window,
         )
-        asym = ranks[:, 1] - ranks[:, 0]
-        stat = pd.DataFrame(
-            {'n': np.count_nonzero(~np.isnan(asym)), 'asym': np.nanmean(asym)},
-            index=[subject],
-        )
+        if ranks.size == 0:
+            n = 0
+            asym = np.nan
+        else:
+            asym = ranks[:, 1] - ranks[:, 0]
+            n = np.count_nonzero(~np.isnan(asym))
+            asym = np.nanmean(asym)
+        stat = pd.DataFrame({'n': n, 'asym': asym}, index=[subject])
         stat.index.name = 'subject'
         return stat
 
