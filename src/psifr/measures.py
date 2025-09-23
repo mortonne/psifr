@@ -509,7 +509,7 @@ class TransitionCategory(TransitionMeasure):
         crp = pd.DataFrame(
             {
                 'subject': subject,
-                'prob': actual / possible,
+                'prob': np.nan if possible == 0 else actual / possible,
                 'actual': actual,
                 'possible': possible,
             },
