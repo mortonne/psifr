@@ -27,6 +27,14 @@ The name Psifr is pronounced "cipher". It's taken from Psi, in reference to the 
   </div>
 </div>
 
+## Citation
+
+If you use Psifr, please help support open-source scientific software by citing it in your publications.
+
+Morton, N. W., (2020). 
+Psifr: Analysis and visualization of free recall data. 
+Journal of Open Source Software, 5(54), 2669, https://doi.org/10.21105/joss.02669
+
 ## Installation
 
 You can install the latest stable version of Psifr using pip:
@@ -69,14 +77,6 @@ A number of archival free recall datasets are available in the Matlab-based EMBA
 Data archives for a number of studies are available from the [UPenn](https://memory.psych.upenn.edu/Data_Archive) and [Vanderbilt](https://memory.psy.vanderbilt.edu/w/index.php/Publications) memory labs.
 If you have data in [EMBAM](https://github.com/vucml/EMBAM) format, use `matlab/frdata2table.m` to convert your data struct to a table with standard format.
 Then use the Matlab function `writetable` to write a CSV file which can then be read into Python for analysis.
-
-## Citation
-
-If you use Psifr, please cite the paper:
-
-Morton, N. W., (2020). 
-Psifr: Analysis and visualization of free recall data. 
-Journal of Open Source Software, 5(54), 2669, https://doi.org/10.21105/joss.02669
 
 ## Publications using Psifr
 
