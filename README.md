@@ -80,10 +80,7 @@ Journal of Open Source Software, 5(54), 2669, https://doi.org/10.21105/joss.0266
 
 ## Publications using Psifr
 
-Hong, B., Barense, M. D., Pace-Tonna, C. A. & Mack, M. L. (2022). 
-Emphasizing associations from encoding affects free recall at retrieval. 
-Proceedings of the Annual Meeting of the Cognitive Science Society 453–460.
-https://escholarship.org/uc/item/2gw1s36q
+See Google Scholar for a list of [publications using Psifr](https://scholar.google.com/scholar?oi=bibs&hl=en&cites=15633316861794439696). 
 
 ## Related projects
 
