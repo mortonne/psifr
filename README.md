@@ -85,7 +85,7 @@ See Google Scholar for a list of [publications using Psifr](https://scholar.goog
 ## Related projects
 
 ### EMBAM
-Analyses supported by Psifr are based on analyses implemented in the Matlab toolbox [EMBAM](https://github.com/vucml/EMBAM).
+Some of the analyses supported by Psifr are based on analyses implemented in the Matlab toolbox [EMBAM](https://github.com/vucml/EMBAM).
 
 ### pybeh
 [pybeh](https://github.com/pennmem/pybeh) is a direct Python port of EMBAM that supports a wide range of analyses.
