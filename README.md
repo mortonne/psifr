@@ -82,10 +82,6 @@ Psifr expects data to be in a simple standard format. For example, if subject 1 
 
 See [importing data](https://psifr.readthedocs.io/en/latest/guide/import.html) for details.
 
-## Publications using Psifr
-
-See Google Scholar for a list of [publications using Psifr](https://scholar.google.com/scholar?oi=bibs&hl=en&cites=15633316861794439696). 
-
 ## Related projects
 
 ### EMBAM
@@ -96,6 +92,10 @@ Some of the analyses supported by Psifr are based on analyses implemented in the
 
 ### Quail
 [Quail](https://github.com/ContextLab/quail) runs automatic scoring of free recall data, supports calculation and plotting of some common free recall measures, and has tools for measuring the "memory fingerprint" of individuals.
+
+## Publications using Psifr
+
+See Google Scholar for a list of [publications using Psifr](https://scholar.google.com/scholar?oi=bibs&hl=en&cites=15633316861794439696). 
 
 ## Contributing to Psifr
 
