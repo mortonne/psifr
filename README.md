@@ -108,7 +108,7 @@ A range of analyses can be used to help characterize recall performance and reca
   * Adjusted ratio of clustering (ARC) and list-based clustering (LBC): [`category_clustering`](https://psifr.readthedocs.io/en/latest/api/api/psifr.fr.category_clustering.html#psifr.fr.category_clustering)
 * __Compound clustering__:
   * Compound lag-CRP: [`lag_crp_compound`](https://psifr.readthedocs.io/en/latest/api/api/psifr.fr.lag_crp_compound.html#psifr.fr.lag_crp_compound)
-  * Compound semantic clustering: [`fr.distance_rank_shifted`](https://psifr.readthedocs.io/en/latest/api/api/psifr.fr.distance_rank_shifted.html#psifr.fr.distance_rank_shifted)
+  * Compound semantic clustering: [`distance_rank_shifted`](https://psifr.readthedocs.io/en/latest/api/api/psifr.fr.distance_rank_shifted.html#psifr.fr.distance_rank_shifted)
 
 Each of these analyses can be customized to group trials by condition, filter to only include specific recalls, and more. See the [User guide](https://psifr.readthedocs.io/en/stable/guide/overview.html) and [API reference](https://psifr.readthedocs.io/en/stable/api/overview.html) for details.
 
