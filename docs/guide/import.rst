@@ -74,6 +74,7 @@ Converting existing datasets
 ----------------------------
 
 A number of archival free recall datasets are available in the Matlab-based EMBAM format.
-Data archives for a number of studies are available from the [UPenn](https://memory.psych.upenn.edu/Data_Archive) and [Vanderbilt](https://memory.psy.vanderbilt.edu/w/index.php/Publications) memory labs.
-If you have data in [EMBAM](https://github.com/vucml/EMBAM) format, use `matlab/frdata2table.m` to convert your data struct to a table with standard format.
+Data archives for a number of studies are available from the `UPenn <https://memory.psych.upenn.edu/Data_Archive>`__ 
+and `Vanderbilt <https://memory.psy.vanderbilt.edu/w/index.php/Publications>`__ memory labs.
+If you have data in `EMBAM <https://github.com/vucml/EMBAM>`__ format, use `matlab/frdata2table.m` to convert your data struct to a table with standard format.
 Then use the Matlab function `writetable` to write a CSV file which can then be read into Python for analysis.
