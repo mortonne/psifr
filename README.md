@@ -68,15 +68,19 @@ Also see the Jupyter notebooks for more analysis examples:
 * [Recall performance](https://github.com/mortonne/psifr-notebooks/blob/master/demo_recall.ipynb)
 * [Temporal clustering](https://github.com/mortonne/psifr-notebooks/blob/master/demo_lag_crp.ipynb)
 
-## Importing data
+## Data format
 
-Generally the best way to get your data into shape for analysis in Psifr is to create a CSV (or TSV) file with one row for each event in the experiment, including study events (i.e., item presentations) and all recall attempts (including repeats and intrusions).
+Psifr expects data to be in a simple standard format. For example, if subject 1 studied a list of the words "absence", "hollow", "pupil", then recalled "pupil", "absence", the data would be represented in a spreadsheet like this:
+
+| subject | list | trial_type | position | item    |
+| ------: | ---: | :--------- | -------: | :------ |
+|       1 |    1 | study      |        1 | absence |
+|       1 |    1 | study      |        2 | hollow  |
+|       1 |    1 | study      |        3 | pupil   |
+|       1 |    1 | recall     |        1 | pupil   |
+|       1 |    1 | recall     |        2 | absence |
+
 See [importing data](https://psifr.readthedocs.io/en/latest/guide/import.html) for details.
-
-A number of archival free recall datasets are available in the Matlab-based EMBAM format.
-Data archives for a number of studies are available from the [UPenn](https://memory.psych.upenn.edu/Data_Archive) and [Vanderbilt](https://memory.psy.vanderbilt.edu/w/index.php/Publications) memory labs.
-If you have data in [EMBAM](https://github.com/vucml/EMBAM) format, use `matlab/frdata2table.m` to convert your data struct to a table with standard format.
-Then use the Matlab function `writetable` to write a CSV file which can then be read into Python for analysis.
 
 ## Publications using Psifr
 
