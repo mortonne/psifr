@@ -112,6 +112,10 @@ A range of analyses can be used to help characterize recall performance and reca
 
 Each of these analyses can be customized to group trials by condition, filter to only include specific recalls, and more. See the [User guide](https://psifr.readthedocs.io/en/stable/guide/overview.html) and [API reference](https://psifr.readthedocs.io/en/stable/api/overview.html) for details.
 
+## Analysis in R
+
+In R, the [{psifrr}](https://mortonne.github.io/psifrr/) package can be used to call Psifr analyses. It requires a Python installation, but allows free recall analysis to be done in R Studio without requiring users to learn Python.
+
 ## Related projects
 
 ### EMBAM
