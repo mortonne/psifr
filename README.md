@@ -64,10 +64,6 @@ g = fr.plot_spc(recall)
 
 See the [user guide](https://psifr.readthedocs.io/en/latest/guide/overview.html) for detailed documentation on importing and analyzing free recall datasets.
 
-Also see the Jupyter notebooks for more analysis examples:
-* [Recall performance](https://github.com/mortonne/psifr-notebooks/blob/master/demo_recall.ipynb)
-* [Temporal clustering](https://github.com/mortonne/psifr-notebooks/blob/master/demo_lag_crp.ipynb)
-
 ## Data format
 
 Psifr expects data to be in a simple standard format. For example, if subject 1 studied a list of the words "absence", "hollow", "pupil", then recalled "pupil", "absence", the data would be represented in a spreadsheet like this:
@@ -80,7 +76,41 @@ Psifr expects data to be in a simple standard format. For example, if subject 1 
 |       1 |    1 | recall     |        1 | pupil   |
 |       1 |    1 | recall     |        2 | absence |
 
-See [importing data](https://psifr.readthedocs.io/en/latest/guide/import.html) for details.
+Datasets can then be read into Python using [Pandas](https://pandas.pydata.org/)
+and scored for analysis using [Psifr](https://psifr.readthedocs.io/en/latest/index.html):
+
+```python
+import pandas as pd
+from psifr import fr
+raw = pd.read_csv('my_data.csv')  # read raw data from a CSV file into a Pandas DataFrame
+data = fr.merge_free_recall(raw)  # score recall data and prepare for analysis in Psifr
+```
+
+See [importing data](https://psifr.readthedocs.io/en/latest/guide/import.html) 
+and [scoring data](https://psifr.readthedocs.io/en/latest/guide/score.html) for details.
+
+## Analyses
+
+A range of analyses can be used to help characterize recall performance and recall dynamics:
+* __Serial position effects__:
+  * Serial position curve: [`spc`](https://psifr.readthedocs.io/en/latest/api/api/psifr.fr.spc.html#psifr.fr.spc)
+  * Probability of nth recall curve: [`pnr`](https://psifr.readthedocs.io/en/latest/api/api/psifr.fr.pnr.html#psifr.fr.pnr)
+* __Intrusions__:
+  * Probability of intrusions at different list lags: [`pli_list_lag`](https://psifr.readthedocs.io/en/latest/api/api/psifr.fr.pli_list_lag.html#psifr.fr.pli_list_lag)
+* __Temporal clustering__:
+  * Lag conditional response probability (lag-CRP): [`lag_crp`](https://psifr.readthedocs.io/en/latest/api/api/psifr.fr.lag_crp.html#psifr.fr.lag_crp)
+  * Temporal clustering score: [`lag_rank`](https://psifr.readthedocs.io/en/latest/api/api/psifr.fr.lag_rank.html#psifr.fr.lag_rank)
+* __Semantic clustering__:
+  * Semantic distance conditional response probability (distance-CRP): [`distance_crp`](https://psifr.readthedocs.io/en/latest/api/api/psifr.fr.distance_crp.html#psifr.fr.distance_crp)
+  * Semantic clustering score: [`distance_rank`](https://psifr.readthedocs.io/en/latest/api/api/psifr.fr.distance_rank.html#psifr.fr.distance_rank)
+* __Category clustering__:
+  * Category clustering score: [`category_crp`](https://psifr.readthedocs.io/en/latest/api/api/psifr.fr.category_crp.html#psifr.fr.category_crp)
+  * Adjusted ratio of clustering (ARC) and list-based clustering (LBC): [`category_clustering`](https://psifr.readthedocs.io/en/latest/api/api/psifr.fr.category_clustering.html#psifr.fr.category_clustering)
+* __Compound clustering__:
+  * Compound lag-CRP: [`lag_crp_compound`](https://psifr.readthedocs.io/en/latest/api/api/psifr.fr.lag_crp_compound.html#psifr.fr.lag_crp_compound)
+  * Compound semantic clustering: [`fr.distance_rank_shifted`](https://psifr.readthedocs.io/en/latest/api/api/psifr.fr.distance_rank_shifted.html#psifr.fr.distance_rank_shifted)
+
+Each of these analyses can be customized to group trials by condition, filter to only include specific recalls, and more. See the [User guide](https://psifr.readthedocs.io/en/stable/guide/overview.html) and [API reference](https://psifr.readthedocs.io/en/stable/api/overview.html) for details.
 
 ## Related projects
 
