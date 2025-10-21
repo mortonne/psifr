@@ -2022,7 +2022,7 @@ def plot_lag_crp(
                 y='prob',
                 hue=hue,
                 style=style,
-                palette=None,
+                palette=palette,
                 **kws,
             )
         )
@@ -2033,7 +2033,7 @@ def plot_lag_crp(
                 y='prob',
                 hue=hue,
                 style=style,
-                palette=None,
+                palette=palette,
                 **kws,
             )
         )
